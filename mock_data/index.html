@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>校园赛博玄学：运势与消费大盘</title>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 引入 Tailwind CSS 做赛博暗黑风格排版 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #38bdf8; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+        /* ================= AI 玄学卡片：霓虹 / 网格 / 扫描线 ================= */
+        .cyber-oracle {
+            background:
+                radial-gradient(900px 340px at 8% -10%, rgba(217, 70, 239, 0.18), transparent 60%),
+                radial-gradient(700px 320px at 100% 0%, rgba(34, 211, 238, 0.14), transparent 60%),
+                rgba(2, 6, 23, 0.92);
+            box-shadow: 0 0 0 1px rgba(217, 70, 239, 0.12), 0 24px 60px -24px rgba(168, 85, 247, 0.55);
+        }
+        .cyber-grid {
+            background-image:
+                linear-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+            background-size: 28px 28px;
+            -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 10%, transparent 78%);
+            mask-image: radial-gradient(ellipse at 50% 0%, #000 10%, transparent 78%);
+        }
+        .cyber-scan {
+            background: repeating-linear-gradient(to bottom, rgba(148, 163, 184, 0.10) 0 1px, transparent 1px 4px);
+            overflow: hidden;
+        }
+        .cyber-scan::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 28%;
+            background: linear-gradient(to bottom, transparent, rgba(34, 211, 238, 0.14), transparent);
+            animation: cyber-sweep 5.5s linear infinite;
+        }
+        @keyframes cyber-sweep {
+            0% { transform: translateY(-120%); }
+            100% { transform: translateY(420%); }
+        }
+        .cyber-glitch {
+            text-shadow: 0 0 18px rgba(217, 70, 239, 0.55), 2px 0 rgba(34, 211, 238, 0.5), -2px 0 rgba(244, 114, 182, 0.4);
+        }
+        .cyber-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(217, 70, 239, 0.55), rgba(34, 211, 238, 0.55), transparent);
+        }
+        .cyber-panel {
+            background: linear-gradient(160deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.86));
+            border: 1px solid rgba(148, 163, 184, 0.14);
+        }
+        .cyber-panel:hover { border-color: rgba(34, 211, 238, 0.35); }
+        .cyber-tag {
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            background: rgba(34, 211, 238, 0.08);
+        }
+        .aura-track { background: rgba(148, 163, 184, 0.15); }
+        .aura-fill { transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fortune-ring {
+            --ring-value: 0%;
+            --ring-color: #22d3ee;
+            width: 116px;
+            height: 116px;
+            border-radius: 9999px;
+            background: conic-gradient(var(--ring-color) var(--ring-value), rgba(148, 163, 184, 0.16) 0);
+            display: grid;
+            place-items: center;
+            filter: drop-shadow(0 0 16px rgba(34, 211, 238, 0.25));
+        }
+        .fortune-ring-inner {
+            width: 88px;
+            height: 88px;
+            border-radius: 9999px;
+            background: #020617;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .caret::after {
+            content: "▌";
+            margin-left: 2px;
+            color: #22d3ee;
+            animation: caret-blink 1s steps(1) infinite;
+        }
+        @keyframes caret-blink { 50% { opacity: 0; } }
+        .terminal-line { animation: terminal-in 0.25s ease-out both; }
+        @keyframes terminal-in {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: none; }
+        }
+        .fade-up { animation: fade-up 0.45s ease-out both; }
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .cyber-scan::after, .caret::after, .terminal-line, .fade-up { animation: none !important; }
+            .aura-fill { transition: none; }
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学：运势与消费大盘</h1>
+            <p class="text-sm text-slate-400 mt-2">—— 结合真实大学生活数据的赛博算命系统</p>
+        </header>
+
+        <!-- 图表展示区域 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 图表1：最高频消费地点占比 -->
+            <div class="bg-slate-900 border border-purple-500/30 p-4 rounded-xl shadow-lg shadow-purple-500/10">
+                <h3 class="text-lg font-semibold mb-4 text-purple-300">⚡ 最高频消费磁场 (Location)</h3>
+                <div id="locationChart" style="width: 100%; height: 300px;"></div>
+            </div>
+
+            <!-- 图表2：深夜渡劫/夜宵消费暴涨趋势 -->
+            <div class="bg-slate-900 border border-cyan-500/30 p-4 rounded-xl shadow-lg shadow-cyan-500/10">
+                <h3 class="text-lg font-semibold mb-4 text-cyan-300">🌙 深夜渡劫与夜宵暴涨曲线</h3>
+                <div id="nightChart" style="width: 100%; height: 300px;"></div>
+            </div>
+        </div>
+
+        <!-- ================= AI 趣味玄学解读卡片 ================= -->
+        <section class="mt-10" aria-labelledby="oracleTitle">
+            <div class="cyber-oracle relative overflow-hidden rounded-2xl border border-fuchsia-500/30">
+                <div class="cyber-grid pointer-events-none absolute inset-0"></div>
+                <div class="cyber-scan pointer-events-none absolute inset-0 opacity-60"></div>
+                <div class="relative p-5 sm:p-7">
+                    <!-- 终端标题栏 -->
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <p class="text-[10px] tracking-[0.4em] text-fuchsia-400/80">CYBER-ORACLE // NEURAL DIVINATION ENGINE</p>
+                            <h2 id="oracleTitle" class="cyber-glitch mt-2 text-2xl font-bold text-slate-100">🛰️ AI 趣味玄学解读终端</h2>
+                            <p id="oracleSource" class="mt-2 text-xs text-slate-400">数据源：expenses.csv · courses.json</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="oracleStatus" class="text-[10px] tracking-widest text-emerald-400/90">● ONLINE</span>
+                            <button id="rerollBtn" type="button"
+                                class="rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-xs font-semibold tracking-widest text-cyan-200 transition hover:bg-cyan-400/20 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] disabled:cursor-wait disabled:opacity-50">
+                                ⟲ 重新卜一卦
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cyber-divider my-5"></div>
+
+                    <!-- 推演中：模拟大模型终端输出 -->
+                    <div id="oracleLoading" class="min-h-[220px] rounded-xl border border-cyan-500/20 bg-slate-950/70 p-4 text-xs leading-6 text-emerald-300/90" role="status" aria-live="polite">
+                        <div id="oracleLog" class="space-y-1"></div>
+                    </div>
+
+                    <!-- 推演结果 -->
+                    <div id="oracleContent" class="hidden" aria-live="polite">
+                        <div class="grid grid-cols-1 gap-5 lg:grid-cols-5">
+                            <!-- 今日赛博人设 -->
+                            <article class="cyber-panel relative overflow-hidden rounded-xl p-5 lg:col-span-2">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-[10px] tracking-[0.3em] text-fuchsia-300/80">TODAY'S CYBER PERSONA</p>
+                                    <span id="personaSerial" class="text-[10px] text-slate-500">#0000</span>
+                                </div>
+                                <div class="mt-4 flex items-start gap-4">
+                                    <div id="personaEmoji" class="grid h-16 w-16 shrink-0 place-items-center rounded-xl border border-fuchsia-400/30 bg-fuchsia-500/10 text-4xl">🧋</div>
+                                    <div class="min-w-0">
+                                        <h3 id="personaTitle" class="text-lg font-bold leading-6 text-slate-100">正在推演...</h3>
+                                        <p id="personaCode" class="mt-1 text-[10px] tracking-widest text-cyan-300/80">PENDING // Lv.0</p>
+                                    </div>
+                                </div>
+                                <div id="personaTags" class="mt-4 flex flex-wrap gap-2"></div>
+                                <p id="personaDesc" class="mt-4 text-xs leading-6 text-slate-300"></p>
+                                <div id="personaStats" class="mt-5 space-y-3"></div>
+                            </article>
+                            <!-- 今日运势报告 -->
+                            <article class="cyber-panel rounded-xl p-5 lg:col-span-3">
+                                <div class="flex flex-wrap items-center justify-between gap-4">
+                                    <div>
+                                        <p class="text-[10px] tracking-[0.3em] text-cyan-300/80">DAILY FORTUNE REPORT</p>
+                                        <h3 class="mt-1 text-lg font-bold text-slate-100">今日运势报告</h3>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <span id="fortuneTier" class="rounded-full border px-3 py-1 text-[11px] tracking-wider text-cyan-200">推演中</span>
+                                        <div class="fortune-ring" id="fortuneRing" aria-hidden="true">
+                                            <div class="fortune-ring-inner">
+                                                <span id="fortuneScore" class="text-2xl font-bold text-slate-100">0</span>
+                                                <span class="text-[10px] tracking-widest text-slate-500">运势值</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p id="reportHeadline" class="mt-4 rounded-lg border-l-2 border-fuchsia-400/70 bg-fuchsia-500/5 px-3 py-2 text-sm font-semibold leading-6 text-fuchsia-100"></p>
+                                <div id="reportLines" class="mt-4 space-y-2 text-xs leading-6 text-slate-300"></div>
+
+                                <div class="mt-5 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+                                    <div class="rounded-lg border border-slate-700/60 bg-slate-950/50 p-2">
+                                        <p class="text-[10px] tracking-widest text-slate-500">卦象</p>
+                                        <p id="oracleHexagram" class="mt-1 text-slate-200">—</p>
+                                    </div>
+                                    <div class="rounded-lg border border-slate-700/60 bg-slate-950/50 p-2">
+                                        <p class="text-[10px] tracking-widest text-slate-500">渡劫对象</p>
+                                        <p id="oracleCourse" class="mt-1 truncate text-slate-200">—</p>
+                                    </div>
+                                    <div class="rounded-lg border border-slate-700/60 bg-slate-950/50 p-2">
+                                        <p class="text-[10px] tracking-widest text-slate-500">幸运时辰</p>
+                                        <p id="oracleLuckTime" class="mt-1 text-slate-200">09:00–11:00</p>
+                                    </div>
+                                    <div class="rounded-lg border border-slate-700/60 bg-slate-950/50 p-2">
+                                        <p class="text-[10px] tracking-widest text-slate-500">AI 置信度</p>
+                                        <p id="oracleConfidence" class="mt-1 text-emerald-300">—</p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!-- 玄学证据链 -->
+                        <div class="mt-5">
+                            <div class="mb-2 flex items-center justify-between">
+                                <h3 class="text-xs font-semibold tracking-widest text-cyan-200">🔍 玄学证据链</h3>
+                                <span class="text-[10px] tracking-widest text-slate-500">DATA → CAUSE → VERDICT</span>
+                            </div>
+                            <div id="evidenceList" class="grid grid-cols-1 gap-3 sm:grid-cols-2"></div>
+                        </div>
+
+                        <!-- 行动指南 + 开运参数 -->
+                        <div class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-3">
+                            <div class="cyber-panel rounded-xl p-4 lg:col-span-2">
+                                <h3 class="text-xs font-semibold tracking-widest text-fuchsia-200">🛠️ 今日行动指南 / ACTION PLAN</h3>
+                                <ul id="actionList" class="mt-3 space-y-2 text-xs leading-6 text-slate-300"></ul>
+                            </div>
+                            <div class="cyber-panel rounded-xl p-4">
+                                <h3 class="text-xs font-semibold tracking-widest text-emerald-200">🍀 开运参数 / LUCKY PARAMS</h3>
+                                <div id="luckyList" class="mt-3 space-y-2 text-xs text-slate-300"></div>
+                                <p id="oracleWarning" class="mt-3 rounded-md border border-amber-400/25 bg-amber-400/10 p-2 text-[11px] leading-5 text-amber-200/90"></p>
+                            </div>
+                        </div>
+
+                        <p class="mt-4 text-[10px] leading-5 text-slate-500">
+                            <span id="oracleMeta"></span><br>
+                            本卡片由本地「消费/选课规则引擎 + 模拟大模型 JSON」生成，仅用于娱乐，不构成任何选课、消费或医疗建议。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        /* ============================================================
+         * 0. 基础 Mock 数据
+         *    与 mock_data/expenses.csv、mock_data/courses.json 保持同步。
+         *    单文件页面在 file:// 协议下无法 fetch 本地文件，故内联一份，
+         *    用来模拟真实项目中「后端 / 大模型返回 JSON」的数据层。
+         * ============================================================ */
+        const RAW_EXPENSE_CSV = `date,time,location,category,amount,remark
+2026-03-02,08:15,一食堂,早餐,6.50,包子豆浆
+2026-03-02,12:30,二食堂,午餐,15.00,双拼饭
+2026-03-02,18:20,三食堂,晚餐,18.00,麻辣烫
+2026-03-02,23:45,校园超市,夜宵,22.50,能量饮料+薯片
+2026-03-04,01:15,蜜雪冰城,夜宵,12.00,大杯冰鲜柠檬水（熬夜写Computer Network作业）
+2026-03-05,01:30,蜜雪冰城,夜宵,15.00,椰果奶茶
+2026-03-08,12:10,二食堂,午餐,14.00,黄焖鸡
+2026-06-15,02:10,校园超市,夜宵,35.00,红牛*2+咖啡
+2026-06-16,02:45,校园超市,夜宵,42.00,咖啡+泡面（期末复习渡劫中）
+2026-06-17,03:00,蜜雪冰城,夜宵,18.00,全套奶茶`;
+
+        const COURSE_RECORDS = [
+            { course_id: 'CS101', course_name: '计算机网络', semester: '2025-2026-2', credits: 4, score: 78, difficulty_rating: 5, remark: '期末周渡劫课程' },
+            { course_id: 'CS102', course_name: '数据结构与算法', semester: '2025-2026-1', credits: 4, score: 85, difficulty_rating: 4, remark: '头发减半' },
+            { course_id: 'GE201', course_name: '赛博朋克与未来哲学', semester: '2025-2026-2', credits: 2, score: 92, difficulty_rating: 1, remark: '神仙通识课' }
+        ];
+
+        const FINALS_WINDOW = { start: '2026-06-15', end: '2026-06-21' };
+        const FORTUNE_TIERS = [
+            { min: 88, label: '大吉 · 欧皇附体', color: '#fbbf24' },
+            { min: 72, label: '中吉 · 稳中带玄', color: '#34d399' },
+            { min: 58, label: '小吉 · 谨慎渡劫', color: '#22d3ee' },
+            { min: 42, label: '平 · 渡劫进行时', color: '#c084fc' },
+            { min: 0, label: '凶 · 建议躺平', color: '#fb7185' }
+        ];
+        const HEXAGRAMS = ['熬夜未遂', '奶茶渡劫', '期末硬刚', '早八闪避', '财库漏水', '清醒结界', '咖啡续命'];
+        const prefersReducedMotion = window.matchMedia
+            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ---------- 通用小工具 ---------- */
+        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+        const sumAmount = (rows) => rows.reduce((total, row) => total + row.amount, 0);
+        const yuan = (value) => `¥${value.toFixed(2)}`;
+        const percent = (part, whole) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
+        const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[char]));
+        const pickBySeed = (list, seed) => list[Math.floor(seed * list.length) % list.length];
+        const withAlpha = (hex, alpha) => {
+            const value = parseInt(hex.slice(1), 16);
+            return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
+        };
+        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        function parseExpensesCsv(csv) {
+            return csv.trim().split(/\r?\n/).slice(1).filter(Boolean).map((line) => {
+                const parts = line.split(',');
+                return {
+                    date: parts[0],
+                    time: parts[1],
+                    location: parts[2],
+                    category: parts[3],
+                    amount: Number(parts[4]) || 0,
+                    remark: parts.slice(5).join(',')
+                };
+            });
+        }
+
+        const EXPENSES = parseExpensesCsv(RAW_EXPENSE_CSV);
+        const hourOf = (time) => parseInt(time.slice(0, 2), 10);
+        const isDeepNight = (time) => hourOf(time) < 5; // 00:00 - 04:59
+        const isNight = (time) => hourOf(time) >= 22 || hourOf(time) < 5; // 22:00 - 次日 04:59
+        const isMilkTeaRow = (row) => /奶茶|柠檬水|果茶/.test(row.remark);
+        const isFinalsRow = (row) => row.date >= FINALS_WINDOW.start && row.date <= FINALS_WINDOW.end;
+
+        /* ============================================================
+         * 1. 数据分析：把消费 / 选课流水转成「玄学事实」
+         * ============================================================ */
+        function analyzeCampusData() {
+            const deepNightRows = EXPENSES.filter((row) => isDeepNight(row.time));
+            const nightRows = EXPENSES.filter((row) => isNight(row.time));
+            const milkTeaRows = nightRows.filter(isMilkTeaRow);
+            const finalsRows = EXPENSES.filter(isFinalsRow);
+            const totalAmount = sumAmount(EXPENSES);
+
+            const locationMap = new Map();
+            EXPENSES.forEach((row) => {
+                const stat = locationMap.get(row.location) || { count: 0, amount: 0 };
+                stat.count += 1;
+                stat.amount += row.amount;
+                locationMap.set(row.location, stat);
+            });
+            const topLocation = Array.from(locationMap, ([name, stat]) => ({ name, ...stat }))
+                .sort((a, b) => b.count - a.count || b.amount - a.amount)[0]
+                || { name: '未知磁场', count: 0, amount: 0 };
+
+            const hardestCourse = COURSE_RECORDS.slice().sort((a, b) =>
+                b.difficulty_rating - a.difficulty_rating || a.score - b.score
+            )[0] || { course_name: '未知课程', credits: 0, score: 0, difficulty_rating: 0, remark: '无' };
+
+            const sortedMilkTea = milkTeaRows.slice().sort((a, b) =>
+                `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
+            );
+
+            return {
+                totalRecords: EXPENSES.length,
+                totalAmount,
+                deepNightRows,
+                deepNightCount: deepNightRows.length,
+                deepNightTotal: sumAmount(deepNightRows),
+                nightCount: nightRows.length,
+                milkTeaRows,
+                milkTeaCount: milkTeaRows.length,
+                milkTeaTotal: sumAmount(milkTeaRows),
+                latestMilkTea: sortedMilkTea[sortedMilkTea.length - 1] || null,
+                finalsRows,
+                finalsCount: finalsRows.length,
+                finalsTotal: sumAmount(finalsRows),
+                topLocation,
+                hardestCourse
+            };
+        }
+
+        /* ============================================================
+         * 2. 模拟大模型：根据事实生成「人设 + 运势报告」JSON
+         * ============================================================ */
+        function buildPersona(facts, seed) {
+            const course = facts.hardestCourse;
+
+            if (facts.deepNightCount >= 4 && facts.milkTeaCount >= 2) {
+                return pickBySeed([
+                    {
+                        emoji: '🧋',
+                        title: '深夜渡劫型 · 奶茶续命法师',
+                        code: 'MIDNIGHT-ALCHEMIST // 糖分系 Lv.MAX',
+                        tags: ['熬夜冠军', '奶茶续命', '期末渡劫'],
+                        desc: `血条由奶茶与红牛拼接，凌晨的外卖柜是你唯一的神龛。${facts.milkTeaCount} 杯深夜奶茶，正在替《${course.course_name}》的伤害买单。`
+                    },
+                    {
+                        emoji: '🌙',
+                        title: '月相绑定型 · 凌晨灵能者',
+                        code: 'LUNAR-CAFFEINE // 夜行系 Lv.99',
+                        tags: ['月亮不睡我不睡', '咖啡因成瘾', '早八绝缘体'],
+                        desc: `作息与月亮同步，白天修学分，夜晚修玄学。${facts.deepNightCount} 笔深夜订单，是你与赛博世界签下的契约。`
+                    }
+                ], seed);
+            }
+            if (facts.finalsCount >= 2) {
+                return {
+                    emoji: '📚',
+                    title: '期末硬刚型 · 渡劫苦行僧',
+                    code: 'FINALS-ASCETIC // 硬核系 Lv.88',
+                    tags: ['期末周', '红牛战士', '图书馆常驻'],
+                    desc: `期末周爆单 ${yuan(facts.finalsTotal)}，你把咖啡当血瓶、把泡面当回城卷轴，正面硬刚《${course.course_name}》。`
+                };
+            }
+            if (course.difficulty_rating >= 4) {
+                return {
+                    emoji: '🧗',
+                    title: '硬核选课型 · 难度收集者',
+                    code: 'DIFFICULTY-COLLECTOR // 头铁系 Lv.77',
+                    tags: ['专挑硬课', '头发减半', '绩点赌徒'],
+                    desc: `难度 ${course.difficulty_rating}/5 的《${course.course_name}》都敢冲，你的课表不是课表，是渡劫进度条。`
+                };
+            }
+            return {
+                emoji: '🛋️',
+                title: '平稳摸鱼型 · 低耗能散修',
+                code: 'LOW-POWER-WANDERER // 摸鱼系 Lv.42',
+                tags: ['低耗能', '情绪稳定', '准点干饭'],
+                desc: '没有深夜爆单，也没有地狱难度，今日的玄学主题是：保持这份可贵的平静。'
+            };
+        }
+
+        function getFortuneTier(score) {
+            return FORTUNE_TIERS.find((tier) => score >= tier.min)
+                || FORTUNE_TIERS[FORTUNE_TIERS.length - 1];
+        }
+
+        /**
+         * 规则引擎 + 模拟大模型输出。
+         * 返回值结构与真实 LLM 的 JSON 响应保持一致：
+         * { persona, score, tier, headline, reportLines, evidence, actions, lucky, auraStats, meta }
+         */
+        function buildDivination(seed) {
+            const roll = typeof seed === 'number' ? seed : Math.random();
+            const facts = analyzeCampusData();
+            const course = facts.hardestCourse;
+            const variance = Math.round((roll - 0.5) * 6); // -3 ~ +3，模拟「玄学波动」
+
+            // 运势值：熬夜扣运、糖分回血、期末爆单扣财库、课程难度扣业力
+            const score = clamp(Math.round(
+                78
+                - facts.deepNightCount * 2.4
+                + facts.milkTeaCount * 3.2
+                - facts.finalsTotal * 0.07
+                - (course.difficulty_rating - 3) * 4
+            ) + variance, 32, 98);
+
+            const tier = getFortuneTier(score);
+            const persona = buildPersona(facts, roll);
+            const hexagram = pickBySeed(HEXAGRAMS, roll);
+            const serial = 1000 + Math.floor(roll * 8999);
+            const confidence = clamp(84 + facts.milkTeaCount * 2 + variance, 78, 97);
+            const lateNightShare = percent(facts.deepNightTotal, facts.totalAmount);
+            const reviewHint = course.course_name.includes('网络') ? 'TCP 三次握手' : '今日核心概念';
+
+            // 三套「大模型文风」模板，点击重新卜卦时轮换，事实仍来自同一份数据
+            const readingVariants = [
+                [
+                    `AI 判定：你正在渡劫《${course.course_name}》，难度 ${course.difficulty_rating}/5，业力值 ${clamp(60 + facts.finalsTotal * 0.3, 0, 100).toFixed(0)}%。`,
+                    `00:00–05:00 之间，你向赛博世界献祭了 ${facts.deepNightCount} 笔订单（${yuan(facts.deepNightTotal)}），其中 ${facts.milkTeaCount} 杯是奶茶/果茶——糖分正在替你扛伤害。`,
+                    `建议今晚加一杯冰美式：+1 清醒 buff、-1 早八存活率；若 23:30 前喝完，可触发「早睡结界」隐藏成就。`,
+                    `期末周已爆单 ${yuan(facts.finalsTotal)}，「红牛 × 2 + 咖啡 + 泡面」同框，判定为标准渡劫套餐。`
+                ],
+                [
+                    `AI 判定：你正在渡劫《${course.course_name}》，而财库正在替这门课缴渡劫税。`,
+                    `最常出没的消费磁场是「${facts.topLocation.name}」（${facts.topLocation.count} 次 / ${yuan(facts.topLocation.amount)}），深夜订单占全部消费的 ${lateNightShare}%。`,
+                    `奶茶是续命符文，也是财库的漏水口：${facts.milkTeaCount} 杯 / ${yuan(facts.milkTeaTotal)}。建议今晚加一杯冰美式，玄学叫「去魅」，科学叫「少摄入约 200 大卡」。`,
+                    `若 23:30 前上床，可于明日 09:00–11:00 获得「早八闪避」buff；否则早八命中率 +100%。`
+                ],
+                [
+                    `卦象显示：你与《${course.course_name}》的因果尚未了结，${facts.finalsCount} 笔期末订单是最后的渡劫供品。`,
+                    `红牛、咖啡与泡面在购物袋里组成三角法阵，${yuan(facts.finalsTotal)} 的祭品已经就位，AI 判定你正在渡劫《${course.course_name}》。`,
+                    `建议今晚加一杯冰美式，并在 24:00 前把「${reviewHint}」讲给室友听，教学相长可解 1 层劫。`,
+                    `禁忌：凌晨 3 点再点奶茶。若执意召唤，明日运势自动 -10，并附赠一节早八。`
+                ]
+            ];
+            const reportLines = pickBySeed(readingVariants, roll);
+            const headline = `AI 判定：你正在渡劫《${course.course_name}》，建议今晚加一杯冰美式。`;
+
+            const auraStats = [
+                { label: '熬夜浓度', value: clamp(20 + facts.deepNightCount * 13 + facts.nightCount * 4, 0, 100), color: '#e879f9' },
+                { label: '糖分依赖', value: clamp(18 + facts.milkTeaCount * 16 + (facts.milkTeaTotal >= 30 ? 10 : 0), 0, 100), color: '#22d3ee' },
+                { label: '渡劫进度', value: clamp(45 + facts.finalsTotal * 0.4 + course.difficulty_rating * 4, 0, 100), color: '#fbbf24' },
+                { label: '财库水位', value: clamp(100 - facts.totalAmount * 0.22, 0, 100), color: '#34d399' }
+            ];
+
+            const evidence = [
+                {
+                    icon: '🌙',
+                    title: '消费灵脉 · 深夜献祭',
+                    tag: 'expenses.csv · 时间',
+                    text: `00:00–05:00 共 ${facts.deepNightCount} 笔深夜订单，合计 ${yuan(facts.deepNightTotal)}，占全部消费 ${lateNightShare}%。`
+                },
+                {
+                    icon: '🧋',
+                    title: '糖分法阵 · 奶茶召唤',
+                    tag: 'expenses.csv · 备注',
+                    text: `${facts.milkTeaCount} 杯深夜奶茶/果茶，合计 ${yuan(facts.milkTeaTotal)}；最近一次「${facts.latestMilkTea ? facts.latestMilkTea.remark : '—'}」（${facts.latestMilkTea ? `${facts.latestMilkTea.date} ${facts.latestMilkTea.time}` : '—'}）。`
+                },
+                {
+                    icon: '💸',
+                    title: '期末爆单 · 续命采购',
+                    tag: 'expenses.csv · 日期',
+                    text: `${FINALS_WINDOW.start} 起共 ${facts.finalsCount} 笔，合计 ${yuan(facts.finalsTotal)}；含「红牛 × 2 + 咖啡」「咖啡 + 泡面」等渡劫物资。`
+                },
+                {
+                    icon: '📚',
+                    title: '选课因果 · 主修劫难',
+                    tag: 'courses.json · 难度',
+                    text: `《${course.course_name}》${course.credits} 学分，难度 ${course.difficulty_rating}/5，得分 ${course.score}，备注「${course.remark}」。`
+                }
+            ];
+
+            const actions = [
+                `今晚 20:00 前加一杯冰美式，为《${course.course_name}》套上「清醒结界」。`,
+                `把「红牛 × 2」替换为温水 + 25 分钟番茄钟，预计让财库回血 ${yuan(35)}。`,
+                '23:30 后关闭外卖 App，避免再次触发「深夜奶茶召唤阵」。',
+                `宜：把${reviewHint}讲给室友听；忌：凌晨 3 点刷新选课系统。`
+            ];
+
+            const lucky = [
+                { label: '开运饮品', value: '冰美式（少冰）' },
+                { label: '开运方位', value: '图书馆三楼靠窗' },
+                { label: '开运操作', value: '23:30 前关闭外卖 App' },
+                { label: '渡劫道具', value: '机械键盘 + 降噪耳机' }
+            ];
+
+            return {
+                facts,
+                course,
+                score,
+                tier,
+                persona,
+                headline,
+                reportLines,
+                evidence,
+                actions,
+                lucky,
+                auraStats,
+                hexagram: `第 ${serial} 卦 · ${hexagram}`,
+                confidence,
+                warning: `⚠ 今日业力来源：《${course.course_name}》难度 ${course.difficulty_rating}/5。若 24:00 后仍在线，明日运势 -10。`,
+                serial: `DIV-${String(serial).padStart(4, '0')}`,
+                generatedAt: new Date().toLocaleString('zh-CN', { hour12: false })
+            };
+        }
+
+        // 1. 初始化最高频消费地点图表
+        var locChart = echarts.init(document.getElementById('locationChart'), 'dark');
+        locChart.setOption({
+            backgroundColor: 'transparent',
+            tooltip: { trigger: 'item' },
+            series: [{
+                name: '消费次数',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                itemStyle: { borderRadius: 8, borderColor: '#0f172a', borderWidth: 2 },
+                data: [
+                    { value: 4, name: '校园超市' },
+                    { value: 3, name: '蜜雪冰城' },
+                    { value: 2, name: '二食堂' },
+                    { value: 1, name: '一食堂' },
+                    { value: 1, name: '三食堂' }
+                ]
+            }]
+        });
+
+        // 2. 初始化深夜夜宵暴涨曲线图表
+        var nightChart = echarts.init(document.getElementById('nightChart'), 'dark');
+        nightChart.setOption({
+            backgroundColor: 'transparent',
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: ['3月2日', '3月4日', '3月5日', '6月15日', '6月16日', '6月17日'] },
+            yAxis: { type: 'value' },
+            series: [{
+                name: '夜宵金额 (元)',
+                type: 'line',
+                smooth: true,
+                itemStyle: { color: '#22d3ee' },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(34, 211, 238, 0.5)' },
+                        { offset: 1, color: 'rgba(34, 211, 238, 0)' }
+                    ])
+                },
+                data: [22.5, 12, 15, 35, 42, 18]
+            }]
+        });
+
+        /* ============================================================
+         * 3. 渲染：把模拟大模型 JSON 映射到赛博朋克卡片
+         * ============================================================ */
+        function renderStats(stats) {
+            const container = document.getElementById('personaStats');
+            container.innerHTML = stats.map((stat) => `
+                <div>
+                    <div class="mb-1 flex items-center justify-between text-xs tracking-wider text-slate-400">
+                        <span>${escapeHTML(stat.label)}</span>
+                        <span class="text-slate-300">${Math.round(stat.value)}%</span>
+                    </div>
+                    <div class="aura-track h-1.5 overflow-hidden rounded-full">
+                        <div class="aura-fill h-full w-0 rounded-full" style="background:${stat.color}; box-shadow:0 0 10px ${stat.color}"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    container.querySelectorAll('.aura-fill').forEach((bar, index) => {
+                        bar.style.width = `${Math.round(stats[index].value)}%`;
+                    });
+                });
+            });
+        }
+
+        function renderOracle(result) {
+            const $ = (id) => document.getElementById(id);
+            $('oracleSource').textContent = `数据源：expenses.csv ${result.facts.totalRecords} 条 · courses.json ${COURSE_RECORDS.length} 门 · 规则引擎推理完成`;
+
+            /* ---------- 今日赛博人设 ---------- */
+            $('personaSerial').textContent = `#${result.serial.replace('DIV-', '')}`;
+            $('personaEmoji').textContent = result.persona.emoji;
+            $('personaTitle').textContent = result.persona.title;
+            $('personaCode').textContent = result.persona.code;
+            $('personaDesc').textContent = result.persona.desc;
+            $('personaTags').innerHTML = result.persona.tags.map((tag) =>
+                `<span class="cyber-tag rounded-full px-2.5 py-1 text-xs tracking-wider text-cyan-200">${escapeHTML(tag)}</span>`
+            ).join('');
+            renderStats(result.auraStats);
+
+            /* ---------- 今日运势报告 ---------- */
+            $('reportHeadline').textContent = result.headline;
+            const tierEl = $('fortuneTier');
+            tierEl.textContent = result.tier.label;
+            tierEl.style.color = result.tier.color;
+            tierEl.style.borderColor = withAlpha(result.tier.color, 0.45);
+            tierEl.style.background = withAlpha(result.tier.color, 0.12);
+            animateScore(result.score, result.tier.color);
+
+            $('oracleHexagram').textContent = result.hexagram;
+            $('oracleCourse').textContent = `《${result.course.course_name}》`;
+            $('oracleConfidence').textContent = `${result.confidence}%`;
+            $('oracleMeta').textContent = `终端编号 ${result.serial} ｜ AI 置信度 ${result.confidence}% ｜ 生成于 ${result.generatedAt}`;
+
+            /* ---------- 玄学证据链 ---------- */
+            $('evidenceList').innerHTML = result.evidence.map((item) => `
+                <div class="rounded-lg border border-slate-700/70 bg-slate-950/60 p-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <p class="text-xs font-semibold text-slate-200">${escapeHTML(item.icon)} ${escapeHTML(item.title)}</p>
+                        <span class="shrink-0 rounded border border-slate-600/60 px-1.5 py-0.5 text-[10px] tracking-wider text-slate-400">${escapeHTML(item.tag)}</span>
+                    </div>
+                    <p class="mt-2 text-xs leading-5 text-slate-400">${escapeHTML(item.text)}</p>
+                </div>
+            `).join('');
+
+            /* ---------- 今日行动指南 ---------- */
+            $('actionList').innerHTML = result.actions.map((action, index) => `
+                <li class="flex gap-2">
+                    <span class="shrink-0 text-cyan-400/70">0${index + 1}</span>
+                    <span>${escapeHTML(action)}</span>
+                </li>
+            `).join('');
+
+            /* ---------- 开运参数 ---------- */
+            $('luckyList').innerHTML = result.lucky.map((item) => `
+                <div class="flex items-center justify-between gap-3 border-b border-slate-700/40 pb-2 last:border-b-0 last:pb-0">
+                    <span class="shrink-0 text-slate-500">${escapeHTML(item.label)}</span>
+                    <span class="text-right text-slate-200">${escapeHTML(item.value)}</span>
+                </div>
+            `).join('');
+            $('oracleWarning').textContent = result.warning;
+        }
+
+        // 运势环从 0 滚动到目标分数
+        function animateScore(target, color) {
+            const ring = document.getElementById('fortuneRing');
+            const scoreEl = document.getElementById('fortuneScore');
+            const runId = oracleRunId;
+            ring.style.setProperty('--ring-color', color);
+            ring.style.setProperty('--ring-value', '0%');
+            scoreEl.textContent = '0';
+
+            if (prefersReducedMotion) {
+                ring.style.setProperty('--ring-value', `${target}%`);
+                scoreEl.textContent = String(target);
+                return;
+            }
+
+            const start = performance.now();
+            const duration = 900;
+            const step = (now) => {
+                if (runId !== oracleRunId) return;
+                const progress = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const value = Math.round(target * eased);
+                ring.style.setProperty('--ring-value', `${value}%`);
+                scoreEl.textContent = String(value);
+                if (progress < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        }
+
+        /* ============================================================
+         * 4. 交互：终端打字机 / 重新卜卦 / 加载动画
+         * ============================================================ */
+        let oracleRunId = 0;
+
+        function typeInto(element, text, runId, speed) {
+            return new Promise((resolve) => {
+                if (prefersReducedMotion) {
+                    element.textContent = text;
+                    resolve(true);
+                    return;
+                }
+                let index = 0;
+                element.classList.add('caret');
+                const tick = () => {
+                    if (runId !== oracleRunId) {
+                        element.classList.remove('caret');
+                        resolve(false);
+                        return;
+                    }
+                    index = Math.min(text.length, index + 2);
+                    element.textContent = text.slice(0, index);
+                    if (index < text.length) {
+                        setTimeout(tick, speed || 14);
+                    } else {
+                        element.classList.remove('caret');
+                        resolve(true);
+                    }
+                };
+                tick();
+            });
+        }
+
+        async function playReading(lines, runId) {
+            const container = document.getElementById('reportLines');
+            container.innerHTML = '';
+            for (const line of lines) {
+                if (runId !== oracleRunId) return;
+                const row = document.createElement('p');
+                row.className = 'flex gap-2';
+                const marker = document.createElement('span');
+                marker.className = 'mt-0.5 shrink-0 text-cyan-400/80';
+                marker.textContent = '>';
+                const text = document.createElement('span');
+                text.className = 'min-w-0 flex-1';
+                row.append(marker, text);
+                container.appendChild(row);
+                const completed = await typeInto(text, line, runId, 12);
+                if (!completed) return;
+            }
+        }
+
+        async function runOracle() {
+            const runId = ++oracleRunId;
+            const button = document.getElementById('rerollBtn');
+            const status = document.getElementById('oracleStatus');
+            const loading = document.getElementById('oracleLoading');
+            const content = document.getElementById('oracleContent');
+            const log = document.getElementById('oracleLog');
+
+            button.disabled = true;
+            button.textContent = '◌ 推演中...';
+            status.textContent = '◌ CALCULATING';
+            status.className = 'text-[10px] tracking-widest text-amber-300';
+            content.classList.add('hidden');
+            loading.classList.remove('hidden');
+            document.getElementById('reportLines').innerHTML = '';
+            log.innerHTML = '';
+
+            const bootLines = [
+                `> 连接校园灵脉数据库 ... OK (${EXPENSES.length} rows)`,
+                `> 载入选课业力档案 ... OK (${COURSE_RECORDS.length} courses)`,
+                '> 加载 cyber-oracle-7b 玄学权重 ... OK',
+                '> 正在计算今日赛博人设 ...'
+            ];
+
+            for (const line of bootLines) {
+                if (runId !== oracleRunId) return;
+                const row = document.createElement('p');
+                row.className = 'terminal-line';
+                row.textContent = line;
+                log.appendChild(row);
+                await sleep(150 + Math.random() * 90);
+            }
+
+            // 模拟大模型返回 JSON（实际项目可替换为 fetch('/api/divination')）
+            const result = buildDivination();
+            await sleep(180);
+            if (runId !== oracleRunId) return;
+
+            loading.classList.add('hidden');
+            content.classList.remove('hidden');
+            content.classList.remove('fade-up');
+            void content.offsetWidth; // 重置入场动画
+            content.classList.add('fade-up');
+            renderOracle(result);
+            status.textContent = '● ONLINE';
+            status.className = 'text-[10px] tracking-widest text-emerald-400/90';
+
+            await playReading(result.reportLines, runId);
+            if (runId !== oracleRunId) return;
+
+            button.disabled = false;
+            button.textContent = '⟲ 重新卜一卦';
+        }
+
+        document.getElementById('rerollBtn').addEventListener('click', runOracle);
+        runOracle();
+
+        // 图表自适应：窗口尺寸变化时重绘
+        window.addEventListener('resize', function () {
+            locChart.resize();
+            nightChart.resize();
+        });
+    </script>
+</body>
+</html>
