@@ -172,13 +172,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- 图表1：最高频消费地点占比 -->
             <div class="bg-slate-900 border border-purple-500/30 p-4 rounded-xl shadow-lg shadow-purple-500/10">
-                <h3 class="text-lg font-semibold mb-4 text-purple-300">⚡ 最高频消费磁场 (Location)</h3>
+                <h3 id="locationChartTitle" class="text-lg font-semibold mb-4 text-purple-300">⚡ 最高频消费磁场 (Location)</h3>
                 <div id="locationChart" style="width: 100%; height: 300px;"></div>
             </div>
 
             <!-- 图表2：深夜渡劫/夜宵消费暴涨趋势 -->
             <div class="bg-slate-900 border border-cyan-500/30 p-4 rounded-xl shadow-lg shadow-cyan-500/10">
-                <h3 class="text-lg font-semibold mb-4 text-cyan-300">🌙 深夜渡劫与夜宵暴涨曲线</h3>
+                <h3 id="nightChartTitle" class="text-lg font-semibold mb-4 text-cyan-300">🌙 深夜渡劫与夜宵暴涨曲线</h3>
                 <div id="nightChart" style="width: 100%; height: 300px;"></div>
             </div>
         </div>
@@ -395,17 +395,19 @@
                 .filter(Boolean);
             if (lines.length < 2) throw new Error('CSV 文件为空或缺少数据行');
 
+            // 表头：去首尾空格 + 统一小写；日期列兼容 date / data
             const header = splitCsvLine(lines[0]).map((name) => name.trim().toLowerCase());
-            const index = {
-                date: header.indexOf('date'),
-                time: header.indexOf('time'),
-                location: header.indexOf('location'),
-                category: header.indexOf('category'),
-                amount: header.indexOf('amount'),
-                remark: header.indexOf('remark')
-            };
-            const required = ['date', 'time', 'location', 'category', 'amount'];
-            const missing = required.filter((key) => index[key] === -1);
+            const dateIndex = header.indexOf('date') !== -1 ? header.indexOf('date') : header.indexOf('data');
+            const categoryIndex = header.indexOf('category');
+            const amountIndex = header.indexOf('amount');
+            const timeIndex = header.indexOf('time');
+            const locationIndex = header.indexOf('location');
+            const noteIndex = header.indexOf('remark') !== -1 ? header.indexOf('remark') : header.indexOf('note');
+
+            const missing = [];
+            if (dateIndex === -1) missing.push('date（或 data）');
+            if (categoryIndex === -1) missing.push('category');
+            if (amountIndex === -1) missing.push('amount');
             if (missing.length) throw new Error(`缺少必需列：${missing.join('、')}`);
 
             const rows = [];
@@ -415,53 +417,60 @@
                 skipped += 1;
                 if (errorSamples.length < 3) errorSamples.push(`第 ${lineNumber} 行：${reason}`);
             };
+            const pad2 = (value) => String(value).padStart(2, '0');
 
             lines.slice(1).forEach((line, offset) => {
                 const lineNumber = offset + 2;
                 const fields = splitCsvLine(line);
-                const pick = (key) => (fields[index[key]] || '').trim();
-                const date = pick('date');
-                const timeRaw = pick('time');
-                const location = pick('location') || '未知地点';
-                const category = pick('category') || '其他';
-                const amountRaw = pick('amount');
-                const remark = index.remark >= 0
-                    ? fields.slice(index.remark).join(',').trim()
-                    : '';
+                const pickIndex = (index) => (index >= 0 ? (fields[index] || '').trim() : '');
+                const dateRaw = pickIndex(dateIndex);
+                const category = pickIndex(categoryIndex);
+                const amountRaw = pickIndex(amountIndex);
+                // time / location 均为可选：缺失或无效时保留空字符串，不补默认值
+                const timeRaw = pickIndex(timeIndex);
+                const location = pickIndex(locationIndex);
+                const noteFields = noteIndex >= 0
+                    ? fields.slice(noteIndex).map((field) => field.trim())
+                    : [];
+                const remark = noteFields.join(',').trim();
 
-                const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+                const dateMatch = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(dateRaw);
                 if (!dateMatch) {
-                    reject(lineNumber, `日期格式无效「${date}」`);
+                    reject(lineNumber, `日期格式无效「${dateRaw}」`);
                     return;
                 }
-                const [, year, month, day] = dateMatch.map(Number);
+                const year = Number(dateMatch[1]);
+                const month = Number(dateMatch[2]);
+                const day = Number(dateMatch[3]);
                 const dateObj = new Date(year, month - 1, day);
                 if (dateObj.getFullYear() !== year || dateObj.getMonth() !== month - 1 || dateObj.getDate() !== day) {
-                    reject(lineNumber, `日期不存在「${date}」`);
+                    reject(lineNumber, `日期不存在「${dateRaw}」`);
+                    return;
+                }
+                const date = `${year}-${pad2(month)}-${pad2(day)}`;
+
+                if (!category) {
+                    reject(lineNumber, 'category 为空');
                     return;
                 }
 
-                const timeMatch = /^(\d{1,2}):(\d{2})$/.exec(timeRaw);
-                if (!timeMatch) {
-                    reject(lineNumber, `时间格式无效「${timeRaw}」`);
-                    return;
-                }
-                const hour = Number(timeMatch[1]);
-                const minute = Number(timeMatch[2]);
-                if (hour > 23 || minute > 59) {
-                    reject(lineNumber, `时间超出范围「${timeRaw}」`);
-                    return;
-                }
-
-                const amount = Number(amountRaw.replace(/[¥,\s]/g, ''));
+                const amount = Number(amountRaw.replace(/[¥￥,\s]/g, ''));
                 if (!amountRaw || !Number.isFinite(amount) || amount < 0) {
                     reject(lineNumber, `金额无效「${amountRaw}」`);
                     return;
                 }
 
+                let time = '';
+                const timeMatch = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(timeRaw);
+                if (timeMatch) {
+                    const hour = Number(timeMatch[1]);
+                    const minute = Number(timeMatch[2]);
+                    if (hour <= 23 && minute <= 59) time = `${pad2(hour)}:${pad2(minute)}`;
+                }
+
                 rows.push({
                     date,
-                    time: `${String(hour).padStart(2, '0')}:${timeMatch[2]}`,
+                    time,
                     location,
                     category,
                     amount: Math.round(amount * 100) / 100,
@@ -470,16 +479,35 @@
             });
 
             rows.sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-            return { rows, skipped, errorSamples };
+            return {
+                rows,
+                skipped,
+                errorSamples,
+                columns: {
+                    time: timeIndex !== -1,
+                    location: locationIndex !== -1,
+                    note: noteIndex !== -1
+                }
+            };
         }
 
         const MOCK_EXPENSES = parseExpensesCsv(RAW_EXPENSE_CSV).rows;
         // 当前生效的消费数据：默认 Mock，上传 CSV 后会整体替换
         let EXPENSES = MOCK_EXPENSES.slice();
         let activeExpenseSource = '内置 Mock 数据（expenses.csv）';
-        const hourOf = (time) => parseInt(time.slice(0, 2), 10);
-        const isDeepNight = (time) => hourOf(time) < 5; // 00:00 - 04:59
-        const isNight = (time) => hourOf(time) >= 22 || hourOf(time) < 5; // 22:00 - 次日 04:59
+        const hourOf = (time) => {
+            const match = /^(\d{1,2}):\d{2}/.exec(String(time || ''));
+            return match ? Number(match[1]) : -1;
+        };
+        const isDeepNight = (time) => {
+            const hour = hourOf(time);
+            return hour >= 0 && hour < 5; // 00:00 - 04:59
+        };
+        const isNight = (time) => {
+            const hour = hourOf(time);
+            return hour >= 22 || (hour >= 0 && hour < 5); // 22:00 - 次日 04:59
+        };
+        const isNightRow = (row) => /夜宵|宵夜/.test(row.category || '') || isNight(row.time);
         const isMilkTeaRow = (row) => /奶茶|柠檬水|果茶/.test(row.remark);
         const isFinalsRow = (row) => row.date >= FINALS_WINDOW.start && row.date <= FINALS_WINDOW.end;
 
@@ -487,14 +515,17 @@
          * 1. 数据分析：把消费 / 选课流水转成「玄学事实」
          * ============================================================ */
         function analyzeCampusData() {
+            const hasTime = EXPENSES.some((row) => Boolean(row.time));
+            const hasLocation = EXPENSES.some((row) => Boolean(row.location));
             const deepNightRows = EXPENSES.filter((row) => isDeepNight(row.time));
-            const nightRows = EXPENSES.filter((row) => isNight(row.time));
+            const nightRows = EXPENSES.filter(isNightRow);
             const milkTeaRows = nightRows.filter(isMilkTeaRow);
             const finalsRows = EXPENSES.filter(isFinalsRow);
             const totalAmount = sumAmount(EXPENSES);
 
             const locationMap = new Map();
             EXPENSES.forEach((row) => {
+                if (!row.location) return; // 没有 location 字段时不伪造地点
                 const stat = locationMap.get(row.location) || { count: 0, amount: 0 };
                 stat.count += 1;
                 stat.amount += row.amount;
@@ -502,7 +533,7 @@
             });
             const topLocation = Array.from(locationMap, ([name, stat]) => ({ name, ...stat }))
                 .sort((a, b) => b.count - a.count || b.amount - a.amount)[0]
-                || { name: '未知磁场', count: 0, amount: 0 };
+                || null;
 
             const hardestCourse = COURSE_RECORDS.slice().sort((a, b) =>
                 b.difficulty_rating - a.difficulty_rating || a.score - b.score
@@ -515,6 +546,8 @@
             return {
                 totalRecords: EXPENSES.length,
                 totalAmount,
+                hasTime,
+                hasLocation,
                 deepNightRows,
                 deepNightCount: deepNightRows.length,
                 deepNightTotal: sumAmount(deepNightRows),
@@ -625,9 +658,11 @@
             const readingVariants = [
                 [
                     `AI 判定：你正在渡劫《${course.course_name}》，难度 ${course.difficulty_rating}/5，业力值 ${clamp(60 + facts.finalsTotal * 0.3, 0, 100).toFixed(0)}%。`,
-                    facts.deepNightCount > 0
-                        ? `00:00–05:00 之间，你向赛博世界献祭了 ${facts.deepNightCount} 笔订单（${yuan(facts.deepNightTotal)}），其中 ${facts.milkTeaCount} 杯是奶茶/果茶——糖分正在替你扛伤害。`
-                        : '00:00–05:00 之间暂无献祭记录，作息结界稳定——今晚的月亮没有收到你的订单。',
+                    facts.hasTime
+                        ? (facts.deepNightCount > 0
+                            ? `00:00–05:00 之间，你向赛博世界献祭了 ${facts.deepNightCount} 笔订单（${yuan(facts.deepNightTotal)}），其中 ${facts.milkTeaCount} 杯是奶茶/果茶——糖分正在替你扛伤害。`
+                            : '00:00–05:00 之间暂无献祭记录，作息结界稳定——今晚的月亮没有收到你的订单。')
+                        : '本次数据未提供 time 字段，深夜献祭无法判定；AI 将改用日期、分类与金额继续推演。',
                     '建议今晚加一杯冰美式：+1 清醒 buff、-1 早八存活率；若 23:30 前喝完，可触发「早睡结界」隐藏成就。',
                     facts.finalsCount > 0
                         ? `期末周已爆单 ${yuan(facts.finalsTotal)}，订单包括「${finalsMenu}」，判定为标准渡劫套餐。`
@@ -635,10 +670,14 @@
                 ],
                 [
                     `AI 判定：你正在渡劫《${course.course_name}》，而财库正在替这门课缴渡劫税。`,
-                    `最常出没的消费磁场是「${facts.topLocation.name}」（${facts.topLocation.count} 次 / ${yuan(facts.topLocation.amount)}），深夜订单占全部消费的 ${lateNightShare}%。`,
+                    facts.topLocation
+                        ? `最常出没的消费磁场是「${facts.topLocation.name}」（${facts.topLocation.count} 次 / ${yuan(facts.topLocation.amount)}），深夜订单占全部消费的 ${lateNightShare}%。`
+                        : '本次数据未提供 location 字段，消费磁场暂不可测；AI 已改用 category 与 amount 推演财库。',
                     facts.milkTeaCount > 0
                         ? `奶茶是续命符文，也是财库的漏水口：${facts.milkTeaCount} 杯 / ${yuan(facts.milkTeaTotal)}。建议今晚加一杯冰美式，玄学叫「去魅」，科学叫「少摄入约 200 大卡」。`
-                        : '今晚没有检测到奶茶漏水口，财库水位稳定；用一杯冰美式替代夜宵，可继续保持这份清醒。',
+                        : (facts.hasTime
+                            ? '今晚没有检测到奶茶漏水口，财库水位稳定；用一杯冰美式替代夜宵，可继续保持这份清醒。'
+                            : '本次数据未提供 time 字段，无法判定深夜奶茶；财库水位仅按金额与日期推演。'),
                     `若 23:30 前上床，可于明日 09:00–11:00 获得「早八闪避」buff；否则早八命中率 +100%。`
                 ],
                 [
@@ -658,7 +697,11 @@
             const headline = `AI 判定：你正在渡劫《${course.course_name}》，建议今晚加一杯冰美式。`;
 
             const auraStats = [
-                { label: '熬夜浓度', value: clamp(20 + facts.deepNightCount * 13 + facts.nightCount * 4, 0, 100), color: '#e879f9' },
+                {
+                    label: facts.hasTime ? '熬夜浓度' : '熬夜浓度 (无 time)',
+                    value: facts.hasTime ? clamp(20 + facts.deepNightCount * 13 + facts.nightCount * 4, 0, 100) : 0,
+                    color: '#e879f9'
+                },
                 { label: '糖分依赖', value: clamp(18 + facts.milkTeaCount * 16 + (facts.milkTeaTotal >= 30 ? 10 : 0), 0, 100), color: '#22d3ee' },
                 { label: '渡劫进度', value: clamp(45 + facts.finalsTotal * 0.4 + course.difficulty_rating * 4, 0, 100), color: '#fbbf24' },
                 { label: '财库水位', value: clamp(100 - facts.totalAmount * 0.22, 0, 100), color: '#34d399' }
@@ -668,18 +711,22 @@
                 {
                     icon: '🌙',
                     title: '消费灵脉 · 深夜献祭',
-                    tag: `${sourceTag} · 时间`,
-                    text: facts.deepNightCount > 0
-                        ? `00:00–05:00 共 ${facts.deepNightCount} 笔深夜订单，合计 ${yuan(facts.deepNightTotal)}，占全部消费 ${lateNightShare}%。`
-                        : '00:00–05:00 暂无深夜订单，作息结界稳定，未检测到熬夜献祭。'
+                    tag: `${sourceTag} · ${facts.hasTime ? '时间' : 'time 缺失'}`,
+                    text: facts.hasTime
+                        ? (facts.deepNightCount > 0
+                            ? `00:00–05:00 共 ${facts.deepNightCount} 笔深夜订单，合计 ${yuan(facts.deepNightTotal)}，占全部消费 ${lateNightShare}%。`
+                            : '00:00–05:00 暂无深夜订单，作息结界稳定，未检测到熬夜献祭。')
+                        : '本次数据未提供 time 字段，深夜灵脉暂不可测；其余指标已按 date / category / amount 推演。'
                 },
                 {
                     icon: '🧋',
                     title: '糖分法阵 · 奶茶召唤',
                     tag: `${sourceTag} · 备注`,
                     text: facts.milkTeaCount > 0
-                        ? `${facts.milkTeaCount} 杯深夜奶茶/果茶，合计 ${yuan(facts.milkTeaTotal)}；最近一次「${facts.latestMilkTea.remark || '未备注'}」（${facts.latestMilkTea.date} ${facts.latestMilkTea.time}）。`
-                        : '暂无深夜奶茶/果茶记录，糖分法阵暂时休眠，财库漏水口已关闭。'
+                        ? `${facts.milkTeaCount} 杯深夜奶茶/果茶，合计 ${yuan(facts.milkTeaTotal)}；最近一次「${facts.latestMilkTea.remark || '未备注'}」（${facts.latestMilkTea.date}${facts.latestMilkTea.time ? ` ${facts.latestMilkTea.time}` : ''}）。`
+                        : (facts.hasTime
+                            ? '暂无深夜奶茶/果茶记录，糖分法阵暂时休眠，财库漏水口已关闭。'
+                            : '本次数据未提供 time 字段，无法定位深夜奶茶；备注中亦未匹配到奶茶/果茶。')
                 },
                 {
                     icon: '💸',
@@ -706,7 +753,9 @@
                     : '期末周暂未爆单，继续保持；把省下的预算投入早餐，可提升「早八存活率」。',
                 facts.milkTeaCount > 0
                     ? '23:30 后关闭外卖 App，避免再次触发「深夜奶茶召唤阵」。'
-                    : '今日未检测到奶茶召唤阵，建议 23:30 前上床锁定「早睡结界」成就。',
+                    : (facts.hasTime
+                        ? '今日未检测到奶茶召唤阵，建议 23:30 前上床锁定「早睡结界」成就。'
+                        : '本次数据未提供 time 字段，无法追踪深夜奶茶；仍建议 23:30 前上床锁定「早睡结界」成就。'),
                 `宜：把${reviewHint}讲给室友听；忌：凌晨 3 点刷新选课系统。`
             ];
 
@@ -741,9 +790,17 @@
          * 3. 图表：始终从当前 EXPENSES 派生，上传后复用同一套配置刷新
          * ============================================================ */
         function buildLocationOption(rows) {
+            // 有 location 时按地点统计；没有 location 列时自动降级为分类构成
+            const locatedRows = rows.filter((row) => Boolean(row.location));
+            const useLocation = locatedRows.length > 0;
+            const sourceRows = useLocation ? locatedRows : rows;
+            const dimension = useLocation ? 'location' : 'category';
+
             const counts = new Map();
-            rows.forEach((row) => {
-                counts.set(row.location, (counts.get(row.location) || 0) + 1);
+            sourceRows.forEach((row) => {
+                const name = (row[dimension] || '').trim();
+                if (!name) return;
+                counts.set(name, (counts.get(name) || 0) + 1);
             });
             const data = Array.from(counts, ([name, value]) => ({ name, value }))
                 .sort((a, b) => b.value - a.value || a.name.localeCompare(b.name));
@@ -769,8 +826,14 @@
         }
 
         function buildNightOption(rows) {
+            // 有深夜/夜宵记录时看夜宵曲线；缺少 time 且无夜宵分类时退化为每日消费趋势
+            const nightRows = rows.filter(isNightRow);
+            const useNight = nightRows.length > 0;
+            const sourceRows = useNight ? nightRows : rows;
+
             const daily = new Map();
-            rows.filter((row) => row.category === '夜宵' || isNight(row.time)).forEach((row) => {
+            sourceRows.forEach((row) => {
+                if (!row.date) return;
                 daily.set(row.date, (daily.get(row.date) || 0) + row.amount);
             });
             const dates = Array.from(daily.keys()).sort();
@@ -797,7 +860,7 @@
                     splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.12)' } }
                 },
                 series: [{
-                    name: '夜宵金额 (元)',
+                    name: useNight ? '夜宵金额 (元)' : '每日消费 (元)',
                     type: 'line',
                     smooth: true,
                     itemStyle: { color: '#22d3ee' },
@@ -813,12 +876,28 @@
                     type: 'text',
                     left: 'center',
                     top: 'middle',
-                    style: { text: '暂无深夜/夜宵消费', fill: '#64748b', fontSize: 12, fontFamily: 'monospace' }
+                    style: { text: useNight ? '暂无深夜/夜宵消费' : '暂无消费记录', fill: '#64748b', fontSize: 12, fontFamily: 'monospace' }
                 }]
             };
         }
 
         function updateExpenseCharts(rows) {
+            const hasLocation = rows.some((row) => Boolean(row.location));
+            const hasNight = rows.some(isNightRow);
+            const locationTitle = document.getElementById('locationChartTitle');
+            const nightTitle = document.getElementById('nightChartTitle');
+
+            if (locationTitle) {
+                locationTitle.textContent = hasLocation
+                    ? '⚡ 最高频消费磁场 (Location)'
+                    : '⚡ 消费分类构成 (Category)';
+            }
+            if (nightTitle) {
+                nightTitle.textContent = hasNight
+                    ? '🌙 深夜渡劫与夜宵暴涨曲线'
+                    : '🌙 每日消费趋势 (Daily)';
+            }
+
             locChart.setOption(buildLocationOption(rows), true);
             nightChart.setOption(buildNightOption(rows), true);
         }
@@ -1070,7 +1149,11 @@
 
         function updateDataSummary() {
             const facts = analyzeCampusData();
-            dataSummary.textContent = `数据源：${activeExpenseSource} ｜ ${facts.totalRecords} 条 · 总额 ${yuan(facts.totalAmount)} · 深夜 ${facts.deepNightCount} 笔 · 奶茶 ${facts.milkTeaCount} 杯`;
+            const missing = [];
+            if (!facts.hasTime) missing.push('time');
+            if (!facts.hasLocation) missing.push('location');
+            const missingText = missing.length ? ` · 未提供 ${missing.join(' / ')}` : '';
+            dataSummary.textContent = `数据源：${activeExpenseSource} ｜ ${facts.totalRecords} 条 · 总额 ${yuan(facts.totalAmount)} · 深夜 ${facts.deepNightCount} 笔 · 奶茶 ${facts.milkTeaCount} 杯${missingText}`;
         }
 
         function applyExpenseData(rows, sourceLabel) {
@@ -1125,7 +1208,14 @@
                     const skippedText = parsed.skipped
                         ? `，已跳过 ${parsed.skipped} 行无效数据（${parsed.errorSamples[0]}）`
                         : '';
-                    setUploadStatus(`✓ 已载入 ${parsed.rows.length} 条记录${skippedText}；图表与玄学报告已刷新。`, 'ok');
+                    const optionalMissing = [];
+                    if (!parsed.columns.time) optionalMissing.push('time');
+                    if (!parsed.columns.location) optionalMissing.push('location');
+                    if (!parsed.columns.note) optionalMissing.push('note/remark');
+                    const adaptText = optionalMissing.length
+                        ? `；未提供 ${optionalMissing.join(' / ')} 列，相关视图已按可用字段自动适配`
+                        : '';
+                    setUploadStatus(`✓ 已载入 ${parsed.rows.length} 条记录${skippedText}${adaptText}；图表与玄学报告已刷新。`, 'ok');
                 } catch (error) {
                     setUploadStatus(`✕ 导入失败：${error.message}`, 'error');
                 } finally {
