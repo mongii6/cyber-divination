@@ -1,0 +1,29 @@
+[
+  {
+    "course_id": "CS101",
+    "course_name": "计算机网络",
+    "semester": "2025-2026-2",
+    "credits": 4,
+    "score": 78,
+    "difficulty_rating": 5,
+    "remark": "期末周渡劫课程"
+  },
+  {
+    "course_id": "CS102",
+    "course_name": "数据结构与算法",
+    "semester": "2025-2026-1",
+    "credits": 4,
+    "score": 85,
+    "difficulty_rating": 4,
+    "remark": "头发减半"
+  },
+  {
+    "course_id": "GE201",
+    "course_name": "赛博朋克与未来哲学",
+    "semester": "2025-2026-2",
+    "credits": 2,
+    "score": 92,
+    "difficulty_rating": 1,
+    "remark": "神仙通识课"
+  }
+]
