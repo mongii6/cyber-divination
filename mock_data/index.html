@@ -100,6 +100,28 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: none; }
         }
+        /* ================= CSV 导入区 ================= */
+        .upload-zone {
+            cursor: pointer;
+            border: 1px dashed rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.05);
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .upload-zone:hover,
+        .upload-zone:focus-visible,
+        .upload-zone.is-dragover {
+            border-color: rgba(217, 70, 239, 0.8);
+            background: rgba(217, 70, 239, 0.12);
+            box-shadow: 0 0 24px rgba(217, 70, 239, 0.28), inset 0 0 22px rgba(34, 211, 238, 0.08);
+            outline: none;
+        }
+        .upload-zone.is-dragover { transform: translateY(-1px) scale(1.01); }
+        .upload-zone.is-loading { cursor: wait; opacity: 0.7; }
+        .upload-status { min-height: 1.25rem; }
+        .upload-status[data-tone="idle"] { color: #94a3b8; }
+        .upload-status[data-tone="busy"] { color: #fcd34d; }
+        .upload-status[data-tone="ok"] { color: #34d399; }
+        .upload-status[data-tone="error"] { color: #fb7185; }
         @media (prefers-reduced-motion: reduce) {
             .cyber-scan::after, .caret::after, .terminal-line, .fade-up { animation: none !important; }
             .aura-fill { transition: none; }
@@ -112,6 +134,39 @@
             <h1 class="text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学：运势与消费大盘</h1>
             <p class="text-sm text-slate-400 mt-2">—— 结合真实大学生活数据的赛博算命系统</p>
         </header>
+
+        <!-- ================= CSV 自定义数据导入 ================= -->
+        <section class="mb-6" aria-labelledby="uploadTitle">
+            <div class="cyber-oracle relative overflow-hidden rounded-2xl border border-cyan-500/30 p-4 sm:p-5">
+                <div class="cyber-grid pointer-events-none absolute inset-0 opacity-70"></div>
+                <div class="relative grid grid-cols-1 items-center gap-4 sm:grid-cols-[1fr_auto]">
+                    <div>
+                        <p class="text-[10px] tracking-[0.35em] text-cyan-300/80">DATA INGESTION // CSV UPLOAD</p>
+                        <h2 id="uploadTitle" class="mt-1 text-lg font-bold text-slate-100">📡 导入你的消费流水</h2>
+                        <p class="mt-1 text-xs leading-5 text-slate-400">
+                            拖拽 CSV 到右侧区域，或点击选择文件。解析成功后会实时刷新消费图表，并重新生成 AI 玄学报告；未上传时继续使用内置 Mock 数据。
+                        </p>
+                        <p class="mt-1 text-[10px] tracking-wider text-slate-500">列格式：date,time,location,category,amount,remark（UTF-8，≤ 2 MB）</p>
+                    </div>
+                    <div class="flex flex-col gap-2 sm:items-stretch">
+                        <label id="uploadZone" for="csvFileInput" role="button" tabindex="0"
+                            class="upload-zone flex min-h-[88px] w-full flex-col items-center justify-center rounded-xl px-5 py-4 text-center sm:min-w-[250px]">
+                            <span id="uploadZoneTitle" class="text-sm font-semibold tracking-wider text-cyan-200">⬆ 拖拽 / 点击上传 CSV</span>
+                            <span id="uploadZoneHint" class="mt-1 text-[10px] tracking-widest text-slate-500">支持 .csv · 最大 2 MB</span>
+                        </label>
+                        <input id="csvFileInput" type="file" accept=".csv,text/csv" class="sr-only">
+                        <button id="resetDataBtn" type="button"
+                            class="hidden rounded-lg border border-slate-600/70 bg-slate-800/60 px-3 py-2 text-[11px] tracking-widest text-slate-300 transition hover:border-fuchsia-400/60 hover:text-fuchsia-200">
+                            ↺ 恢复 Mock 数据
+                        </button>
+                    </div>
+                </div>
+                <div class="relative mt-3 flex flex-col gap-1 border-t border-slate-700/50 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p id="uploadStatus" class="upload-status text-[11px]" data-tone="idle" role="status" aria-live="polite">● 当前使用内置 Mock 数据（expenses.csv）</p>
+                    <p id="dataSummary" class="text-[10px] tracking-wider text-slate-500">—</p>
+                </div>
+            </div>
+        </section>
 
         <!-- 图表展示区域 -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -302,21 +357,126 @@
         };
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-        function parseExpensesCsv(csv) {
-            return csv.trim().split(/\r?\n/).slice(1).filter(Boolean).map((line) => {
-                const parts = line.split(',');
-                return {
-                    date: parts[0],
-                    time: parts[1],
-                    location: parts[2],
-                    category: parts[3],
-                    amount: Number(parts[4]) || 0,
-                    remark: parts.slice(5).join(',')
-                };
-            });
+        /**
+         * 极简 CSV 解析：支持双引号包裹字段与字段内逗号。
+         * 返回 { rows, skipped, errorSamples }，单行错误不会中断整份文件。
+         */
+        function splitCsvLine(line) {
+            const fields = [];
+            let current = '';
+            let quoted = false;
+            for (let i = 0; i < line.length; i += 1) {
+                const char = line[i];
+                if (quoted) {
+                    if (char === '"' && line[i + 1] === '"') {
+                        current += '"';
+                        i += 1;
+                    } else if (char === '"') {
+                        quoted = false;
+                    } else {
+                        current += char;
+                    }
+                } else if (char === '"') {
+                    quoted = true;
+                } else if (char === ',') {
+                    fields.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            fields.push(current);
+            return fields;
         }
 
-        const EXPENSES = parseExpensesCsv(RAW_EXPENSE_CSV);
+        function parseExpensesCsv(csv) {
+            const lines = String(csv).replace(/^\uFEFF/, '').split(/\r?\n/)
+                .map((line) => line.trim())
+                .filter(Boolean);
+            if (lines.length < 2) throw new Error('CSV 文件为空或缺少数据行');
+
+            const header = splitCsvLine(lines[0]).map((name) => name.trim().toLowerCase());
+            const index = {
+                date: header.indexOf('date'),
+                time: header.indexOf('time'),
+                location: header.indexOf('location'),
+                category: header.indexOf('category'),
+                amount: header.indexOf('amount'),
+                remark: header.indexOf('remark')
+            };
+            const required = ['date', 'time', 'location', 'category', 'amount'];
+            const missing = required.filter((key) => index[key] === -1);
+            if (missing.length) throw new Error(`缺少必需列：${missing.join('、')}`);
+
+            const rows = [];
+            let skipped = 0;
+            const errorSamples = [];
+            const reject = (lineNumber, reason) => {
+                skipped += 1;
+                if (errorSamples.length < 3) errorSamples.push(`第 ${lineNumber} 行：${reason}`);
+            };
+
+            lines.slice(1).forEach((line, offset) => {
+                const lineNumber = offset + 2;
+                const fields = splitCsvLine(line);
+                const pick = (key) => (fields[index[key]] || '').trim();
+                const date = pick('date');
+                const timeRaw = pick('time');
+                const location = pick('location') || '未知地点';
+                const category = pick('category') || '其他';
+                const amountRaw = pick('amount');
+                const remark = index.remark >= 0
+                    ? fields.slice(index.remark).join(',').trim()
+                    : '';
+
+                const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+                if (!dateMatch) {
+                    reject(lineNumber, `日期格式无效「${date}」`);
+                    return;
+                }
+                const [, year, month, day] = dateMatch.map(Number);
+                const dateObj = new Date(year, month - 1, day);
+                if (dateObj.getFullYear() !== year || dateObj.getMonth() !== month - 1 || dateObj.getDate() !== day) {
+                    reject(lineNumber, `日期不存在「${date}」`);
+                    return;
+                }
+
+                const timeMatch = /^(\d{1,2}):(\d{2})$/.exec(timeRaw);
+                if (!timeMatch) {
+                    reject(lineNumber, `时间格式无效「${timeRaw}」`);
+                    return;
+                }
+                const hour = Number(timeMatch[1]);
+                const minute = Number(timeMatch[2]);
+                if (hour > 23 || minute > 59) {
+                    reject(lineNumber, `时间超出范围「${timeRaw}」`);
+                    return;
+                }
+
+                const amount = Number(amountRaw.replace(/[¥,\s]/g, ''));
+                if (!amountRaw || !Number.isFinite(amount) || amount < 0) {
+                    reject(lineNumber, `金额无效「${amountRaw}」`);
+                    return;
+                }
+
+                rows.push({
+                    date,
+                    time: `${String(hour).padStart(2, '0')}:${timeMatch[2]}`,
+                    location,
+                    category,
+                    amount: Math.round(amount * 100) / 100,
+                    remark
+                });
+            });
+
+            rows.sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
+            return { rows, skipped, errorSamples };
+        }
+
+        const MOCK_EXPENSES = parseExpensesCsv(RAW_EXPENSE_CSV).rows;
+        // 当前生效的消费数据：默认 Mock，上传 CSV 后会整体替换
+        let EXPENSES = MOCK_EXPENSES.slice();
+        let activeExpenseSource = '内置 Mock 数据（expenses.csv）';
         const hourOf = (time) => parseInt(time.slice(0, 2), 10);
         const isDeepNight = (time) => hourOf(time) < 5; // 00:00 - 04:59
         const isNight = (time) => hourOf(time) >= 22 || hourOf(time) < 5; // 22:00 - 次日 04:59
@@ -454,26 +614,44 @@
             const confidence = clamp(84 + facts.milkTeaCount * 2 + variance, 78, 97);
             const lateNightShare = percent(facts.deepNightTotal, facts.totalAmount);
             const reviewHint = course.course_name.includes('网络') ? 'TCP 三次握手' : '今日核心概念';
+            const finalsMenu = facts.finalsRows
+                .map((row) => row.remark)
+                .filter(Boolean)
+                .slice(0, 3)
+                .join('、') || '未记录具体物资';
+            const sourceTag = activeExpenseSource.startsWith('本地文件') ? '上传 CSV' : 'expenses.csv';
 
             // 三套「大模型文风」模板，点击重新卜卦时轮换，事实仍来自同一份数据
             const readingVariants = [
                 [
                     `AI 判定：你正在渡劫《${course.course_name}》，难度 ${course.difficulty_rating}/5，业力值 ${clamp(60 + facts.finalsTotal * 0.3, 0, 100).toFixed(0)}%。`,
-                    `00:00–05:00 之间，你向赛博世界献祭了 ${facts.deepNightCount} 笔订单（${yuan(facts.deepNightTotal)}），其中 ${facts.milkTeaCount} 杯是奶茶/果茶——糖分正在替你扛伤害。`,
-                    `建议今晚加一杯冰美式：+1 清醒 buff、-1 早八存活率；若 23:30 前喝完，可触发「早睡结界」隐藏成就。`,
-                    `期末周已爆单 ${yuan(facts.finalsTotal)}，「红牛 × 2 + 咖啡 + 泡面」同框，判定为标准渡劫套餐。`
+                    facts.deepNightCount > 0
+                        ? `00:00–05:00 之间，你向赛博世界献祭了 ${facts.deepNightCount} 笔订单（${yuan(facts.deepNightTotal)}），其中 ${facts.milkTeaCount} 杯是奶茶/果茶——糖分正在替你扛伤害。`
+                        : '00:00–05:00 之间暂无献祭记录，作息结界稳定——今晚的月亮没有收到你的订单。',
+                    '建议今晚加一杯冰美式：+1 清醒 buff、-1 早八存活率；若 23:30 前喝完，可触发「早睡结界」隐藏成就。',
+                    facts.finalsCount > 0
+                        ? `期末周已爆单 ${yuan(facts.finalsTotal)}，订单包括「${finalsMenu}」，判定为标准渡劫套餐。`
+                        : '期末周暂未爆单，财库水位安全，继续保持这份难得的平静。'
                 ],
                 [
                     `AI 判定：你正在渡劫《${course.course_name}》，而财库正在替这门课缴渡劫税。`,
                     `最常出没的消费磁场是「${facts.topLocation.name}」（${facts.topLocation.count} 次 / ${yuan(facts.topLocation.amount)}），深夜订单占全部消费的 ${lateNightShare}%。`,
-                    `奶茶是续命符文，也是财库的漏水口：${facts.milkTeaCount} 杯 / ${yuan(facts.milkTeaTotal)}。建议今晚加一杯冰美式，玄学叫「去魅」，科学叫「少摄入约 200 大卡」。`,
+                    facts.milkTeaCount > 0
+                        ? `奶茶是续命符文，也是财库的漏水口：${facts.milkTeaCount} 杯 / ${yuan(facts.milkTeaTotal)}。建议今晚加一杯冰美式，玄学叫「去魅」，科学叫「少摄入约 200 大卡」。`
+                        : '今晚没有检测到奶茶漏水口，财库水位稳定；用一杯冰美式替代夜宵，可继续保持这份清醒。',
                     `若 23:30 前上床，可于明日 09:00–11:00 获得「早八闪避」buff；否则早八命中率 +100%。`
                 ],
                 [
-                    `卦象显示：你与《${course.course_name}》的因果尚未了结，${facts.finalsCount} 笔期末订单是最后的渡劫供品。`,
-                    `红牛、咖啡与泡面在购物袋里组成三角法阵，${yuan(facts.finalsTotal)} 的祭品已经就位，AI 判定你正在渡劫《${course.course_name}》。`,
+                    facts.finalsCount > 0
+                        ? `卦象显示：你与《${course.course_name}》的因果尚未了结，${facts.finalsCount} 笔期末订单是最后的渡劫供品。`
+                        : `卦象显示：你与《${course.course_name}》的因果仍在，但期末周暂无供品，财库暂时安全。`,
+                    facts.finalsCount > 0
+                        ? `深夜购物袋里出现「${finalsMenu}」，${yuan(facts.finalsTotal)} 的祭品已经就位，AI 判定你正在渡劫《${course.course_name}》。`
+                        : `没有红牛与泡面的三角法阵，AI 判定你正在以最低消耗渡劫《${course.course_name}》。`,
                     `建议今晚加一杯冰美式，并在 24:00 前把「${reviewHint}」讲给室友听，教学相长可解 1 层劫。`,
-                    `禁忌：凌晨 3 点再点奶茶。若执意召唤，明日运势自动 -10，并附赠一节早八。`
+                    facts.milkTeaCount > 0
+                        ? '禁忌：凌晨 3 点再点奶茶。若执意召唤，明日运势自动 -10，并附赠一节早八。'
+                        : '禁忌：把「今天没喝奶茶」当成放纵许可证；一旦破戒，明日运势自动 -10。'
                 ]
             ];
             const reportLines = pickBySeed(readingVariants, roll);
@@ -490,20 +668,26 @@
                 {
                     icon: '🌙',
                     title: '消费灵脉 · 深夜献祭',
-                    tag: 'expenses.csv · 时间',
-                    text: `00:00–05:00 共 ${facts.deepNightCount} 笔深夜订单，合计 ${yuan(facts.deepNightTotal)}，占全部消费 ${lateNightShare}%。`
+                    tag: `${sourceTag} · 时间`,
+                    text: facts.deepNightCount > 0
+                        ? `00:00–05:00 共 ${facts.deepNightCount} 笔深夜订单，合计 ${yuan(facts.deepNightTotal)}，占全部消费 ${lateNightShare}%。`
+                        : '00:00–05:00 暂无深夜订单，作息结界稳定，未检测到熬夜献祭。'
                 },
                 {
                     icon: '🧋',
                     title: '糖分法阵 · 奶茶召唤',
-                    tag: 'expenses.csv · 备注',
-                    text: `${facts.milkTeaCount} 杯深夜奶茶/果茶，合计 ${yuan(facts.milkTeaTotal)}；最近一次「${facts.latestMilkTea ? facts.latestMilkTea.remark : '—'}」（${facts.latestMilkTea ? `${facts.latestMilkTea.date} ${facts.latestMilkTea.time}` : '—'}）。`
+                    tag: `${sourceTag} · 备注`,
+                    text: facts.milkTeaCount > 0
+                        ? `${facts.milkTeaCount} 杯深夜奶茶/果茶，合计 ${yuan(facts.milkTeaTotal)}；最近一次「${facts.latestMilkTea.remark || '未备注'}」（${facts.latestMilkTea.date} ${facts.latestMilkTea.time}）。`
+                        : '暂无深夜奶茶/果茶记录，糖分法阵暂时休眠，财库漏水口已关闭。'
                 },
                 {
                     icon: '💸',
                     title: '期末爆单 · 续命采购',
-                    tag: 'expenses.csv · 日期',
-                    text: `${FINALS_WINDOW.start} 起共 ${facts.finalsCount} 笔，合计 ${yuan(facts.finalsTotal)}；含「红牛 × 2 + 咖啡」「咖啡 + 泡面」等渡劫物资。`
+                    tag: `${sourceTag} · 日期`,
+                    text: facts.finalsCount > 0
+                        ? `${FINALS_WINDOW.start} 起共 ${facts.finalsCount} 笔，合计 ${yuan(facts.finalsTotal)}；含「${finalsMenu}」等渡劫物资。`
+                        : `${FINALS_WINDOW.start} 起暂无期末爆单记录，财库暂时安全。`
                 },
                 {
                     icon: '📚',
@@ -515,8 +699,14 @@
 
             const actions = [
                 `今晚 20:00 前加一杯冰美式，为《${course.course_name}》套上「清醒结界」。`,
-                `把「红牛 × 2」替换为温水 + 25 分钟番茄钟，预计让财库回血 ${yuan(35)}。`,
-                '23:30 后关闭外卖 App，避免再次触发「深夜奶茶召唤阵」。',
+                facts.finalsCount > 0
+                    ? (finalsMenu.includes('红牛')
+                        ? `把「红牛 × 2」替换为温水 + 25 分钟番茄钟，预计让财库回血 ${yuan(35)}。`
+                        : `把期末周的 ${facts.finalsCount} 笔夜宵预算控制在每天 ${yuan(30)} 以内，预计让财库回血 ${yuan(30)}。`)
+                    : '期末周暂未爆单，继续保持；把省下的预算投入早餐，可提升「早八存活率」。',
+                facts.milkTeaCount > 0
+                    ? '23:30 后关闭外卖 App，避免再次触发「深夜奶茶召唤阵」。'
+                    : '今日未检测到奶茶召唤阵，建议 23:30 前上床锁定「早睡结界」成就。',
                 `宜：把${reviewHint}讲给室友听；忌：凌晨 3 点刷新选课系统。`
             ];
 
@@ -547,47 +737,96 @@
             };
         }
 
-        // 1. 初始化最高频消费地点图表
-        var locChart = echarts.init(document.getElementById('locationChart'), 'dark');
-        locChart.setOption({
-            backgroundColor: 'transparent',
-            tooltip: { trigger: 'item' },
-            series: [{
-                name: '消费次数',
-                type: 'pie',
-                radius: ['40%', '70%'],
-                itemStyle: { borderRadius: 8, borderColor: '#0f172a', borderWidth: 2 },
-                data: [
-                    { value: 4, name: '校园超市' },
-                    { value: 3, name: '蜜雪冰城' },
-                    { value: 2, name: '二食堂' },
-                    { value: 1, name: '一食堂' },
-                    { value: 1, name: '三食堂' }
-                ]
-            }]
-        });
+        /* ============================================================
+         * 3. 图表：始终从当前 EXPENSES 派生，上传后复用同一套配置刷新
+         * ============================================================ */
+        function buildLocationOption(rows) {
+            const counts = new Map();
+            rows.forEach((row) => {
+                counts.set(row.location, (counts.get(row.location) || 0) + 1);
+            });
+            const data = Array.from(counts, ([name, value]) => ({ name, value }))
+                .sort((a, b) => b.value - a.value || a.name.localeCompare(b.name));
 
-        // 2. 初始化深夜夜宵暴涨曲线图表
-        var nightChart = echarts.init(document.getElementById('nightChart'), 'dark');
-        nightChart.setOption({
-            backgroundColor: 'transparent',
-            tooltip: { trigger: 'axis' },
-            xAxis: { type: 'category', data: ['3月2日', '3月4日', '3月5日', '6月15日', '6月16日', '6月17日'] },
-            yAxis: { type: 'value' },
-            series: [{
-                name: '夜宵金额 (元)',
-                type: 'line',
-                smooth: true,
-                itemStyle: { color: '#22d3ee' },
-                areaStyle: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: 'rgba(34, 211, 238, 0.5)' },
-                        { offset: 1, color: 'rgba(34, 211, 238, 0)' }
-                    ])
+            return {
+                backgroundColor: 'transparent',
+                tooltip: { trigger: 'item', formatter: '{b}<br/>{c} 次 ({d}%)' },
+                series: [{
+                    name: '消费次数',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    itemStyle: { borderRadius: 8, borderColor: '#0f172a', borderWidth: 2 },
+                    label: { color: '#cbd5e1' },
+                    data
+                }],
+                graphic: data.length ? [] : [{
+                    type: 'text',
+                    left: 'center',
+                    top: 'middle',
+                    style: { text: '暂无消费记录', fill: '#64748b', fontSize: 12, fontFamily: 'monospace' }
+                }]
+            };
+        }
+
+        function buildNightOption(rows) {
+            const daily = new Map();
+            rows.filter((row) => row.category === '夜宵' || isNight(row.time)).forEach((row) => {
+                daily.set(row.date, (daily.get(row.date) || 0) + row.amount);
+            });
+            const dates = Array.from(daily.keys()).sort();
+            const labels = dates.map((date) => {
+                const parts = date.split('-');
+                return `${Number(parts[1])}月${Number(parts[2])}日`;
+            });
+
+            return {
+                backgroundColor: 'transparent',
+                tooltip: { trigger: 'axis' },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: labels,
+                    axisLabel: { color: '#94a3b8' },
+                    axisLine: { lineStyle: { color: '#475569' } }
                 },
-                data: [22.5, 12, 15, 35, 42, 18]
-            }]
-        });
+                yAxis: {
+                    type: 'value',
+                    name: '元',
+                    nameTextStyle: { color: '#94a3b8' },
+                    axisLabel: { color: '#94a3b8' },
+                    splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.12)' } }
+                },
+                series: [{
+                    name: '夜宵金额 (元)',
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: { color: '#22d3ee' },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(34, 211, 238, 0.5)' },
+                            { offset: 1, color: 'rgba(34, 211, 238, 0)' }
+                        ])
+                    },
+                    data: dates.map((date) => Number(daily.get(date).toFixed(2)))
+                }],
+                graphic: dates.length ? [] : [{
+                    type: 'text',
+                    left: 'center',
+                    top: 'middle',
+                    style: { text: '暂无深夜/夜宵消费', fill: '#64748b', fontSize: 12, fontFamily: 'monospace' }
+                }]
+            };
+        }
+
+        function updateExpenseCharts(rows) {
+            locChart.setOption(buildLocationOption(rows), true);
+            nightChart.setOption(buildNightOption(rows), true);
+        }
+
+        // 初始化图表：默认使用 Mock 数据，后续由上传逻辑调用 updateExpenseCharts 刷新
+        var locChart = echarts.init(document.getElementById('locationChart'), 'dark');
+        var nightChart = echarts.init(document.getElementById('nightChart'), 'dark');
+        updateExpenseCharts(EXPENSES);
 
         /* ============================================================
          * 3. 渲染：把模拟大模型 JSON 映射到赛博朋克卡片
@@ -617,7 +856,7 @@
 
         function renderOracle(result) {
             const $ = (id) => document.getElementById(id);
-            $('oracleSource').textContent = `数据源：expenses.csv ${result.facts.totalRecords} 条 · courses.json ${COURSE_RECORDS.length} 门 · 规则引擎推理完成`;
+            $('oracleSource').textContent = `数据源：${activeExpenseSource} · ${result.facts.totalRecords} 条消费记录 · courses.json ${COURSE_RECORDS.length} 门 · 规则引擎推理完成`;
 
             /* ---------- 今日赛博人设 ---------- */
             $('personaSerial').textContent = `#${result.serial.replace('DIV-', '')}`;
@@ -810,6 +1049,146 @@
 
         document.getElementById('rerollBtn').addEventListener('click', runOracle);
         runOracle();
+
+        /* ============================================================
+         * 5. CSV 自定义数据导入：FileReader → 解析 → 图表 + 玄学卡片
+         * ============================================================ */
+        const fileInput = document.getElementById('csvFileInput');
+        const uploadZone = document.getElementById('uploadZone');
+        const uploadZoneTitle = document.getElementById('uploadZoneTitle');
+        const uploadZoneHint = document.getElementById('uploadZoneHint');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const dataSummary = document.getElementById('dataSummary');
+        const resetDataBtn = document.getElementById('resetDataBtn');
+        const MAX_CSV_BYTES = 2 * 1024 * 1024;
+        let uploadBusy = false;
+
+        function setUploadStatus(message, tone) {
+            uploadStatus.textContent = message;
+            uploadStatus.dataset.tone = tone || 'idle';
+        }
+
+        function updateDataSummary() {
+            const facts = analyzeCampusData();
+            dataSummary.textContent = `数据源：${activeExpenseSource} ｜ ${facts.totalRecords} 条 · 总额 ${yuan(facts.totalAmount)} · 深夜 ${facts.deepNightCount} 笔 · 奶茶 ${facts.milkTeaCount} 杯`;
+        }
+
+        function applyExpenseData(rows, sourceLabel) {
+            EXPENSES = rows;
+            activeExpenseSource = sourceLabel;
+            updateExpenseCharts(EXPENSES);
+            updateDataSummary();
+            runOracle(); // 数据变更后重新生成 AI 玄学解读
+        }
+
+        function readCsvFile(file) {
+            if (!file || uploadBusy) {
+                if (uploadBusy) fileInput.value = '';
+                return;
+            }
+
+            const isCsv = /\.csv$/i.test(file.name)
+                || file.type === 'text/csv'
+                || file.type === 'application/vnd.ms-excel';
+            if (!isCsv) {
+                setUploadStatus('✕ 仅支持 .csv 文件，请重新选择。', 'error');
+                fileInput.value = '';
+                return;
+            }
+            if (file.size > MAX_CSV_BYTES) {
+                setUploadStatus('✕ 文件超过 2 MB，请精简后再上传。', 'error');
+                fileInput.value = '';
+                return;
+            }
+            if (file.size === 0) {
+                setUploadStatus('✕ 文件为空，请检查后重新上传。', 'error');
+                fileInput.value = '';
+                return;
+            }
+
+            uploadBusy = true;
+            uploadZone.classList.add('is-loading');
+            setUploadStatus(`◌ 正在读取 ${file.name} ...`, 'busy');
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const parsed = parseExpensesCsv(reader.result);
+                    if (!parsed.rows.length) {
+                        const detail = parsed.errorSamples.length ? `（${parsed.errorSamples[0]}）` : '';
+                        throw new Error(`没有解析到有效数据行${detail}`);
+                    }
+                    applyExpenseData(parsed.rows, `本地文件：${file.name}`);
+                    uploadZoneTitle.textContent = '⬆ 更换 CSV 文件';
+                    uploadZoneHint.textContent = file.name;
+                    resetDataBtn.classList.remove('hidden');
+                    const skippedText = parsed.skipped
+                        ? `，已跳过 ${parsed.skipped} 行无效数据（${parsed.errorSamples[0]}）`
+                        : '';
+                    setUploadStatus(`✓ 已载入 ${parsed.rows.length} 条记录${skippedText}；图表与玄学报告已刷新。`, 'ok');
+                } catch (error) {
+                    setUploadStatus(`✕ 导入失败：${error.message}`, 'error');
+                } finally {
+                    uploadBusy = false;
+                    uploadZone.classList.remove('is-loading');
+                    fileInput.value = '';
+                }
+            };
+            reader.onerror = () => {
+                uploadBusy = false;
+                uploadZone.classList.remove('is-loading');
+                fileInput.value = '';
+                setUploadStatus('✕ 文件读取失败，请确认文件未被占用后重试。', 'error');
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        fileInput.addEventListener('change', () => {
+            readCsvFile(fileInput.files && fileInput.files[0]);
+        });
+
+        ['dragenter', 'dragover'].forEach((eventName) => {
+            uploadZone.addEventListener(eventName, (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                uploadZone.classList.add('is-dragover');
+            });
+        });
+
+        ['dragleave', 'dragend'].forEach((eventName) => {
+            uploadZone.addEventListener(eventName, () => uploadZone.classList.remove('is-dragover'));
+        });
+
+        uploadZone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            uploadZone.classList.remove('is-dragover');
+            const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+            readCsvFile(file);
+        });
+
+        uploadZone.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                fileInput.click();
+            }
+        });
+
+        // 文件拖到页面其他位置时，阻止浏览器直接打开文件
+        ['dragover', 'drop'].forEach((eventName) => {
+            window.addEventListener(eventName, (event) => event.preventDefault());
+        });
+
+        resetDataBtn.addEventListener('click', () => {
+            applyExpenseData(MOCK_EXPENSES.slice(), '内置 Mock 数据（expenses.csv）');
+            resetDataBtn.classList.add('hidden');
+            uploadZoneTitle.textContent = '⬆ 拖拽 / 点击上传 CSV';
+            uploadZoneHint.textContent = '支持 .csv · 最大 2 MB';
+            fileInput.value = '';
+            setUploadStatus('↺ 已恢复内置 Mock 数据；图表与玄学报告已重新生成。', 'idle');
+        });
+
+        updateDataSummary();
 
         // 图表自适应：窗口尺寸变化时重绘
         window.addEventListener('resize', function () {
