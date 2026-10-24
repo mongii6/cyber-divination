@@ -122,17 +122,98 @@
         .upload-status[data-tone="busy"] { color: #fcd34d; }
         .upload-status[data-tone="ok"] { color: #34d399; }
         .upload-status[data-tone="error"] { color: #fb7185; }
+
+        /* ================= 手机快捷记账 ================= */
+        .quick-entry {
+            background:
+                radial-gradient(700px 260px at 0% 0%, rgba(52, 211, 153, 0.10), transparent 65%),
+                linear-gradient(160deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.90));
+            box-shadow: 0 20px 50px -30px rgba(16, 185, 129, 0.45);
+        }
+        .quick-entry summary { list-style: none; }
+        .quick-entry summary::-webkit-details-marker { display: none; }
+        .quick-chevron { transition: transform 0.2s ease; }
+        .quick-entry[open] .quick-chevron { transform: rotate(180deg); }
+        .quick-label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            color: #94a3b8;
+        }
+        .quick-input {
+            width: 100%;
+            min-width: 0;
+            min-height: 48px;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(34, 211, 238, 0.22);
+            background: rgba(2, 6, 23, 0.82);
+            color: #e2e8f0;
+            padding: 0.7rem 0.85rem;
+            font: inherit;
+            font-size: 16px; /* 避免 iOS 聚焦输入框时自动放大 */
+            line-height: 1.35;
+            outline: none;
+            color-scheme: dark;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .quick-input::placeholder { color: #475569; }
+        .quick-input:hover { border-color: rgba(34, 211, 238, 0.38); }
+        .quick-input:focus {
+            border-color: rgba(52, 211, 153, 0.8);
+            background: rgba(2, 6, 23, 0.98);
+            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.12), 0 0 24px rgba(34, 211, 238, 0.14);
+        }
+        .quick-input option { background: #020617; color: #e2e8f0; }
+        .quick-input::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.65; cursor: pointer; }
+        .quick-submit {
+            background: linear-gradient(135deg, #22d3ee, #34d399);
+            box-shadow: 0 0 24px rgba(34, 211, 238, 0.22);
+        }
+        .quick-submit:hover {
+            filter: brightness(1.08);
+            box-shadow: 0 0 30px rgba(52, 211, 153, 0.36);
+        }
+        .quick-submit:active { transform: translateY(1px); }
+        .quick-submit:focus-visible { outline: 2px solid #a7f3d0; outline-offset: 2px; }
+        .quick-status[data-tone="ok"] { color: #34d399; }
+        .quick-status[data-tone="error"] { color: #fb7185; }
+        .cyber-toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+            z-index: 70;
+            width: max-content;
+            max-width: calc(100vw - 2rem);
+            transform: translate(-50%, 16px);
+            opacity: 0;
+            pointer-events: none;
+            border: 1px solid rgba(52, 211, 153, 0.45);
+            border-radius: 0.85rem;
+            background: rgba(2, 6, 23, 0.97);
+            color: #a7f3d0;
+            padding: 0.8rem 1rem;
+            text-align: center;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            line-height: 1.4;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.2), 0 18px 40px rgba(0, 0, 0, 0.45);
+            transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+        .cyber-toast.is-visible {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
         @media (prefers-reduced-motion: reduce) {
             .cyber-scan::after, .caret::after, .terminal-line, .fade-up { animation: none !important; }
             .aura-fill { transition: none; }
         }
     </style>
 </head>
-<body class="p-8">
+<body class="p-4 sm:p-8">
     <div class="max-w-4xl mx-auto">
-        <header class="text-center mb-10">
-            <h1 class="text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学：运势与消费大盘</h1>
-            <p class="text-sm text-slate-400 mt-2">—— 结合真实大学生活数据的赛博算命系统</p>
+        <header class="text-center mb-6 sm:mb-10">
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学：运势与消费大盘</h1>
+            <p class="text-xs sm:text-sm text-slate-400 mt-2">—— 结合真实大学生活数据的赛博算命系统</p>
         </header>
 
         <!-- ================= CSV 自定义数据导入 ================= -->
@@ -166,6 +247,67 @@
                     <p id="dataSummary" class="text-[10px] tracking-wider text-slate-500">—</p>
                 </div>
             </div>
+        </section>
+
+        <!-- ================= 手机快捷记账 ================= -->
+        <section class="mb-6" aria-labelledby="quickEntryTitle">
+            <details class="quick-entry relative overflow-hidden rounded-2xl border border-emerald-400/25" open>
+                <div class="cyber-grid pointer-events-none absolute inset-0 opacity-40"></div>
+                <summary class="relative flex cursor-pointer items-start justify-between gap-3 p-4 sm:p-5">
+                    <span class="flex min-w-0 items-start gap-3">
+                        <span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 text-lg" aria-hidden="true">📱</span>
+                        <span class="min-w-0">
+                            <span class="block text-[10px] tracking-[0.35em] text-emerald-300/80">MOBILE LEDGER // QUICK ENTRY</span>
+                            <span id="quickEntryTitle" class="mt-1 block text-lg font-bold text-slate-100">手机快捷记账</span>
+                            <span class="mt-1 block text-xs leading-5 text-slate-400">随手补一笔，立即追加到当前数据并刷新图表与 AI 运势。</span>
+                        </span>
+                    </span>
+                    <span class="shrink-0 rounded-lg border border-slate-600/60 px-2.5 py-1 text-[10px] tracking-wider text-slate-400">
+                        折叠 / 展开 <span class="quick-chevron inline-block">⌄</span>
+                    </span>
+                </summary>
+                <form id="quickEntryForm" class="relative border-t border-slate-700/50 p-4 sm:p-5" novalidate>
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div>
+                            <label for="quickDate" class="quick-label">日期</label>
+                            <input id="quickDate" name="date" type="date" required class="quick-input mt-1.5">
+                        </div>
+                        <div>
+                            <label for="quickCategory" class="quick-label">分类</label>
+                            <select id="quickCategory" name="category" required class="quick-input mt-1.5">
+                                <option value="餐饮" selected>餐饮</option>
+                                <option value="学习">学习</option>
+                                <option value="娱乐">娱乐</option>
+                                <option value="交通">交通</option>
+                                <option value="购物">购物</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="quickAmount" class="quick-label">金额（元）</label>
+                            <div class="relative mt-1.5">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-sm text-cyan-300/70">¥</span>
+                                <input id="quickAmount" name="amount" type="number" inputmode="decimal" min="0.01" step="0.01" required
+                                    class="quick-input pl-8" placeholder="0.00" enterkeyhint="next">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="quickNote" class="quick-label">备注（选填）</label>
+                            <input id="quickNote" name="note" type="text" maxlength="80" class="quick-input mt-1.5"
+                                placeholder="例如：食堂午饭 / 奶茶" enterkeyhint="done">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <button id="quickEntrySubmit" type="submit"
+                            class="quick-submit inline-flex min-h-[48px] w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold tracking-widest text-slate-950 transition sm:w-auto">
+                            ➕ 记一笔 / 插入流水
+                        </button>
+                        <p id="quickEntryStatus" class="quick-status text-[11px] leading-5 text-slate-500 sm:text-right" data-tone="idle" role="status" aria-live="polite">
+                            本笔会追加到当前数据，不会覆盖 CSV / Mock。
+                        </p>
+                    </div>
+                </form>
+            </details>
         </section>
 
         <!-- 图表展示区域 -->
@@ -303,6 +445,10 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <div id="quickToast" class="cyber-toast" role="status" aria-live="polite" aria-atomic="true">
+        <span aria-hidden="true">✓</span> <span id="quickToastText">记账成功！运势已更新</span>
     </div>
 
     <script>
@@ -1276,6 +1422,115 @@
             uploadZoneHint.textContent = '支持 .csv · 最大 2 MB';
             fileInput.value = '';
             setUploadStatus('↺ 已恢复内置 Mock 数据；图表与玄学报告已重新生成。', 'idle');
+        });
+
+        /* ============================================================
+         * 6. 手机快捷记账：追加到当前数据 → 图表 + AI 重算
+         * ============================================================ */
+        const quickEntryForm = document.getElementById('quickEntryForm');
+        const quickDate = document.getElementById('quickDate');
+        const quickCategory = document.getElementById('quickCategory');
+        const quickAmount = document.getElementById('quickAmount');
+        const quickNote = document.getElementById('quickNote');
+        const quickEntryStatus = document.getElementById('quickEntryStatus');
+        const quickToast = document.getElementById('quickToast');
+        const quickToastText = document.getElementById('quickToastText');
+        const QUICK_CATEGORIES = new Set(['餐饮', '学习', '娱乐', '交通', '购物', '其他']);
+        let quickToastTimer = null;
+
+        function formatDateForInput(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function isValidQuickDate(value) {
+            const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+            if (!match) return false;
+            const year = Number(match[1]);
+            const month = Number(match[2]);
+            const day = Number(match[3]);
+            const date = new Date(year, month - 1, day);
+            return date.getFullYear() === year
+                && date.getMonth() === month - 1
+                && date.getDate() === day;
+        }
+
+        function setQuickEntryStatus(message, tone) {
+            quickEntryStatus.textContent = message;
+            quickEntryStatus.dataset.tone = tone || 'idle';
+        }
+
+        function showQuickToast(message) {
+            quickToastText.textContent = message;
+            quickToast.classList.add('is-visible');
+            clearTimeout(quickToastTimer);
+            quickToastTimer = setTimeout(() => quickToast.classList.remove('is-visible'), 2600);
+        }
+
+        // 日期默认今天，格式 YYYY-MM-DD
+        quickDate.value = formatDateForInput(new Date());
+
+        quickEntryForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const date = quickDate.value.trim();
+            const category = quickCategory.value;
+            const amountRaw = quickAmount.value.trim();
+            const note = quickNote.value.trim();
+
+            if (!isValidQuickDate(date)) {
+                setQuickEntryStatus('✕ 请选择有效的日期。', 'error');
+                quickDate.focus();
+                return;
+            }
+            if (!QUICK_CATEGORIES.has(category)) {
+                setQuickEntryStatus('✕ 请选择消费分类。', 'error');
+                quickCategory.focus();
+                return;
+            }
+
+            const amount = Number(amountRaw);
+            if (!amountRaw || !Number.isFinite(amount) || amount <= 0) {
+                setQuickEntryStatus('✕ 请输入大于 0 的金额。', 'error');
+                quickAmount.focus();
+                return;
+            }
+            const roundedAmount = Math.round(amount * 100) / 100;
+            if (roundedAmount <= 0) {
+                setQuickEntryStatus('✕ 金额过小，请至少输入 0.01 元。', 'error');
+                quickAmount.focus();
+                return;
+            }
+
+            // 不伪造 time / location：表单没有的字段保持空字符串
+            const entry = {
+                date,
+                time: '',
+                location: '',
+                category,
+                amount: roundedAmount,
+                remark: note
+            };
+
+            EXPENSES = EXPENSES.concat(entry).sort((a, b) =>
+                `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
+            );
+            if (!activeExpenseSource.includes('手动记账')) {
+                activeExpenseSource = `${activeExpenseSource} + 手动记账`;
+            }
+            resetDataBtn.classList.remove('hidden');
+
+            updateExpenseCharts(EXPENSES);
+            updateDataSummary();
+            runOracle(); // 追加后重新生成 AI 赛博玄学解读
+
+            quickAmount.value = '';
+            quickNote.value = '';
+            const notePreview = note
+                ? ` · ${note.length > 18 ? `${note.slice(0, 18)}…` : note}`
+                : '';
+            setQuickEntryStatus(`✓ 已追加：${date} · ${category} · ${yuan(roundedAmount)}${notePreview}`, 'ok');
+            showQuickToast('记账成功！运势已更新');
+            quickAmount.focus();
         });
 
         updateDataSummary();
