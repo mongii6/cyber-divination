@@ -203,8 +203,236 @@
             opacity: 1;
             transform: translate(-50%, 0);
         }
+        /* ================= 多维数据输入面板 ================= */
+        .data-panel {
+            background:
+                radial-gradient(560px 220px at 0% 0%, rgba(34, 211, 238, 0.10), transparent 65%),
+                linear-gradient(160deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.90));
+            box-shadow: 0 18px 46px -30px rgba(34, 211, 238, 0.45);
+        }
+        .data-panel summary { list-style: none; }
+        .data-panel summary::-webkit-details-marker { display: none; }
+        .mini-upload {
+            cursor: pointer;
+            display: flex;
+            min-height: 64px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed rgba(34, 211, 238, 0.42);
+            border-radius: 0.75rem;
+            background: rgba(34, 211, 238, 0.05);
+            padding: 0.65rem 0.9rem;
+            text-align: center;
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+        .mini-upload:hover, .mini-upload:focus-visible,
+        .mini-upload.is-dragover {
+            border-color: rgba(217, 70, 239, 0.8);
+            background: rgba(217, 70, 239, 0.10);
+            box-shadow: 0 0 22px rgba(217, 70, 239, 0.22);
+            outline: none;
+        }
+        .mini-upload.is-loading { cursor: wait; opacity: 0.65; }
+        .data-chip {
+            min-height: 46px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 0.75rem;
+            background: rgba(15, 23, 42, 0.72);
+            padding: 0.55rem 0.7rem;
+            color: #cbd5e1;
+            text-align: left;
+            transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+        }
+        .data-chip:hover { border-color: rgba(34, 211, 238, 0.55); color: #e2e8f0; }
+        .data-chip[aria-pressed="true"] {
+            border-color: rgba(52, 211, 153, 0.7);
+            background: rgba(52, 211, 153, 0.12);
+            color: #a7f3d0;
+            box-shadow: inset 0 0 18px rgba(52, 211, 153, 0.08), 0 0 16px rgba(34, 211, 238, 0.10);
+        }
+        .data-chip:focus-visible { outline: 2px solid #67e8f9; outline-offset: 2px; }
+        .data-chip .chip-meta { color: #64748b; }
+        .data-chip[aria-pressed="true"] .chip-meta { color: #34d399; }
+        .mode-toggle {
+            min-height: 34px;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 0.55rem;
+            padding: 0.25rem 0.65rem;
+            color: #94a3b8;
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            transition: all 0.18s ease;
+        }
+        .mode-toggle.is-active {
+            border-color: rgba(34, 211, 238, 0.6);
+            background: rgba(34, 211, 238, 0.12);
+            color: #a5f3fc;
+            box-shadow: 0 0 14px rgba(34, 211, 238, 0.12);
+        }
+        .course-roster {
+            max-height: 184px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(34, 211, 238, 0.35) transparent;
+        }
+        .course-roster::-webkit-scrollbar { width: 5px; }
+        .course-roster::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.35); border-radius: 9999px; }
+        .course-row {
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            border-radius: 0.65rem;
+            background: rgba(2, 6, 23, 0.55);
+            padding: 0.55rem 0.65rem;
+        }
+        .course-badge {
+            border: 1px solid rgba(251, 191, 36, 0.35);
+            border-radius: 9999px;
+            background: rgba(251, 191, 36, 0.10);
+            padding: 0.1rem 0.4rem;
+            color: #fcd34d;
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            white-space: nowrap;
+        }
+
+        /* ================= 考试渡劫终端 ================= */
+        .exam-terminal {
+            background:
+                radial-gradient(700px 300px at 15% 0%, rgba(251, 191, 36, 0.13), transparent 62%),
+                radial-gradient(600px 260px at 100% 100%, rgba(217, 70, 239, 0.12), transparent 62%),
+                linear-gradient(160deg, rgba(15, 23, 42, 0.97), rgba(2, 6, 23, 0.95));
+            box-shadow: 0 24px 70px -30px rgba(251, 191, 36, 0.35);
+        }
+        .exam-lot-tube {
+            position: relative;
+            display: grid;
+            width: 112px;
+            height: 112px;
+            flex: 0 0 auto;
+            place-items: center;
+            border: 1px solid rgba(251, 191, 36, 0.38);
+            border-radius: 1.6rem;
+            background: radial-gradient(circle at 50% 32%, rgba(251, 191, 36, 0.18), rgba(2, 6, 23, 0.92) 68%);
+            box-shadow: inset 0 0 28px rgba(251, 191, 36, 0.08), 0 0 24px rgba(251, 191, 36, 0.14);
+        }
+        .exam-lot-tube::before {
+            content: "";
+            position: absolute;
+            inset: -13px;
+            border: 1px dashed rgba(34, 211, 238, 0.28);
+            border-radius: 9999px;
+            animation: exam-orbit 8s linear infinite;
+        }
+        .exam-lot-tube::after {
+            content: "";
+            position: absolute;
+            inset: 17px;
+            border-radius: 9999px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.16), transparent 70%);
+        }
+        .exam-lot-stick {
+            position: absolute;
+            z-index: 1;
+            bottom: 22px;
+            width: 9px;
+            height: 44px;
+            border-radius: 6px;
+            background: linear-gradient(to top, #b45309, #fcd34d 55%, #fff7ed);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
+            transform-origin: bottom center;
+        }
+        .exam-lot-stick:nth-child(1) { left: 38px; transform: rotate(-12deg); }
+        .exam-lot-stick:nth-child(2) { left: 51px; height: 50px; }
+        .exam-lot-stick:nth-child(3) { left: 64px; transform: rotate(12deg); }
+        .exam-lot-core {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border: 1px solid rgba(251, 191, 36, 0.5);
+            border-radius: 9999px;
+            background: rgba(2, 6, 23, 0.92);
+            color: #fcd34d;
+            font-size: 18px;
+            font-weight: 700;
+            box-shadow: 0 0 18px rgba(251, 191, 36, 0.22);
+        }
+        .exam-lot-tube.is-drawing { animation: exam-shake 0.14s linear infinite; }
+        .exam-lot-tube.is-drawing .exam-lot-stick { animation: exam-stick 0.24s ease-in-out infinite alternate; }
+        @keyframes exam-orbit { to { transform: rotate(360deg); } }
+        @keyframes exam-shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-3px) rotate(-2deg); }
+            75% { transform: translateX(3px) rotate(2deg); }
+        }
+        @keyframes exam-stick {
+            from { transform: translateY(0) rotate(-12deg); }
+            to { transform: translateY(-7px) rotate(12deg); }
+        }
+        .exam-lot-result { border: 1px solid rgba(251, 191, 36, 0.36); background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(2, 6, 23, 0.72)); }
+        .exam-gauge-wrap { position: relative; min-height: 270px; }
+        .exam-gauge-center {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-content: center;
+            pointer-events: none;
+            text-align: center;
+        }
+        .talisman-card {
+            overflow: hidden;
+            border: 1px solid rgba(251, 191, 36, 0.45);
+            border-radius: 1rem;
+            background:
+                repeating-linear-gradient(45deg, rgba(251, 191, 36, 0.035) 0 6px, transparent 6px 12px),
+                linear-gradient(145deg, rgba(69, 26, 3, 0.55), rgba(2, 6, 23, 0.94));
+            box-shadow: inset 0 0 34px rgba(251, 191, 36, 0.06), 0 0 32px rgba(251, 191, 36, 0.12);
+        }
+        .talisman-card::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1px dashed rgba(251, 191, 36, 0.22);
+            border-radius: 0.7rem;
+            pointer-events: none;
+        }
+        .talisman-seal {
+            display: grid;
+            width: 54px;
+            height: 54px;
+            flex: 0 0 auto;
+            place-items: center;
+            border: 2px solid rgba(251, 113, 133, 0.75);
+            border-radius: 0.6rem;
+            color: #fda4af;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-align: center;
+            transform: rotate(-9deg);
+        }
+        .buff-chip {
+            min-height: 52px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 0.7rem;
+            background: rgba(15, 23, 42, 0.72);
+            padding: 0.5rem 0.55rem;
+            text-align: left;
+            transition: all 0.18s ease;
+        }
+        .buff-chip:hover { border-color: rgba(251, 191, 36, 0.5); }
+        .buff-chip[aria-pressed="true"] {
+            border-color: rgba(251, 191, 36, 0.65);
+            background: rgba(251, 191, 36, 0.10);
+            box-shadow: inset 0 0 16px rgba(251, 191, 36, 0.06);
+        }
+
         @media (prefers-reduced-motion: reduce) {
-            .cyber-scan::after, .caret::after, .terminal-line, .fade-up { animation: none !important; }
+            .cyber-scan::after, .caret::after, .terminal-line, .fade-up,
+            .exam-lot-tube::before, .exam-lot-tube.is-drawing,
+            .exam-lot-tube.is-drawing .exam-lot-stick { animation: none !important; }
             .aura-fill { transition: none; }
         }
     </style>
@@ -308,6 +536,138 @@
                     </div>
                 </form>
             </details>
+        </section>
+
+        <!-- ================= 多维数据输入面板 ================= -->
+        <section class="mb-6" aria-labelledby="multiInputTitle">
+            <div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-[10px] tracking-[0.35em] text-cyan-300/80">MULTI-DIMENSION INPUT // DATA INGESTION</p>
+                    <h2 id="multiInputTitle" class="mt-1 text-lg font-bold text-slate-100">🧬 多维数据采集面板</h2>
+                </div>
+                <p class="text-[10px] tracking-wider text-slate-500">课表 × 生活状态 × 消费流水 → 综合渡劫模型</p>
+            </div>
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <details class="data-panel relative overflow-hidden rounded-2xl border border-cyan-400/25" open>
+                    <div class="cyber-grid pointer-events-none absolute inset-0 opacity-40"></div>
+                    <summary class="relative flex cursor-pointer items-start justify-between gap-3 p-4">
+                        <span class="flex min-w-0 items-start gap-3">
+                            <span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-cyan-400/30 bg-cyan-400/10 text-lg" aria-hidden="true">📚</span>
+                            <span class="min-w-0">
+                                <span class="block text-[10px] tracking-[0.3em] text-cyan-300/80">ACADEMIC ARCHIVE</span>
+                                <span class="mt-1 block text-base font-bold text-slate-100">课表 / 成绩单接入</span>
+                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">上传 CSV / JSON，或手动录入课程难度与期末标记。</span>
+                            </span>
+                        </span>
+                        <span class="shrink-0 text-[10px] tracking-wider text-slate-500">折叠 ⌄</span>
+                    </summary>
+                    <div class="relative border-t border-slate-700/50 p-4">
+                        <div class="flex flex-col gap-2 sm:flex-row">
+                            <label id="courseUploadZone" for="courseFileInput" role="button" tabindex="0"
+                                class="mini-upload min-w-0 flex-1">
+                                <span id="courseUploadTitle" class="text-xs font-semibold tracking-wider text-cyan-200">⬆ 上传课表 / 成绩单</span>
+                                <span id="courseUploadHint" class="mt-1 text-[10px] tracking-wider text-slate-500">支持 .csv / .json · 最大 2 MB</span>
+                            </label>
+                            <input id="courseFileInput" type="file" accept=".csv,.json,text/csv,application/json" class="sr-only">
+                            <button id="resetCoursesBtn" type="button"
+                                class="hidden min-h-[48px] shrink-0 rounded-lg border border-slate-600/70 bg-slate-800/60 px-3 py-2 text-[10px] tracking-widest text-slate-300 transition hover:border-fuchsia-400/60 hover:text-fuchsia-200">
+                                ↺ 恢复课程 Mock
+                            </button>
+                        </div>
+                        <p class="mt-2 text-[10px] leading-4 text-slate-500">CSV 列：course_name, difficulty_rating, is_final；可选 credits, score, semester, remark。JSON 支持数组或 { courses: [] }。</p>
+                        <p id="courseUploadStatus" class="upload-status mt-1 text-[11px]" data-tone="idle" role="status" aria-live="polite">● 当前使用内置 Mock 课表（courses.json）</p>
+                        <form id="courseQuickForm" class="mt-3 border-t border-slate-700/50 pt-3" novalidate>
+                            <p class="mb-2 text-[10px] tracking-[0.22em] text-fuchsia-300/80">MOBILE QUICK COURSE // 快捷录入</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="col-span-2">
+                                    <label for="courseName" class="quick-label">课程名</label>
+                                    <input id="courseName" name="courseName" type="text" maxlength="40" required
+                                        class="quick-input mt-1.5" placeholder="例如：概率论与数理统计" enterkeyhint="next">
+                                </div>
+                                <div>
+                                    <label for="courseDifficulty" class="quick-label">难度 Rating</label>
+                                    <select id="courseDifficulty" name="courseDifficulty" class="quick-input mt-1.5">
+                                        <option value="1">1 · 养生课</option>
+                                        <option value="2">2 · 正常课</option>
+                                        <option value="3" selected>3 · 有压力</option>
+                                        <option value="4">4 · 硬核课</option>
+                                        <option value="5">5 · 地狱级</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-end">
+                                    <label class="flex min-h-[48px] w-full cursor-pointer items-center gap-2 rounded-xl border border-amber-400/20 bg-amber-400/5 px-3 py-2 text-[11px] leading-4 text-amber-100/90">
+                                        <input id="courseIsFinal" name="courseIsFinal" type="checkbox"
+                                            class="h-4 w-4 shrink-0 rounded border-slate-500 bg-slate-950 text-amber-400 focus:ring-amber-300">
+                                        <span>期末科目标记</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+                                <button type="submit"
+                                    class="min-h-[48px] rounded-lg bg-gradient-to-r from-fuchsia-400 to-cyan-400 px-4 py-2 text-xs font-bold tracking-wider text-slate-950 transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200">
+                                    ➕ 录入课程
+                                </button>
+                                <p id="courseQuickStatus" class="quick-status text-[11px] leading-5 text-slate-500" data-tone="idle" role="status" aria-live="polite">
+                                    新课程会追加到当前课表，并同步刷新占卜结果。
+                                </p>
+                            </div>
+                        </form>
+
+                        <div class="mt-3 border-t border-slate-700/50 pt-3">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <p class="text-[10px] tracking-[0.22em] text-slate-400">CURRENT COURSE ARCHIVE</p>
+                                <span id="courseCountBadge" class="text-[10px] tracking-wider text-cyan-300/80">— 门</span>
+                            </div>
+                            <div id="courseRoster" class="course-roster space-y-2" aria-live="polite"></div>
+                        </div>
+                    </div>
+                </details>
+                <details class="data-panel relative overflow-hidden rounded-2xl border border-emerald-400/25" open>
+                    <div class="cyber-grid pointer-events-none absolute inset-0 opacity-40"></div>
+                    <summary class="relative flex cursor-pointer items-start justify-between gap-3 p-4">
+                        <span class="flex min-w-0 items-start gap-3">
+                            <span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 text-lg" aria-hidden="true">🧋</span>
+                            <span class="min-w-0">
+                                <span class="block text-[10px] tracking-[0.3em] text-emerald-300/80">LIFESTYLE SIGNAL</span>
+                                <span class="mt-1 block text-base font-bold text-slate-100">近期饮食 / 生活状态</span>
+                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">选择标签，让课程难度与生活状态在占卜引擎中联动。</span>
+                            </span>
+                        </span>
+                        <span class="shrink-0 text-[10px] tracking-wider text-slate-500">折叠 ⌄</span>
+                    </summary>
+                    <div class="relative border-t border-slate-700/50 p-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="inline-flex items-center gap-1 rounded-lg border border-slate-700/60 bg-slate-950/60 p-1" role="group" aria-label="标签选择模式">
+                                <button type="button" data-lifestyle-mode="multi" aria-pressed="true"
+                                    class="mode-toggle is-active">MULTI 多选</button>
+                                <button type="button" data-lifestyle-mode="single" aria-pressed="false"
+                                    class="mode-toggle">SINGLE 单选</button>
+                            </div>
+                            <button id="clearLifestyleBtn" type="button"
+                                class="min-h-[34px] rounded-lg border border-slate-600/60 px-2.5 py-1 text-[10px] tracking-wider text-slate-400 transition hover:border-rose-400/50 hover:text-rose-200">
+                                清空标签
+                            </button>
+                        </div>
+                        <div id="lifestyleTagList" class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
+                        <p id="lifestyleSummary" class="mt-3 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-3 py-2 text-[11px] leading-5 text-emerald-200/90" role="status" aria-live="polite">
+                            正在载入生活状态信号...
+                        </p>
+                        <p class="mt-2 text-[10px] leading-4 text-slate-500">
+                            标签只参与 AI 解读与考试概率预测，不会写入或伪造消费流水。单选模式下每次只保留一个状态。
+                        </p>
+                        <div class="mt-3 grid grid-cols-2 gap-2 text-[10px] leading-4 text-slate-500">
+                            <div class="rounded-lg border border-slate-700/50 bg-slate-950/45 p-2">
+                                <span class="block tracking-widest text-cyan-300/70">SYNERGY</span>
+                                课程难度 × 作息 / 饮食状态
+                            </div>
+                            <div class="rounded-lg border border-slate-700/50 bg-slate-950/45 p-2">
+                                <span class="block tracking-widest text-fuchsia-300/70">OUTPUT</span>
+                                人设 / 证据链 / 考运预测
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
         </section>
 
         <!-- 图表展示区域 -->
@@ -445,6 +805,118 @@
                 </div>
             </div>
         </section>
+
+        <!-- ================= 考试渡劫专属终端 ================= -->
+        <section id="examDivination" class="mt-10" aria-labelledby="examTitle">
+            <div class="exam-terminal relative overflow-hidden rounded-2xl border border-amber-400/30">
+                <div class="cyber-grid pointer-events-none absolute inset-0 opacity-50"></div>
+                <div class="cyber-scan pointer-events-none absolute inset-0 opacity-40"></div>
+                <div class="relative p-5 sm:p-7">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <p class="text-[10px] tracking-[0.4em] text-amber-300/80">FINAL BOSS // EXAM DIVINATION TERMINAL</p>
+                            <h2 id="examTitle" class="cyber-glitch mt-2 text-2xl font-bold text-slate-100">🧧 考试渡劫专属终端</h2>
+                            <p class="mt-2 text-xs leading-5 text-slate-400">赛博签筒 × 概率仪表盘 × 考神护体符咒。数据依据：当前课程难度 + 生活状态标签 + 已叠加 Buff。</p>
+                        </div>
+                        <span id="examStatus" class="shrink-0 rounded-full border border-emerald-400/35 bg-emerald-400/10 px-3 py-1 text-[10px] tracking-widest text-emerald-300">● READY</span>
+                    </div>
+                    <div class="mt-5 flex flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-950/55 p-3 sm:flex-row sm:items-center sm:justify-between">
+                        <label for="examSubjectSelect" class="text-[10px] tracking-[0.22em] text-cyan-200/80">渡劫科目 / EXAM SUBJECT</label>
+                        <div class="flex min-w-0 flex-col gap-1 sm:w-2/3 sm:items-end">
+                            <select id="examSubjectSelect" class="quick-input sm:max-w-sm"></select>
+                            <span class="text-[10px] leading-4 text-slate-500">该科目同时用于摇号概率预测与符咒生成。</span>
+                        </div>
+                    </div>
+                    <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+                        <div class="cyber-panel rounded-xl p-4 sm:p-5">
+                            <div class="flex items-center justify-between gap-2">
+                                <div>
+                                    <h3 class="text-sm font-semibold tracking-widest text-amber-100">🎋 考前玄学签筒</h3>
+                                    <p class="mt-1 text-[10px] tracking-wider text-slate-500">CYBER LOTTERY // 概率随数据实时重算</p>
+                                </div>
+                                <span class="text-[10px] tracking-widest text-slate-500">LIVE</span>
+                            </div>
+
+                            <div class="exam-gauge-wrap mt-2">
+                                <div id="examGaugeChart" class="h-[270px] w-full" role="img" aria-label="挂科率、低空飞过率与高分率仪表盘"></div>
+                                <div class="exam-gauge-center">
+                                    <span id="examPassRate" class="text-3xl font-bold text-amber-200">--%</span>
+                                    <span class="mt-1 text-[9px] tracking-[0.2em] text-slate-500">COMPOSITE PASS</span>
+                                    <span class="mt-0.5 text-[10px] text-slate-400">综合过关率</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="rounded-lg border border-rose-400/20 bg-rose-400/5 p-2">
+                                    <span class="block text-[9px] tracking-widest text-rose-300/70">挂科率</span>
+                                    <strong id="examFailRate" class="mt-1 block text-sm text-rose-200">--%</strong>
+                                </div>
+                                <div class="rounded-lg border border-cyan-400/20 bg-cyan-400/5 p-2">
+                                    <span class="block text-[9px] tracking-widest text-cyan-300/70">低空飞过</span>
+                                    <strong id="examLowRate" class="mt-1 block text-sm text-cyan-200">--%</strong>
+                                </div>
+                                <div class="rounded-lg border border-emerald-400/20 bg-emerald-400/5 p-2">
+                                    <span class="block text-[9px] tracking-widest text-emerald-300/70">高分率</span>
+                                    <strong id="examHighRate" class="mt-1 block text-sm text-emerald-200">--%</strong>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex flex-col items-center gap-3 rounded-xl border border-slate-700/60 bg-slate-950/45 p-3 sm:flex-row">
+                                <div id="examLotTube" class="exam-lot-tube" aria-hidden="true">
+                                    <span class="exam-lot-stick"></span>
+                                    <span class="exam-lot-stick"></span>
+                                    <span class="exam-lot-stick"></span>
+                                    <span class="exam-lot-core">签</span>
+                                </div>
+                                <div class="min-w-0 flex-1 text-center sm:text-left">
+                                    <p id="examLotTicker" class="min-h-[20px] text-[10px] tracking-wider text-amber-300/80">SYNC // 等待接入考神频道</p>
+                                    <button id="drawLotBtn" type="button"
+                                        class="mt-2 min-h-[48px] w-full rounded-lg border border-amber-300/50 bg-gradient-to-r from-amber-400 to-yellow-300 px-4 py-2 text-xs font-bold tracking-widest text-slate-950 transition hover:brightness-110 hover:shadow-[0_0_24px_rgba(251,191,36,0.35)] disabled:cursor-wait disabled:opacity-60 sm:w-auto">
+                                        🎲 开始抽签
+                                    </button>
+                                    <p id="examLotStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">签筒已就绪。点击后由课程压力与生活状态共同推演签文。</p>
+                                </div>
+                            </div>
+
+                            <div id="examLotResult" class="exam-lot-result mt-4 hidden rounded-xl p-4" role="status" aria-live="polite">
+                                <div class="flex items-center justify-between gap-3">
+                                    <span id="examLotGrade" class="rounded-full border border-amber-300/40 px-2.5 py-1 text-[10px] tracking-widest text-amber-200">上上签</span>
+                                    <span id="examLotCode" class="text-[10px] tracking-widest text-slate-500">LOT-0000</span>
+                                </div>
+                                <h4 id="examLotTitle" class="mt-3 text-xl font-bold text-amber-100">逢考必过</h4>
+                                <p id="examLotVerse" class="mt-2 text-xs leading-6 text-slate-300"></p>
+                                <p id="examLotTip" class="mt-2 rounded-lg border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-[11px] leading-5 text-cyan-100/90"></p>
+                            </div>
+                        </div>
+                        <div class="cyber-panel rounded-xl p-4 sm:p-5">
+                            <div class="flex items-center justify-between gap-2">
+                                <div>
+                                    <h3 class="text-sm font-semibold tracking-widest text-fuchsia-100">🛡️ 考神护体 Buff 叠加器</h3>
+                                    <p class="mt-1 text-[10px] tracking-wider text-slate-500">BLESSING STACK // 多选 Buff 会同步影响概率</p>
+                                </div>
+                                <span class="text-[10px] tracking-widest text-slate-500">STACK</span>
+                            </div>
+                            <p class="mt-3 text-[11px] leading-5 text-slate-400">选择科目上方的渡劫科目，再叠加护体 Buff，一键生成带专属祝福与避坑指南的赛博符咒。</p>
+                            <div id="buffList" class="mt-3 grid grid-cols-2 gap-2"></div>
+                            <button id="generateTalismanBtn" type="button"
+                                class="mt-3 min-h-[48px] w-full rounded-lg border border-fuchsia-300/45 bg-gradient-to-r from-fuchsia-400 to-cyan-300 px-4 py-2 text-xs font-bold tracking-widest text-slate-950 transition hover:brightness-110 hover:shadow-[0_0_26px_rgba(217,70,239,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-200">
+                                ✨ 一键生成赛博符咒
+                            </button>
+                            <p id="talismanStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">
+                                尚未生成符咒。已选 Buff 会实时参与概率预测。
+                            </p>
+
+                            <div id="talismanCard" class="talisman-card relative mt-4 hidden p-4" role="status" aria-live="polite">
+                                <!-- 符咒内容由 generateTalisman() 渲染 -->
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-[10px] leading-5 text-slate-500">
+                        签文、概率和符咒均由本地规则引擎根据当前数据生成，仅用于考前娱乐减压，不构成考试结果预测或任何真实建议。<br>
+                        概率模型不会保存到服务器；刷新页面后恢复默认课程、生活状态与消费数据。
+                    </p>
+                </div>
+            </div>
+        </section>
     </div>
 
     <div id="quickToast" class="cyber-toast" role="status" aria-live="polite" aria-atomic="true">
@@ -470,11 +942,13 @@
 2026-06-16,02:45,校园超市,夜宵,42.00,咖啡+泡面（期末复习渡劫中）
 2026-06-17,03:00,蜜雪冰城,夜宵,18.00,全套奶茶`;
 
-        const COURSE_RECORDS = [
-            { course_id: 'CS101', course_name: '计算机网络', semester: '2025-2026-2', credits: 4, score: 78, difficulty_rating: 5, remark: '期末周渡劫课程' },
-            { course_id: 'CS102', course_name: '数据结构与算法', semester: '2025-2026-1', credits: 4, score: 85, difficulty_rating: 4, remark: '头发减半' },
-            { course_id: 'GE201', course_name: '赛博朋克与未来哲学', semester: '2025-2026-2', credits: 2, score: 92, difficulty_rating: 1, remark: '神仙通识课' }
+        const MOCK_COURSE_RECORDS = [
+            { course_id: 'CS101', course_name: '计算机网络', semester: '2025-2026-2', credits: 4, score: 78, difficulty_rating: 5, is_final: true, remark: '期末周渡劫课程' },
+            { course_id: 'CS102', course_name: '数据结构与算法', semester: '2025-2026-1', credits: 4, score: 85, difficulty_rating: 4, is_final: true, remark: '头发减半' },
+            { course_id: 'GE201', course_name: '赛博朋克与未来哲学', semester: '2025-2026-2', credits: 2, score: 92, difficulty_rating: 1, is_final: false, remark: '神仙通识课' }
         ];
+        let COURSE_RECORDS = MOCK_COURSE_RECORDS.map((course) => ({ ...course }));
+        let activeCourseSource = '内置 Mock 数据（courses.json）';
 
         const FINALS_WINDOW = { start: '2026-06-15', end: '2026-06-21' };
         const FORTUNE_TIERS = [
@@ -485,6 +959,76 @@
             { min: 0, label: '凶 · 建议躺平', color: '#fb7185' }
         ];
         const HEXAGRAMS = ['熬夜未遂', '奶茶渡劫', '期末硬刚', '早八闪避', '财库漏水', '清醒结界', '咖啡续命'];
+        const LIFESTYLE_OPTIONS = [
+            { id: 'milk-tea', label: '奶茶续命', emoji: '🧋', risk: 9, note: '糖分护盾 · 血糖过山车' },
+            { id: 'takeout', label: '疯狂外卖', emoji: '🛵', risk: 7, note: '外卖柜常驻居民' },
+            { id: 'canteen', label: '食堂清汤寡水', emoji: '🥣', risk: 3, note: '低配生存模式' },
+            { id: 'night-snack', label: '熬夜夜宵', emoji: '🌙', risk: 12, note: '凌晨灵能补给' },
+            { id: 'early-sleep', label: '早睡早起', emoji: '🌅', risk: -10, note: '稀有作息结界' }
+        ];
+        let lifestyleMode = 'multi';
+        let selectedLifestyleIds = new Set(['milk-tea', 'night-snack']);
+        let selectedExamBuffIds = new Set();
+        let currentExamLot = null;
+        let examGaugeChart = null;
+        let examDrawing = false;
+        let lastLotId = null;
+        const EXAM_LOTS = [
+            {
+                id: 'perfect', grade: '上上签', title: '逢考必过', color: '#34d399',
+                failDelta: -12, highDelta: 12,
+                verse: '锦鲤跃过答题卡，蒙的都对，写的全会；监考老师看你都像在看标准答案。',
+                tip: '别因为签太好就空题。先把会做的全拿满，再让玄学接管选择题。'
+            },
+            {
+                id: 'high-score', grade: '上上签', title: '高分上岸', color: '#fbbf24',
+                failDelta: -8, highDelta: 16,
+                verse: '笔尖自带圣光，步骤分自动排队进场；最后一题像极了昨晚刚复习的例题。',
+                tip: '开考先翻一遍卷子，把最有把握的大题标记出来，优先收割确定性分数。'
+            },
+            {
+                id: 'steady', grade: '上签', title: '稳过不慌', color: '#22d3ee',
+                failDelta: -6, highDelta: 6,
+                verse: '不追求满绩神话，只求六十分以上稳稳落地；你的平时分正在暗中托举。',
+                tip: '计算题写清公式与单位，主观题分点作答。稳，是今天最强的玄学。'
+            },
+            {
+                id: 'low-pass', grade: '中签', title: '低空飞过', color: '#38bdf8',
+                failDelta: -2, highDelta: -4,
+                verse: '雷劫擦着头发丝落下，最终以 60.5 分惊险落地；及格线对你行了一个礼。',
+                tip: '先保基础题，不要和压轴题硬耗。留 10 分钟检查姓名、学号与答题卡。'
+            },
+            {
+                id: 'coffee', grade: '中签', title: '咖啡显灵', color: '#c084fc',
+                failDelta: -3, highDelta: 3,
+                verse: '咖啡因在凌晨三点完成献祭，考场上大脑短暂接入了高算力模式。',
+                tip: '考试当天别空腹猛灌咖啡。带温水，开考前上一次洗手间，避免 buff 变 debuff。'
+            },
+            {
+                id: 'teacher', grade: '中签', title: '师生情谊', color: '#a78bfa',
+                failDelta: -4, highDelta: 0,
+                verse: '平时分正在替你扛伤害，老师划的重点在卷面上若隐若现。',
+                tip: '有平时分托底也别摆烂。把课堂例题和作业错题再扫一遍，性价比最高。'
+            },
+            {
+                id: 'edge', grade: '下签', title: '险过雷劫', color: '#fb923c',
+                failDelta: 5, highDelta: -8,
+                verse: '答题过程电闪雷鸣，最终可能以一分之差站在及格线内侧，需要立刻补一层护盾。',
+                tip: '立刻停止刷新玄学，去背三个高频公式。选择题不留空，大题能写几步写几步。'
+            },
+            {
+                id: 'retake', grade: '下下签', title: '补考边缘', color: '#fb7185',
+                failDelta: 11, highDelta: -13,
+                verse: '签筒发出一声警告：当前复习浓度不足以硬抗此劫，补考频道正在试探性接入。',
+                tip: '今晚先救最容易提分的章节，别从头翻书。把近三年真题的重复考点列成清单。'
+            }
+        ];
+        const EXAM_BUFFS = [
+            { id: 'caffeine', label: '咖啡因护盾', emoji: '☕', boost: 3, desc: '清醒 +3' },
+            { id: 'review', label: '错题回响', emoji: '📖', boost: 5, desc: '熟练 +5' },
+            { id: 'sleep', label: '早睡结界', emoji: '🌙', boost: 4, desc: '稳定 +4' },
+            { id: 'roommate', label: '室友押题', emoji: '🤝', boost: 4, desc: '情报 +4' }
+        ];
         const prefersReducedMotion = window.matchMedia
             && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -502,6 +1046,88 @@
             return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
         };
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        /** 当前生活状态标签 → 可复用的规则输入 */
+        function getLifestyleState() {
+            const options = LIFESTYLE_OPTIONS.filter((option) => selectedLifestyleIds.has(option.id));
+            const risk = options.reduce((total, option) => total + option.risk, 0);
+            return {
+                mode: lifestyleMode,
+                options,
+                ids: options.map((option) => option.id),
+                labels: options.map((option) => option.label),
+                count: options.length,
+                risk,
+                hasMilkTea: selectedLifestyleIds.has('milk-tea'),
+                hasTakeout: selectedLifestyleIds.has('takeout'),
+                hasCanteen: selectedLifestyleIds.has('canteen'),
+                hasNightSnack: selectedLifestyleIds.has('night-snack'),
+                hasEarlySleep: selectedLifestyleIds.has('early-sleep')
+            };
+        }
+
+        const parseBooleanFlag = (value) => {
+            if (value === true || value === 1) return true;
+            if (value === false || value === 0 || value === null || value === undefined) return false;
+            return /^(1|true|yes|y|是|有|期末|final)$/i.test(String(value).trim());
+        };
+
+        const optionalNumber = (value) => {
+            if (value === null || value === undefined || value === '') return null;
+            const cleaned = String(value).replace(/[^\d.-]/g, '');
+            if (!cleaned) return null;
+            const number = Number(cleaned);
+            return Number.isFinite(number) ? number : null;
+        };
+
+        /**
+         * 统一课程数据形状，兼容 CSV / JSON / 快捷表单与 courses.json。
+         * 缺少可选字段时不伪造成绩或学分，统一保留 null / 0。
+         */
+        function normalizeCourseRecord(record, index) {
+            if (!record || typeof record !== 'object') return null;
+            const name = String(
+                record.course_name ?? record.name ?? record.course ?? record['课程名'] ?? record['课程'] ?? ''
+            ).trim();
+            if (!name) return null;
+
+            const difficultyRaw = optionalNumber(
+                record.difficulty_rating ?? record.difficulty ?? record.rating ?? record['难度']
+            );
+            const difficulty = clamp(Math.round(difficultyRaw === null ? 3 : difficultyRaw), 1, 5);
+            const scoreRaw = optionalNumber(record.score ?? record.grade ?? record['成绩']);
+            const creditsRaw = optionalNumber(record.credits ?? record.credit ?? record['学分']);
+            const finalValue = record.is_final ?? record.isFinal ?? record.final_exam
+                ?? record.final ?? record['期末'] ?? record['期末科目'];
+
+            return {
+                course_id: String(record.course_id ?? record.id ?? `GEN-${String(index + 1).padStart(2, '0')}`).trim(),
+                course_name: name,
+                semester: String(record.semester ?? record.term ?? record['学期'] ?? '').trim(),
+                credits: creditsRaw === null ? 0 : clamp(Math.round(creditsRaw), 0, 20),
+                score: scoreRaw === null ? null : clamp(Math.round(scoreRaw), 0, 100),
+                difficulty_rating: difficulty,
+                is_final: parseBooleanFlag(finalValue),
+                remark: String(record.remark ?? record.note ?? record['备注'] ?? '').trim()
+            };
+        }
+
+        /** 保证课程 ID 唯一，便于两个科目下拉框稳定回选 */
+        function ensureUniqueCourseIds(courses) {
+            const used = new Set();
+            return courses.map((course, index) => {
+                const baseId = String(course.course_id || `GEN-${String(index + 1).padStart(2, '0')}`);
+                let id = baseId;
+                let suffix = 1;
+                // 循环补齐后缀，避免多条重复 ID 生成同一个新 ID
+                while (used.has(id)) {
+                    id = `${baseId}-${suffix}`;
+                    suffix += 1;
+                }
+                used.add(id);
+                return { ...course, course_id: id };
+            });
+        }
 
         /**
          * 极简 CSV 解析：支持双引号包裹字段与字段内逗号。
@@ -637,6 +1263,103 @@
             };
         }
 
+        /**
+         * 课表 / 成绩单 CSV 解析。
+         * 必需列：course_name；可选列：difficulty_rating、is_final、credits、score、semester、remark。
+         */
+        function parseCoursesCsv(csv) {
+            const lines = String(csv).replace(/^\uFEFF/, '').split(/\r?\n/)
+                .map((line) => line.trim())
+                .filter(Boolean);
+            if (lines.length < 2) throw new Error('课程 CSV 为空或缺少数据行');
+
+            const header = splitCsvLine(lines[0]).map((name) => name.trim().toLowerCase());
+            const findIndex = (aliases) => aliases.reduce(
+                (found, alias) => (found === -1 ? header.indexOf(alias) : found),
+                -1
+            );
+            const nameIndex = findIndex(['course_name', 'name', 'course', '课程名', '课程']);
+            if (nameIndex === -1) throw new Error('缺少必需列：course_name（或 name / 课程名）');
+
+            const difficultyIndex = findIndex(['difficulty_rating', 'difficulty', 'rating', '难度']);
+            const finalIndex = findIndex(['is_final', 'final', 'final_exam', '期末', '期末科目']);
+            const creditsIndex = findIndex(['credits', 'credit', '学分']);
+            const scoreIndex = findIndex(['score', 'grade', '成绩']);
+            const semesterIndex = findIndex(['semester', 'term', '学期']);
+            const remarkIndex = findIndex(['remark', 'note', '备注']);
+
+            const courses = [];
+            let skipped = 0;
+            const errorSamples = [];
+            lines.slice(1).forEach((line, offset) => {
+                const fields = splitCsvLine(line);
+                const pick = (index) => (index >= 0 ? (fields[index] || '').trim() : '');
+                const course = normalizeCourseRecord({
+                    course_name: pick(nameIndex),
+                    difficulty_rating: pick(difficultyIndex),
+                    is_final: pick(finalIndex),
+                    credits: pick(creditsIndex),
+                    score: pick(scoreIndex),
+                    semester: pick(semesterIndex),
+                    remark: remarkIndex >= 0
+                        ? fields.slice(remarkIndex).map((field) => field.trim()).join(',')
+                        : ''
+                }, courses.length);
+                if (!course) {
+                    skipped += 1;
+                    if (errorSamples.length < 3) errorSamples.push(`第 ${offset + 2} 行：课程名为空`);
+                    return;
+                }
+                courses.push(course);
+            });
+
+            if (!courses.length) {
+                const detail = errorSamples.length ? `（${errorSamples[0]}）` : '';
+                throw new Error(`没有解析到有效课程${detail}`);
+            }
+            return { courses: ensureUniqueCourseIds(courses), skipped, errorSamples, format: 'CSV' };
+        }
+
+        /** 课表 / 成绩单 JSON 解析，兼容数组与 { courses: [] } */
+        function parseCoursesJson(text) {
+            let parsed;
+            try {
+                parsed = JSON.parse(String(text).replace(/^\uFEFF/, ''));
+            } catch (error) {
+                throw new Error(`JSON 格式错误：${error.message}`);
+            }
+            let list;
+            if (Array.isArray(parsed)) {
+                list = parsed;
+            } else if (parsed && Array.isArray(parsed.courses)) {
+                list = parsed.courses;
+            } else if (parsed && (parsed.course_name || parsed.name || parsed.course
+                || parsed['课程名'] || parsed['课程'])) {
+                list = [parsed];
+            } else {
+                throw new Error('JSON 需为课程数组，或包含 courses 数组');
+            }
+            if (!list.length) throw new Error('JSON 中没有课程数据');
+
+            const courses = [];
+            let skipped = 0;
+            const errorSamples = [];
+            list.forEach((item, index) => {
+                const course = normalizeCourseRecord(item, courses.length);
+                if (!course) {
+                    skipped += 1;
+                    if (errorSamples.length < 3) errorSamples.push(`第 ${index + 1} 项：course_name 为空`);
+                    return;
+                }
+                courses.push(course);
+            });
+            if (!courses.length) {
+                const detail = errorSamples.length ? `（${errorSamples[0]}）` : '';
+                throw new Error(`没有解析到有效课程${detail}`);
+            }
+            return { courses: ensureUniqueCourseIds(courses), skipped, errorSamples, format: 'JSON' };
+        }
+
         const MOCK_EXPENSES = parseExpensesCsv(RAW_EXPENSE_CSV).rows;
         // 当前生效的消费数据：默认 Mock，上传 CSV 后会整体替换
         let EXPENSES = MOCK_EXPENSES.slice();
@@ -681,9 +1404,16 @@
                 .sort((a, b) => b.count - a.count || b.amount - a.amount)[0]
                 || null;
 
+            const lifestyle = getLifestyleState();
+            const finalsCourses = COURSE_RECORDS.filter((course) => course.is_final);
+            const hardCourses = COURSE_RECORDS.filter((course) => course.difficulty_rating >= 4);
+            const avgDifficulty = COURSE_RECORDS.length
+                ? COURSE_RECORDS.reduce((total, course) => total + course.difficulty_rating, 0) / COURSE_RECORDS.length
+                : 0;
+
             const hardestCourse = COURSE_RECORDS.slice().sort((a, b) =>
-                b.difficulty_rating - a.difficulty_rating || a.score - b.score
-            )[0] || { course_name: '未知课程', credits: 0, score: 0, difficulty_rating: 0, remark: '无' };
+                b.difficulty_rating - a.difficulty_rating || (a.score ?? 0) - (b.score ?? 0)
+            )[0] || { course_name: '未知课程', credits: 0, score: null, difficulty_rating: 0, is_final: false, remark: '无' };
 
             const sortedMilkTea = milkTeaRows.slice().sort((a, b) =>
                 `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
@@ -706,7 +1436,14 @@
                 finalsCount: finalsRows.length,
                 finalsTotal: sumAmount(finalsRows),
                 topLocation,
-                hardestCourse
+                hardestCourse,
+                courseCount: COURSE_RECORDS.length,
+                finalsCourses,
+                finalsCourseCount: finalsCourses.length,
+                hardCourses,
+                hardCourseCount: hardCourses.length,
+                avgDifficulty,
+                lifestyle
             };
         }
 
@@ -715,6 +1452,27 @@
          * ============================================================ */
         function buildPersona(facts, seed) {
             const course = facts.hardestCourse;
+            const lifestyle = facts.lifestyle;
+
+            if (lifestyle.hasEarlySleep && facts.deepNightCount <= 1 && !lifestyle.hasNightSnack) {
+                return {
+                    emoji: '🌅',
+                    title: '稀有作息型 · 早睡结界师',
+                    code: 'EARLY-SLEEP-ASCETIC // 养生系 Lv.99',
+                    tags: ['早睡早起', '清晨灵能', '早八幸存者'],
+                    desc: `在全员熬夜的校园里，你以「早睡早起」维持结界。面对难度 ${course.difficulty_rating}/5 的《${course.course_name}》，你的血条比室友多出一整条清晨。`
+                };
+            }
+
+            if (course.difficulty_rating >= 4 && (lifestyle.hasTakeout || lifestyle.hasNightSnack || lifestyle.hasMilkTea)) {
+                return {
+                    emoji: '🛵',
+                    title: '外卖渡劫型 · 糖分护盾术士',
+                    code: 'DELIVERY-SHIELD // 外卖系 Lv.87',
+                    tags: ['硬核课程', '外卖常驻', '五行缺觉'],
+                    desc: `《${course.course_name}》难度 ${course.difficulty_rating}/5，而你把「${lifestyle.labels.slice(0, 2).join(' + ') || '外卖'}」当作护盾。课程在扣血，外卖在回血，绩点在旁边看心电图。`
+                };
+            }
 
             if (facts.deepNightCount >= 4 && facts.milkTeaCount >= 2) {
                 return pickBySeed([
@@ -777,13 +1535,15 @@
             const course = facts.hardestCourse;
             const variance = Math.round((roll - 0.5) * 6); // -3 ~ +3，模拟「玄学波动」
 
-            // 运势值：熬夜扣运、糖分回血、期末爆单扣财库、课程难度扣业力
+            // 运势值：熬夜扣运、糖分回血、期末爆单扣财库、课程难度扣业力、生活状态联动
             const score = clamp(Math.round(
                 78
                 - facts.deepNightCount * 2.4
                 + facts.milkTeaCount * 3.2
                 - facts.finalsTotal * 0.07
                 - (course.difficulty_rating - 3) * 4
+                - facts.lifestyle.risk * 0.55
+                - facts.avgDifficulty * 1.2
             ) + variance, 32, 98);
 
             const tier = getFortuneTier(score);
@@ -798,7 +1558,15 @@
                 .filter(Boolean)
                 .slice(0, 3)
                 .join('、') || '未记录具体物资';
-            const sourceTag = activeExpenseSource.startsWith('本地文件') ? '上传 CSV' : 'expenses.csv';
+            const sourceTag = activeExpenseSource.startsWith('本地文件')
+                ? '上传 CSV'
+                : (activeExpenseSource.includes('手动记账') ? '手动记账' : 'expenses.csv');
+            // 幸运时辰随生活状态与本次卦象变化，避免固定展示与当前数据脱节
+            const luckyTime = facts.lifestyle.hasEarlySleep
+                ? '06:30–08:00'
+                : (facts.lifestyle.hasNightSnack || facts.milkTeaCount > 0
+                    ? '13:00–15:00'
+                    : ['09:00–11:00', '15:00–17:00', '19:00–21:00'][Math.floor(roll * 3) % 3]);
 
             // 三套「大模型文风」模板，点击重新卜卦时轮换，事实仍来自同一份数据
             const readingVariants = [
@@ -839,17 +1607,43 @@
                         : '禁忌：把「今天没喝奶茶」当成放纵许可证；一旦破戒，明日运势自动 -10。'
                 ]
             ];
-            const reportLines = pickBySeed(readingVariants, roll);
-            const headline = `AI 判定：你正在渡劫《${course.course_name}》，建议今晚加一杯冰美式。`;
+            // 复制模板数组：lifecycle 行的 splice 不能污染后续卜卦的模板
+            const reportLines = pickBySeed(readingVariants, roll).slice();
+            const lifestyleSignal = facts.lifestyle.count
+                ? `「${facts.lifestyle.labels.join(' + ')}」`
+                : '未选择生活状态标签';
+            const lifestyleLine = facts.lifestyle.count
+                ? `生活状态联动：检测到${lifestyleSignal}，生活业力 ${facts.lifestyle.risk > 0 ? '+' : ''}${facts.lifestyle.risk}。${facts.lifestyle.hasEarlySleep ? '早睡结界正在抵消部分课程伤害。' : '糖分与清醒值正在互相拆台。'}`
+                : '生活状态联动：尚未选择标签，本次仅按消费流水与课程难度推演；选择饮食/作息标签可解锁更精准的玄学诊断。';
+            reportLines.splice(Math.min(2, reportLines.length), 0, lifestyleLine);
+
+            const sleepVerdict = facts.lifestyle.hasEarlySleep ? '作息结界尚存' : '五行缺觉';
+            const lifestyleClause = facts.lifestyle.count
+                ? `且伴随高频${lifestyleSignal}输入`
+                : '但生活状态输入尚未接入';
+            const headline = `检测到本学期包含${course.difficulty_rating >= 4 ? '高难课程' : '课程'}《${course.course_name}》${lifestyleClause}，${sleepVerdict}，建议今晚先补一觉再渡劫。`;
 
             const auraStats = [
                 {
                     label: facts.hasTime ? '熬夜浓度' : '熬夜浓度 (无 time)',
-                    value: facts.hasTime ? clamp(20 + facts.deepNightCount * 13 + facts.nightCount * 4, 0, 100) : 0,
+                    value: facts.hasTime
+                        ? clamp(20 + facts.deepNightCount * 13 + facts.nightCount * 4
+                            + (facts.lifestyle.hasNightSnack ? 18 : 0) + (facts.lifestyle.hasTakeout ? 6 : 0), 0, 100)
+                        : clamp(10 + (facts.lifestyle.hasNightSnack ? 24 : 0), 0, 100),
                     color: '#e879f9'
                 },
-                { label: '糖分依赖', value: clamp(18 + facts.milkTeaCount * 16 + (facts.milkTeaTotal >= 30 ? 10 : 0), 0, 100), color: '#22d3ee' },
-                { label: '渡劫进度', value: clamp(45 + facts.finalsTotal * 0.4 + course.difficulty_rating * 4, 0, 100), color: '#fbbf24' },
+                {
+                    label: '糖分依赖',
+                    value: clamp(18 + facts.milkTeaCount * 16 + (facts.milkTeaTotal >= 30 ? 10 : 0)
+                        + (facts.lifestyle.hasMilkTea ? 22 : 0) + (facts.lifestyle.hasTakeout ? 8 : 0), 0, 100),
+                    color: '#22d3ee'
+                },
+                {
+                    label: '渡劫进度',
+                    value: clamp(40 + facts.finalsTotal * 0.4 + course.difficulty_rating * 4
+                        + facts.finalsCourseCount * 4 + facts.avgDifficulty * 2, 0, 100),
+                    color: '#fbbf24'
+                },
                 { label: '财库水位', value: clamp(100 - facts.totalAmount * 0.22, 0, 100), color: '#34d399' }
             ];
 
@@ -885,8 +1679,16 @@
                 {
                     icon: '📚',
                     title: '选课因果 · 主修劫难',
-                    tag: 'courses.json · 难度',
-                    text: `《${course.course_name}》${course.credits} 学分，难度 ${course.difficulty_rating}/5，得分 ${course.score}，备注「${course.remark}」。`
+                    tag: `${activeCourseSource} · 难度`,
+                    text: `《${course.course_name}》${course.credits > 0 ? `${course.credits} 学分，` : ''}难度 ${course.difficulty_rating}/5，${course.score !== null ? `得分 ${course.score}，` : '成绩未提供，'}备注「${course.remark || '无'}」；当前课表共 ${facts.courseCount} 门，其中期末科目 ${facts.finalsCourseCount} 门、硬核课程 ${facts.hardCourseCount} 门。`
+                },
+                {
+                    icon: '🧬',
+                    title: '生活状态 · 多维输入',
+                    tag: `${facts.lifestyle.mode === 'single' ? '单选' : '多选'} · ${facts.lifestyle.count} 个标签`,
+                    text: facts.lifestyle.count
+                        ? `已接入「${facts.lifestyle.labels.join('、')}」；生活业力 ${facts.lifestyle.risk > 0 ? '+' : ''}${facts.lifestyle.risk}，${facts.lifestyle.hasEarlySleep ? '早睡结界正在生效。' : '建议优先修复睡眠与糖分回路。'}`
+                        : '未选择饮食/生活状态标签，本次联动力度较低；可在多维输入面板中补充。'
                 }
             ];
 
@@ -902,14 +1704,17 @@
                     : (facts.hasTime
                         ? '今日未检测到奶茶召唤阵，建议 23:30 前上床锁定「早睡结界」成就。'
                         : '本次数据未提供 time 字段，无法追踪深夜奶茶；仍建议 23:30 前上床锁定「早睡结界」成就。'),
-                `宜：把${reviewHint}讲给室友听；忌：凌晨 3 点刷新选课系统。`
+                `宜：把${reviewHint}讲给室友听；忌：凌晨 3 点刷新选课系统。`,
+                facts.lifestyle.hasEarlySleep
+                    ? '生活结界：继续保持早睡早起，明日早八闪避率 +30%。'
+                    : `生活结界：把「${facts.lifestyle.labels[0] || '熬夜夜宵'}」频率减半，可让《${course.course_name}》业力 -8%。`
             ];
 
             const lucky = [
-                { label: '开运饮品', value: '冰美式（少冰）' },
+                { label: '开运饮品', value: facts.lifestyle.hasEarlySleep ? '温牛奶（22:30 前）' : '冰美式（少冰）' },
                 { label: '开运方位', value: '图书馆三楼靠窗' },
-                { label: '开运操作', value: '23:30 前关闭外卖 App' },
-                { label: '渡劫道具', value: '机械键盘 + 降噪耳机' }
+                { label: '开运操作', value: facts.lifestyle.hasTakeout ? '23:30 前关闭外卖 App' : '23:30 前关闭短视频' },
+                { label: '渡劫道具', value: course.course_name.includes('数据') ? '草稿纸 + 错题本' : '机械键盘 + 降噪耳机' }
             ];
 
             return {
@@ -925,8 +1730,9 @@
                 lucky,
                 auraStats,
                 hexagram: `第 ${serial} 卦 · ${hexagram}`,
+                luckyTime,
                 confidence,
-                warning: `⚠ 今日业力来源：《${course.course_name}》难度 ${course.difficulty_rating}/5。若 24:00 后仍在线，明日运势 -10。`,
+                warning: `⚠ 今日业力来源：《${course.course_name}》难度 ${course.difficulty_rating}/5${facts.lifestyle.count ? ` × 生活状态「${facts.lifestyle.labels.join('、')}」` : ''}。若 24:00 后仍在线，明日运势 -10。`,
                 serial: `DIV-${String(serial).padStart(4, '0')}`,
                 generatedAt: new Date().toLocaleString('zh-CN', { hour12: false })
             };
@@ -1081,7 +1887,7 @@
 
         function renderOracle(result) {
             const $ = (id) => document.getElementById(id);
-            $('oracleSource').textContent = `数据源：${activeExpenseSource} · ${result.facts.totalRecords} 条消费记录 · courses.json ${COURSE_RECORDS.length} 门 · 规则引擎推理完成`;
+            $('oracleSource').textContent = `数据源：${activeExpenseSource} · ${result.facts.totalRecords} 条消费记录 · ${activeCourseSource} ${COURSE_RECORDS.length} 门 · 规则引擎推理完成`;
 
             /* ---------- 今日赛博人设 ---------- */
             $('personaSerial').textContent = `#${result.serial.replace('DIV-', '')}`;
@@ -1106,6 +1912,7 @@
             $('oracleHexagram').textContent = result.hexagram;
             $('oracleCourse').textContent = `《${result.course.course_name}》`;
             $('oracleConfidence').textContent = `${result.confidence}%`;
+            $('oracleLuckTime').textContent = result.luckyTime;
             $('oracleMeta').textContent = `终端编号 ${result.serial} ｜ AI 置信度 ${result.confidence}% ｜ 生成于 ${result.generatedAt}`;
 
             /* ---------- 玄学证据链 ---------- */
@@ -1167,8 +1974,542 @@
         }
 
         /* ============================================================
+         * 3.5 考试渡劫终端：课程 × 生活状态 × Buff → 概率 / 签文 / 符咒
+         * ============================================================ */
+        const EXAM_FALLBACK_COURSE = {
+            course_id: 'FINAL-404',
+            course_name: '未命名渡劫科目',
+            credits: 0,
+            score: null,
+            difficulty_rating: 3,
+            is_final: true,
+            remark: '课程数据未提供'
+        };
+
+        function getExamCourse(courseId) {
+            return COURSE_RECORDS.find((course) => course.course_id === courseId)
+                || COURSE_RECORDS[0]
+                || EXAM_FALLBACK_COURSE;
+        }
+
+        function getExamBuffBoost() {
+            return EXAM_BUFFS
+                .filter((buff) => selectedExamBuffIds.has(buff.id))
+                .reduce((total, buff) => total + buff.boost, 0);
+        }
+
+        function calculateExamRates(courseId) {
+            const course = getExamCourse(courseId);
+            const lifestyle = getLifestyleState();
+            const difficulty = course.difficulty_rating || 3;
+            const buffBoost = getExamBuffBoost();
+            const positiveRisk = Math.max(0, lifestyle.risk);
+
+            let fail = clamp(
+                8 + difficulty * 6 + positiveRisk * 0.55 + (course.is_final ? 3 : 0)
+                - buffBoost - (lifestyle.hasEarlySleep ? 8 : 0),
+                4, 82
+            );
+            let high = clamp(
+                34 - difficulty * 5 - positiveRisk * 0.3 + buffBoost * 1.4
+                + (lifestyle.hasEarlySleep ? 6 : 0) - (course.is_final ? 2 : 0),
+                3, 78
+            );
+            if (fail + high > 94) high = 94 - fail;
+            fail = Math.round(fail);
+            high = Math.round(high);
+            const low = Math.max(1, 100 - fail - high);
+            return {
+                course,
+                difficulty,
+                buffBoost,
+                fail,
+                low,
+                high,
+                pass: low + high
+            };
+        }
+
+        function setExamStatus(text, tone = 'ready') {
+            const el = document.getElementById('examStatus');
+            if (!el) return;
+            el.textContent = text;
+            const classes = {
+                ready: 'border-emerald-400/35 bg-emerald-400/10 text-emerald-300',
+                drawing: 'border-amber-300/50 bg-amber-400/10 text-amber-200',
+                success: 'border-cyan-300/45 bg-cyan-400/10 text-cyan-200',
+                warn: 'border-rose-400/40 bg-rose-400/10 text-rose-200'
+            };
+            el.className = `shrink-0 rounded-full border px-3 py-1 text-[10px] tracking-widest ${classes[tone] || classes.ready}`;
+        }
+
+        function updateExamSubjects(preferredId) {
+            const select = document.getElementById('examSubjectSelect');
+            if (!select) return;
+            const previous = preferredId || select.value;
+            select.innerHTML = '';
+            if (!COURSE_RECORDS.length) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = '暂无课程，请先录入或上传课表';
+                select.appendChild(option);
+                select.disabled = true;
+                return;
+            }
+            select.disabled = false;
+            COURSE_RECORDS.forEach((course) => {
+                const option = document.createElement('option');
+                option.value = course.course_id;
+                const hardMark = course.difficulty_rating >= 4 ? '🔥 ' : '';
+                option.textContent = `${hardMark}${course.course_name} · 难度 ${course.difficulty_rating}/5${course.is_final ? ' · 期末' : ''}`;
+                select.appendChild(option);
+            });
+            select.value = COURSE_RECORDS.some((course) => course.course_id === previous)
+                ? previous
+                : COURSE_RECORDS[0].course_id;
+        }
+
+        function renderExamGauge(courseId) {
+            const container = document.getElementById('examGaugeChart');
+            if (!container) return null;
+            const rates = calculateExamRates(courseId);
+            if (examGaugeChart && examGaugeChart.getDom() !== container) {
+                examGaugeChart.dispose();
+                examGaugeChart = null;
+            }
+            if (!examGaugeChart) {
+                container.innerHTML = '';
+                examGaugeChart = echarts.init(container, null, { renderer: 'canvas' });
+            }
+
+            const option = {
+                backgroundColor: 'transparent',
+                animationDuration: prefersReducedMotion ? 0 : 780,
+                animationEasing: 'cubicOut',
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: 'rgba(2,6,23,0.95)',
+                    borderColor: 'rgba(251,191,36,0.35)',
+                    textStyle: { color: '#e2e8f0', fontSize: 11 },
+                    formatter: () => [
+                        `综合过关率：${rates.pass}%`,
+                        `挂科 ${rates.fail}% · 低空 ${rates.low}% · 高分 ${rates.high}%`
+                    ].join('<br/>')
+                },
+                series: [{
+                    name: '考试渡劫概率',
+                    type: 'gauge',
+                    center: ['50%', '58%'],
+                    radius: '78%',
+                    startAngle: 210,
+                    endAngle: -30,
+                    min: 0,
+                    max: 100,
+                    splitNumber: 5,
+                    progress: { show: false },
+                    pointer: {
+                        show: true,
+                        length: '54%',
+                        width: 3,
+                        itemStyle: { color: '#fcd34d' }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            width: 14,
+                            color: [
+                                [rates.fail / 100, '#fb7185'],
+                                [(rates.fail + rates.low) / 100, '#22d3ee'],
+                                [1, '#34d399']
+                            ]
+                        }
+                    },
+                    axisTick: { show: false },
+                    splitLine: { length: 6, lineStyle: { color: 'rgba(148,163,184,0.35)', width: 1 } },
+                    axisLabel: {
+                        distance: -20,
+                        color: '#64748b',
+                        fontSize: 8,
+                        formatter: (value) => (value % 25 === 0 ? `${value}` : '')
+                    },
+                    anchor: { show: false },
+                    title: { show: false },
+                    detail: { show: false },
+                    data: [{ value: rates.pass, name: '综合过关率' }]
+                }]
+            };
+            examGaugeChart.setOption(option, true);
+
+            document.getElementById('examPassRate').textContent = `${rates.pass}%`;
+            document.getElementById('examFailRate').textContent = `${rates.fail}%`;
+            document.getElementById('examLowRate').textContent = `${rates.low}%`;
+            document.getElementById('examHighRate').textContent = `${rates.high}%`;
+            return rates;
+        }
+
+        function refreshExamTerminal(preferredId) {
+            updateExamSubjects(preferredId);
+            const select = document.getElementById('examSubjectSelect');
+            const courseId = select && select.value;
+            if (!courseId) {
+                setExamStatus('● NO DATA', 'warn');
+                if (examGaugeChart) {
+                    examGaugeChart.dispose();
+                    examGaugeChart = null;
+                }
+                const gauge = document.getElementById('examGaugeChart');
+                if (gauge) {
+                    gauge.innerHTML = `
+                        <div class="flex h-full items-center justify-center rounded-xl border border-dashed border-slate-600/50 text-[11px] tracking-widest text-slate-500">
+                            NO COURSE DATA // 等待课程接入
+                        </div>`;
+                }
+                ['examPassRate', 'examFailRate', 'examLowRate', 'examHighRate'].forEach((id) => {
+                    const node = document.getElementById(id);
+                    if (node) node.textContent = '--%';
+                });
+                const ticker = document.getElementById('examLotTicker');
+                if (ticker) ticker.textContent = 'SYNC // 暂无课程数据，请先上传课表或快捷录入';
+                const lotStatus = document.getElementById('examLotStatus');
+                if (lotStatus) lotStatus.textContent = '暂无科目可抽签，请先上传课表或快捷录入课程。';
+                const result = document.getElementById('examLotResult');
+                if (result) result.classList.add('hidden');
+                currentExamLot = null;
+                const drawButton = document.getElementById('drawLotBtn');
+                if (drawButton) {
+                    drawButton.disabled = true;
+                    // 抽签动画中不要抢占「摇号中」文案，结算时会统一恢复
+                    if (!examDrawing) drawButton.textContent = '🎲 开始抽签';
+                }
+                const talismanButton = document.getElementById('generateTalismanBtn');
+                if (talismanButton) talismanButton.disabled = true;
+                const card = document.getElementById('talismanCard');
+                if (card) card.classList.add('hidden');
+                const talismanStatus = document.getElementById('talismanStatus');
+                if (talismanStatus) talismanStatus.textContent = '暂无可渡劫科目：请先录入或上传课程数据。';
+                return;
+            }
+            const drawButton = document.getElementById('drawLotBtn');
+            // 抽签动画进行中即使数据刷新也不要提前解锁按钮
+            if (drawButton) drawButton.disabled = examDrawing;
+            const talismanButton = document.getElementById('generateTalismanBtn');
+            if (talismanButton) talismanButton.disabled = false;
+            // 课程恢复后清除“暂无可渡劫科目”的旧提示；已有符咒时保留生成反馈
+            const talismanCard = document.getElementById('talismanCard');
+            const talismanStatus = document.getElementById('talismanStatus');
+            if (talismanStatus
+                && (!talismanCard || talismanCard.classList.contains('hidden'))
+                && talismanStatus.textContent.startsWith('暂无可渡劫科目')) {
+                talismanStatus.textContent = '尚未生成符咒。已选 Buff 会实时参与概率预测。';
+            }
+            const rates = renderExamGauge(courseId);
+            const ticker = document.getElementById('examLotTicker');
+            if (ticker) {
+                ticker.textContent = `SYNC // ${rates.course.course_name} · 难度 ${rates.difficulty}/5 · ${rates.buffBoost > 0 ? `已叠加 ${rates.buffBoost} 点 Buff` : '未叠加 Buff'}`;
+            }
+            const result = document.getElementById('examLotResult');
+            if (currentExamLot && currentExamLot.subjectId !== courseId && result) {
+                currentExamLot = null;
+                result.classList.add('hidden');
+                const status = document.getElementById('examLotStatus');
+                if (status) status.textContent = '科目已切换，旧签文已失效。重新抽签可获取当前科目的渡劫签文。';
+                if (drawButton && !examDrawing) drawButton.textContent = '🎲 摇一签';
+            }
+            const lotStatus = document.getElementById('examLotStatus');
+            if (lotStatus && !currentExamLot && lotStatus.textContent.startsWith('暂无科目')) {
+                lotStatus.textContent = '签筒已就绪：选择科目与 Buff 后即可抽签。';
+            }
+            // 抽签动画进行中保持 DRAWING 徽标；数据刷新后不要把状态误重置为 READY
+            if (examDrawing) {
+                setExamStatus('● DRAWING', 'drawing');
+            } else {
+                setExamStatus('● READY', 'ready');
+            }
+        }
+
+        function renderBuffList() {
+            const container = document.getElementById('buffList');
+            if (!container) return;
+            container.innerHTML = EXAM_BUFFS.map((buff) => `
+                <button type="button" class="buff-chip" data-buff-id="${buff.id}"
+                    aria-pressed="${selectedExamBuffIds.has(buff.id)}">
+                    <span class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-200">
+                        <span aria-hidden="true">${buff.emoji}</span>${buff.label}
+                    </span>
+                    <span class="mt-1 block text-[9px] tracking-wider text-slate-500">${buff.desc}</span>
+                </button>
+            `).join('');
+        }
+
+        // 统一复用全局转义，避免两套实现出现差异
+        const escapeHtml = escapeHTML;
+
+        function hashText(text) {
+            let hash = 0;
+            for (let index = 0; index < String(text).length; index += 1) {
+                hash = ((hash << 5) - hash + text.charCodeAt(index)) | 0;
+            }
+            return Math.abs(hash);
+        }
+
+        /** 生成符咒：科目难度 + 生活状态 + 已叠加 Buff → 祝福语与避坑指南 */
+        function generateTalisman() {
+            const select = document.getElementById('examSubjectSelect');
+            const card = document.getElementById('talismanCard');
+            const status = document.getElementById('talismanStatus');
+            if (!card) return;
+            // 无课程时不再生成兜底符咒，避免按钮被程序化触发后展示虚假科目
+            if (!COURSE_RECORDS.length) {
+                card.classList.add('hidden');
+                if (status) status.textContent = '暂无可渡劫科目：请先录入或上传课程数据。';
+                return;
+            }
+
+            const course = getExamCourse(select ? select.value : '');
+            const rates = calculateExamRates(course.course_id);
+            const lifestyle = getLifestyleState();
+            const buffs = EXAM_BUFFS.filter((buff) => selectedExamBuffIds.has(buff.id));
+            const seed = hashText(`${course.course_id}-${lifestyle.labels.join('-')}-${buffs.map((buff) => buff.id).join('-')}`);
+            const code = `TAL-${(seed % 9000 + 1000)}`;
+            const blessings = [
+                '考神已接入你的草稿纸，步骤分自动对齐采分点。',
+                '选择题蒙运 +30%，大题步骤分不掉线，稳住就是胜利。',
+                '雷劫当前，笔锋自带避雷针；先易后难，分数自然归位。',
+                '监考老师的目光将短暂失去威慑力，你的思路保持满格。'
+            ];
+            const blessing = blessings[seed % blessings.length];
+
+            const pitfalls = [];
+            if (lifestyle.hasNightSnack) pitfalls.push('今晚 00:30 后停止夜宵与短视频，避免第二天在考场进入待机模式。');
+            if (lifestyle.hasTakeout) pitfalls.push('考试当天提前吃正餐，别让外卖延误把「护体」变成「空腹硬扛」。');
+            if (course.difficulty_rating >= 4) pitfalls.push(`《${course.course_name}》压轴题只留最后 15 分钟，先收基础分，避免和难题互相消耗。`);
+            if (!buffs.length) pitfalls.push('当前是裸考 Buff 状态：至少叠一层「错题回响」，先把高频公式过一遍。');
+            pitfalls.push('开考前检查准考证、学生证、2B 铅笔与听力设备；玄学不负责补办证件。');
+
+            const luckText = rates.fail <= 15
+                ? '雷劫强度：可控'
+                : rates.fail <= 30
+                    ? '雷劫强度：警戒'
+                    : '雷劫强度：高危';
+
+            if (status) {
+                status.textContent = `符咒已生成：${course.course_name} · ${luckText} · 综合过关率 ${rates.pass}%`;
+            }
+
+            card.innerHTML = `
+                <div class="relative z-10">
+                    <div class="flex items-start gap-3">
+                        <div class="talisman-seal" aria-hidden="true">考神<br>护体</div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[9px] tracking-[0.28em] text-amber-300/75">CYBER TALISMAN // ${escapeHtml(code)}</p>
+                            <h4 class="mt-1 break-words text-lg font-bold text-amber-100">《${escapeHtml(course.course_name)}》渡劫符</h4>
+                            <p class="mt-1 text-[10px] tracking-wider text-slate-400">难度 ${rates.difficulty}/5 · ${escapeHtml(luckText)} · 过关率 ${rates.pass}%</p>
+                        </div>
+                    </div>
+                    <p class="mt-3 rounded-lg border border-amber-300/20 bg-amber-300/5 px-3 py-2 text-xs leading-6 text-amber-50/90">
+                        ✦ ${escapeHtml(blessing)}
+                    </p>
+                    <div class="mt-3 flex flex-wrap gap-1.5">
+                        ${buffs.length
+                            ? buffs.map((buff) => `<span class="rounded-full border border-fuchsia-300/30 bg-fuchsia-300/10 px-2 py-0.5 text-[9px] tracking-wider text-fuchsia-100">${buff.emoji} ${escapeHtml(buff.label)}</span>`).join('')
+                            : '<span class="rounded-full border border-slate-500/30 bg-slate-500/10 px-2 py-0.5 text-[9px] tracking-wider text-slate-400">裸考模式</span>'}
+                        ${lifestyle.options.map((option) => `<span class="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-2 py-0.5 text-[9px] tracking-wider text-emerald-100">${option.emoji} ${escapeHtml(option.label)}</span>`).join('')}
+                    </div>
+                    <div class="mt-3 border-t border-amber-300/15 pt-3">
+                        <p class="text-[9px] tracking-[0.25em] text-cyan-300/75">避坑指南 // PITFALL SHIELD</p>
+                        <ul class="mt-2 space-y-1.5 text-[11px] leading-5 text-slate-300">
+                            ${pitfalls.slice(0, 4).map((tip) => `<li class="flex gap-2"><span class="text-amber-300/80">▸</span><span>${escapeHtml(tip)}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                    <p class="mt-3 text-[9px] leading-4 text-slate-500">生成时间 ${new Date().toLocaleString('zh-CN', { hour12: false })} · 符咒仅供娱乐，请以复习和考试纪律为准。</p>
+                </div>
+            `;
+            card.classList.remove('hidden');
+            card.classList.remove('fade-up');
+            void card.offsetWidth;
+            card.classList.add('fade-up');
+        }
+
+        /* ============================================================
+         * 3.6 赛博签筒：加权抽签 / 签文渲染 / 数据变更联动
+         * ============================================================ */
+        function pickExamLot(rates) {
+            const weighted = EXAM_LOTS.map((lot) => {
+                let weight = 6;
+                if (rates.fail >= 35 && ['retake', 'edge', 'low-pass'].includes(lot.id)) weight += 8;
+                if (rates.pass >= 80 && ['perfect', 'high-score', 'steady'].includes(lot.id)) weight += 8;
+                if (rates.high >= 35 && ['high-score', 'perfect'].includes(lot.id)) weight += 5;
+                if (selectedExamBuffIds.size > 0 && ['coffee', 'teacher', 'steady', 'high-score'].includes(lot.id)) weight += 2;
+                return { lot, weight };
+            });
+            let cursor = Math.random() * weighted.reduce((total, item) => total + item.weight, 0);
+            let chosen = weighted[weighted.length - 1].lot;
+            for (const item of weighted) {
+                cursor -= item.weight;
+                if (cursor <= 0) {
+                    chosen = item.lot;
+                    break;
+                }
+            }
+            if (chosen.id === lastLotId && EXAM_LOTS.length > 1) {
+                const currentIndex = EXAM_LOTS.findIndex((lot) => lot.id === chosen.id);
+                chosen = EXAM_LOTS[(currentIndex + 1) % EXAM_LOTS.length];
+            }
+            return chosen;
+        }
+
+        function renderExamLotResult(lot, rates, subjectId) {
+            const result = document.getElementById('examLotResult');
+            if (!result) return;
+            const grade = document.getElementById('examLotGrade');
+            const code = document.getElementById('examLotCode');
+            const title = document.getElementById('examLotTitle');
+            const verse = document.getElementById('examLotVerse');
+            const tip = document.getElementById('examLotTip');
+
+            grade.textContent = `${lot.grade} · ${lot.title}`;
+            grade.style.borderColor = `${lot.color}66`;
+            grade.style.color = lot.color;
+            code.textContent = `LOT-${(hashText(`${subjectId}-${lot.id}-${Date.now()}`) % 9000 + 1000)}`;
+            title.textContent = lot.title;
+            title.style.color = lot.color;
+            verse.textContent = `《${rates.course.course_name}》${lot.verse}`;
+            tip.textContent = `避坑提示：${lot.tip} 当前综合过关率 ${rates.pass}%（挂科 ${rates.fail}% / 低空飞过 ${rates.low}% / 高分 ${rates.high}%）。`;
+            result.classList.remove('hidden');
+            result.classList.remove('fade-up');
+            void result.offsetWidth;
+            result.classList.add('fade-up');
+        }
+
+        async function drawExamLot() {
+            if (examDrawing) return;
+            const select = document.getElementById('examSubjectSelect');
+            const courseId = select && select.value;
+            if (!courseId) {
+                const status = document.getElementById('examLotStatus');
+                if (status) status.textContent = '还没有可抽签的科目，请先录入或上传课程。';
+                currentExamLot = null;
+                setExamStatus('● NO DATA', 'warn');
+                return;
+            }
+
+            examDrawing = true;
+            const button = document.getElementById('drawLotBtn');
+            const tube = document.getElementById('examLotTube');
+            const ticker = document.getElementById('examLotTicker');
+            const status = document.getElementById('examLotStatus');
+            const result = document.getElementById('examLotResult');
+            // 新一轮抽签开始后旧签文即失效，避免动画期间数据刷新误判为「仍有旧签」
+            currentExamLot = null;
+            let rates = calculateExamRates(courseId);
+            const frames = [
+                '接通考神频道...', '扫描平时分磁场...', '检测熬夜浓度...',
+                '校准及格线...', '过滤墨菲定律...', '签筒开始共振...'
+            ];
+
+            if (button) {
+                button.disabled = true;
+                button.textContent = '🎲 摇号中...';
+            }
+            tube?.classList.add('is-drawing');
+            result?.classList.add('hidden');
+            setExamStatus('● DRAWING', 'drawing');
+
+            const steps = prefersReducedMotion ? 5 : 18;
+            for (let index = 0; index < steps; index += 1) {
+                // 动画期间科目 / 课程数据可能变化：每帧读取最新科目，避免状态栏停留在旧科目
+                const activeSelect = document.getElementById('examSubjectSelect');
+                const activeCourseId = activeSelect ? activeSelect.value : '';
+                if (!activeCourseId) break;
+                rates = calculateExamRates(activeCourseId);
+                if (ticker) ticker.textContent = `${frames[index % frames.length]} ${EXAM_LOTS[index % EXAM_LOTS.length].title}?`;
+                if (status) status.textContent = `赛博签筒正在读取《${rates.course.course_name}》的因果...`;
+                await sleep(prefersReducedMotion ? 35 : 70 + Math.random() * 45);
+            }
+
+            // 抽签动画期间课程 / 生活状态可能变化，最终结果按最新状态结算
+            const latestSelect = document.getElementById('examSubjectSelect');
+            const latestCourseId = latestSelect ? latestSelect.value : '';
+            if (!latestCourseId) {
+                examDrawing = false;
+                currentExamLot = null;
+                tube?.classList.remove('is-drawing');
+                if (button) {
+                    button.disabled = true;
+                    button.textContent = '🎲 开始抽签';
+                }
+                if (result) result.classList.add('hidden');
+                setExamStatus('● NO DATA', 'warn');
+                return;
+            }
+            rates = calculateExamRates(latestCourseId);
+
+            const lot = pickExamLot(rates);
+            const subjectId = latestCourseId;
+            lastLotId = lot.id;
+            currentExamLot = { ...lot, subjectId, courseName: rates.course.course_name, rates };
+            renderExamLotResult(lot, rates, subjectId);
+
+            tube?.classList.remove('is-drawing');
+            if (button) {
+                button.disabled = false;
+                button.textContent = '🎲 再抽一签';
+            }
+            if (ticker) ticker.textContent = `RESULT // ${lot.grade} · ${lot.title} · ${rates.course.course_name}`;
+            if (status) status.textContent = `抽签完成：${lot.grade}「${lot.title}」。概率仪表盘仍按当前课程与生活状态实时计算。`;
+            setExamStatus('● LOT READY', 'success');
+            examDrawing = false;
+        }
+
+        function refreshExamAfterDataChange() {
+            const hadLot = Boolean(currentExamLot);
+            currentExamLot = null;
+            const result = document.getElementById('examLotResult');
+            if (result) result.classList.add('hidden');
+            if (hadLot) {
+                const lotStatus = document.getElementById('examLotStatus');
+                if (lotStatus) lotStatus.textContent = '数据已更新，旧签文已失效；请重新抽签获取当前状态下的结果。';
+                const drawButton = document.getElementById('drawLotBtn');
+                if (drawButton && !examDrawing) drawButton.textContent = '🎲 摇一签';
+            }
+            refreshExamTerminal();
+            const card = document.getElementById('talismanCard');
+            if (card && !card.classList.contains('hidden')) generateTalisman();
+        }
+
+        function bindExamTerminal() {
+            renderBuffList();
+            refreshExamTerminal();
+
+            const select = document.getElementById('examSubjectSelect');
+            select?.addEventListener('change', () => {
+                refreshExamTerminal(select.value);
+                // 科目切换后，已生成的符咒必须同步为新科目
+                const card = document.getElementById('talismanCard');
+                if (card && !card.classList.contains('hidden')) generateTalisman();
+            });
+
+            document.getElementById('buffList')?.addEventListener('click', (event) => {
+                const button = event.target.closest('[data-buff-id]');
+                if (!button) return;
+                const buffId = button.dataset.buffId;
+                if (selectedExamBuffIds.has(buffId)) {
+                    selectedExamBuffIds.delete(buffId);
+                } else {
+                    selectedExamBuffIds.add(buffId);
+                }
+                renderBuffList();
+                // Buff 会改变概率：旧签文一并作废，符咒按新概率重绘
+                refreshExamAfterDataChange();
+            });
+
+            document.getElementById('drawLotBtn')?.addEventListener('click', drawExamLot);
+            document.getElementById('generateTalismanBtn')?.addEventListener('click', generateTalisman);
+        }
+
+        /* ============================================================
          * 4. 交互：终端打字机 / 重新卜卦 / 加载动画
          * ============================================================ */
+
         let oracleRunId = 0;
 
         function typeInto(element, text, runId, speed) {
@@ -1276,6 +2617,332 @@
         runOracle();
 
         /* ============================================================
+         * 4.5 多维输入：课表上传 / 快捷录入 / 生活状态标签
+         * ============================================================ */
+        const courseFileInput = document.getElementById('courseFileInput');
+        const courseUploadZone = document.getElementById('courseUploadZone');
+        const courseUploadTitle = document.getElementById('courseUploadTitle');
+        const courseUploadHint = document.getElementById('courseUploadHint');
+        const courseUploadStatus = document.getElementById('courseUploadStatus');
+        const courseQuickForm = document.getElementById('courseQuickForm');
+        const courseNameInput = document.getElementById('courseName');
+        const courseDifficultyInput = document.getElementById('courseDifficulty');
+        const courseIsFinalInput = document.getElementById('courseIsFinal');
+        const courseQuickStatus = document.getElementById('courseQuickStatus');
+        const courseRoster = document.getElementById('courseRoster');
+        const courseCountBadge = document.getElementById('courseCountBadge');
+        const resetCoursesBtn = document.getElementById('resetCoursesBtn');
+        const lifestyleTagList = document.getElementById('lifestyleTagList');
+        const lifestyleSummary = document.getElementById('lifestyleSummary');
+        const clearLifestyleBtn = document.getElementById('clearLifestyleBtn');
+        let courseUploadBusy = false;
+        let lifestyleOracleTimer = null;
+
+        function setCourseUploadStatus(message, tone = 'idle') {
+            if (!courseUploadStatus) return;
+            courseUploadStatus.textContent = message;
+            courseUploadStatus.dataset.tone = tone;
+        }
+
+        function setCourseQuickStatus(message, tone = 'idle') {
+            if (!courseQuickStatus) return;
+            courseQuickStatus.textContent = message;
+            courseQuickStatus.dataset.tone = tone;
+        }
+
+        function renderCourseRoster() {
+            if (!courseRoster) return;
+            if (!COURSE_RECORDS.length) {
+                courseRoster.innerHTML = `
+                    <div class="rounded-lg border border-dashed border-slate-600/50 p-3 text-[11px] leading-5 text-slate-500">
+                        暂无课程数据。上传课表，或使用上方快捷表单录入第一门渡劫课程。
+                    </div>`;
+                if (courseCountBadge) courseCountBadge.textContent = '0 门';
+                return;
+            }
+            courseRoster.innerHTML = COURSE_RECORDS.map((course) => `
+                <div class="course-row flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="break-words text-[12px] font-semibold text-slate-100">${escapeHtml(course.course_name)}</span>
+                            ${course.is_final ? '<span class="course-badge">期末</span>' : ''}
+                            ${course.difficulty_rating >= 4 ? '<span class="course-badge" style="border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.1);color:#fda4af">硬核</span>' : ''}
+                        </div>
+                        <p class="mt-1 text-[10px] leading-4 text-slate-500">
+                            难度 ${course.difficulty_rating}/5
+                            ${course.credits > 0 ? ` · ${course.credits} 学分` : ''}
+                            ${course.score !== null ? ` · 成绩 ${course.score}` : ' · 成绩未提供'}
+                            ${course.semester ? ` · ${escapeHtml(course.semester)}` : ''}
+                        </p>
+                        ${course.remark ? `<p class="mt-0.5 truncate text-[10px] text-slate-600">${escapeHtml(course.remark)}</p>` : ''}
+                    </div>
+                    <button type="button" data-remove-course="${escapeHtml(course.course_id)}"
+                        class="shrink-0 rounded px-1.5 py-1 text-[10px] text-slate-500 transition hover:bg-rose-400/10 hover:text-rose-300"
+                        aria-label="移除课程 ${escapeHtml(course.course_name)}">✕</button>
+                </div>
+            `).join('');
+            if (courseCountBadge) {
+                const finals = COURSE_RECORDS.filter((course) => course.is_final).length;
+                courseCountBadge.textContent = `${COURSE_RECORDS.length} 门 · 期末 ${finals}`;
+            }
+        }
+
+        function applyCourseData(courses, sourceLabel, extraMessage = '') {
+            COURSE_RECORDS = ensureUniqueCourseIds(courses);
+            activeCourseSource = sourceLabel;
+            renderCourseRoster();
+            resetCoursesBtn?.classList.remove('hidden');
+            if (extraMessage) setCourseUploadStatus(extraMessage, 'ok');
+            runOracle();
+            refreshExamAfterDataChange();
+        }
+
+        function handleCourseFile(file) {
+            if (!file || courseUploadBusy) return;
+            const isCsv = /\.csv$/i.test(file.name) || file.type === 'text/csv';
+            const isJson = /\.json$/i.test(file.name) || file.type === 'application/json';
+            if (!isCsv && !isJson) {
+                setCourseUploadStatus('✕ 仅支持 .csv / .json 文件，请重新选择。', 'error');
+                if (courseFileInput) courseFileInput.value = '';
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                setCourseUploadStatus('✕ 文件超过 2 MB，请精简后再上传。', 'error');
+                if (courseFileInput) courseFileInput.value = '';
+                return;
+            }
+            if (file.size === 0) {
+                setCourseUploadStatus('✕ 文件为空，请检查后重新上传。', 'error');
+                if (courseFileInput) courseFileInput.value = '';
+                return;
+            }
+
+            courseUploadBusy = true;
+            courseUploadZone?.classList.add('is-loading');
+            setCourseUploadStatus(`◌ 正在读取 ${file.name} ...`, 'busy');
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const parsed = isCsv
+                        ? parseCoursesCsv(reader.result)
+                        : parseCoursesJson(reader.result);
+                    const skippedText = parsed.skipped
+                        ? `，跳过 ${parsed.skipped} 条无效记录（${parsed.errorSamples[0] || '字段缺失'}）`
+                        : '';
+                    applyCourseData(
+                        parsed.courses,
+                        `本地文件：${file.name}`,
+                        `✓ 已载入 ${parsed.courses.length} 门课程（${parsed.format}）${skippedText}；AI 报告与考试概率已刷新。`
+                    );
+                    if (courseUploadTitle) courseUploadTitle.textContent = '⬆ 更换课表 / 成绩单';
+                    if (courseUploadHint) courseUploadHint.textContent = file.name;
+                    setCourseQuickStatus('课程档案已更新；可继续快捷录入追加课程。', 'ok');
+                } catch (error) {
+                    setCourseUploadStatus(`✕ 课程导入失败：${error.message}`, 'error');
+                } finally {
+                    courseUploadBusy = false;
+                    courseUploadZone?.classList.remove('is-loading');
+                    if (courseFileInput) courseFileInput.value = '';
+                }
+            };
+            reader.onerror = () => {
+                courseUploadBusy = false;
+                courseUploadZone?.classList.remove('is-loading');
+                if (courseFileInput) courseFileInput.value = '';
+                setCourseUploadStatus('✕ 文件读取失败，请确认文件未被占用后重试。', 'error');
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function renderLifestyleTags() {
+            if (!lifestyleTagList) return;
+            lifestyleTagList.innerHTML = LIFESTYLE_OPTIONS.map((option) => {
+                const selected = selectedLifestyleIds.has(option.id);
+                return `
+                    <button type="button" class="data-chip" data-lifestyle-id="${option.id}"
+                        aria-pressed="${selected}">
+                        <span class="flex items-center gap-1.5 text-[11px] font-semibold">
+                            <span aria-hidden="true">${option.emoji}</span>${option.label}
+                        </span>
+                        <span class="chip-meta mt-1 block text-[9px] leading-4">${option.note}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderLifestyleSummary() {
+            if (!lifestyleSummary) return;
+            const state = getLifestyleState();
+            if (!state.count) {
+                lifestyleSummary.textContent = '未选择生活状态：占卜引擎仅使用课程与消费数据；选择标签后可激活联动解读。';
+                return;
+            }
+            const riskText = `${state.risk > 0 ? '+' : ''}${state.risk}`;
+            const synergy = state.hasEarlySleep
+                ? '早睡结界已激活，考试概率获得正向修正。'
+                : (state.hasNightSnack || state.hasMilkTea
+                    ? '检测到糖分/熬夜信号，课程业力与考试挂科率已被上调。'
+                    : '生活状态信号已接入综合模型。');
+            lifestyleSummary.textContent = `已选择 ${state.count} 项（${lifestyleMode === 'single' ? '单选' : '多选'}）：${state.labels.join(' + ')}｜生活业力 ${riskText}。${synergy}`;
+        }
+
+        function scheduleLifestyleOracle() {
+            clearTimeout(lifestyleOracleTimer);
+            lifestyleOracleTimer = setTimeout(() => runOracle(), 260);
+        }
+
+        function removeCourse(courseId) {
+            const removed = COURSE_RECORDS.find((course) => course.course_id === courseId);
+            COURSE_RECORDS = COURSE_RECORDS.filter((course) => course.course_id !== courseId);
+            if (!activeCourseSource.includes('手动调整')) activeCourseSource = `${activeCourseSource} · 手动调整`;
+            renderCourseRoster();
+            setCourseUploadStatus(
+                removed ? `✕ 已移除《${removed.course_name}》；AI 报告与考试概率已重新计算。` : '课程已移除。',
+                'idle'
+            );
+            resetCoursesBtn?.classList.remove('hidden');
+            runOracle();
+            refreshExamAfterDataChange();
+        }
+
+        function bindCourseAndLifestylePanel() {
+            renderCourseRoster();
+            renderLifestyleTags();
+            renderLifestyleSummary();
+            bindExamTerminal();
+
+            courseFileInput?.addEventListener('change', () => {
+                handleCourseFile(courseFileInput.files && courseFileInput.files[0]);
+            });
+
+            courseUploadZone?.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    courseFileInput?.click();
+                }
+            });
+
+            ['dragenter', 'dragover'].forEach((eventName) => {
+                courseUploadZone?.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    courseUploadZone.classList.add('is-dragover');
+                });
+            });
+            ['dragleave', 'dragend'].forEach((eventName) => {
+                courseUploadZone?.addEventListener(eventName, () => {
+                    courseUploadZone.classList.remove('is-dragover');
+                });
+            });
+            courseUploadZone?.addEventListener('drop', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                courseUploadZone.classList.remove('is-dragover');
+                const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+                handleCourseFile(file);
+            });
+
+            resetCoursesBtn?.addEventListener('click', () => {
+                COURSE_RECORDS = MOCK_COURSE_RECORDS.map((course) => ({ ...course }));
+                activeCourseSource = '内置 Mock 数据（courses.json）';
+                renderCourseRoster();
+                resetCoursesBtn.classList.add('hidden');
+                if (courseUploadTitle) courseUploadTitle.textContent = '⬆ 上传课表 / 成绩单';
+                if (courseUploadHint) courseUploadHint.textContent = '支持 .csv / .json · 最大 2 MB';
+                setCourseUploadStatus('↺ 已恢复内置 Mock 课表；AI 报告与考试概率已刷新。', 'idle');
+                setCourseQuickStatus('已恢复默认课程，可继续快捷录入。', 'idle');
+                runOracle();
+                refreshExamAfterDataChange();
+            });
+
+            courseQuickForm?.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const name = courseNameInput ? courseNameInput.value.trim() : '';
+                if (!name) {
+                    setCourseQuickStatus('✕ 请输入课程名后再录入。', 'error');
+                    courseNameInput?.focus();
+                    return;
+                }
+                const difficulty = clamp(Number(courseDifficultyInput?.value) || 3, 1, 5);
+                const newCourse = normalizeCourseRecord({
+                    course_id: `GEN-${Date.now().toString(36).toUpperCase()}`,
+                    course_name: name,
+                    difficulty_rating: difficulty,
+                    is_final: Boolean(courseIsFinalInput?.checked),
+                    credits: 0,
+                    semester: '',
+                    remark: '移动端快捷录入'
+                }, COURSE_RECORDS.length);
+                if (!newCourse) {
+                    setCourseQuickStatus('✕ 课程数据无效，请检查课程名。', 'error');
+                    return;
+                }
+                COURSE_RECORDS = ensureUniqueCourseIds([...COURSE_RECORDS, newCourse]);
+                if (!activeCourseSource.includes('快捷录入')) activeCourseSource = `${activeCourseSource} + 快捷录入`;
+                renderCourseRoster();
+                resetCoursesBtn?.classList.remove('hidden');
+                setCourseQuickStatus(`✓ 已录入《${newCourse.course_name}》（难度 ${difficulty}/5${newCourse.is_final ? ' · 期末' : ''}），玄学报告与考试概率已刷新。`, 'ok');
+                courseQuickForm.reset();
+                runOracle();
+                refreshExamAfterDataChange();
+                courseNameInput?.focus();
+            });
+
+            courseRoster?.addEventListener('click', (event) => {
+                const button = event.target.closest('[data-remove-course]');
+                if (!button) return;
+                removeCourse(button.dataset.removeCourse);
+            });
+
+            document.querySelectorAll('[data-lifestyle-mode]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    lifestyleMode = button.dataset.lifestyleMode === 'single' ? 'single' : 'multi';
+                    if (lifestyleMode === 'single' && selectedLifestyleIds.size > 1) {
+                        selectedLifestyleIds = new Set([selectedLifestyleIds.values().next().value]);
+                    }
+                    document.querySelectorAll('[data-lifestyle-mode]').forEach((item) => {
+                        const active = item.dataset.lifestyleMode === lifestyleMode;
+                        item.classList.toggle('is-active', active);
+                        item.setAttribute('aria-pressed', String(active));
+                    });
+                    renderLifestyleTags();
+                    renderLifestyleSummary();
+                    refreshExamAfterDataChange();
+                    scheduleLifestyleOracle();
+                });
+            });
+
+            lifestyleTagList?.addEventListener('click', (event) => {
+                const button = event.target.closest('[data-lifestyle-id]');
+                if (!button) return;
+                const id = button.dataset.lifestyleId;
+                if (lifestyleMode === 'single') {
+                    selectedLifestyleIds = selectedLifestyleIds.has(id)
+                        ? new Set()
+                        : new Set([id]);
+                } else if (selectedLifestyleIds.has(id)) {
+                    selectedLifestyleIds.delete(id);
+                } else {
+                    selectedLifestyleIds.add(id);
+                }
+                renderLifestyleTags();
+                renderLifestyleSummary();
+                refreshExamAfterDataChange();
+                scheduleLifestyleOracle();
+            });
+
+            clearLifestyleBtn?.addEventListener('click', () => {
+                selectedLifestyleIds.clear();
+                renderLifestyleTags();
+                renderLifestyleSummary();
+                refreshExamAfterDataChange();
+                scheduleLifestyleOracle();
+            });
+        }
+
+        bindCourseAndLifestylePanel();
+
+        /* ============================================================
          * 5. CSV 自定义数据导入：FileReader → 解析 → 图表 + 玄学卡片
          * ============================================================ */
         const fileInput = document.getElementById('csvFileInput');
@@ -1308,6 +2975,7 @@
             updateExpenseCharts(EXPENSES);
             updateDataSummary();
             runOracle(); // 数据变更后重新生成 AI 玄学解读
+            refreshExamAfterDataChange();
         }
 
         function readCsvFile(file) {
@@ -1522,6 +3190,7 @@
             updateExpenseCharts(EXPENSES);
             updateDataSummary();
             runOracle(); // 追加后重新生成 AI 赛博玄学解读
+            refreshExamAfterDataChange();
 
             quickAmount.value = '';
             quickNote.value = '';
@@ -1539,6 +3208,7 @@
         window.addEventListener('resize', function () {
             locChart.resize();
             nightChart.resize();
+            if (examGaugeChart) examGaugeChart.resize();
         });
     </script>
 </body>

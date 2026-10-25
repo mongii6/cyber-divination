@@ -6,6 +6,7 @@
     "credits": 4,
     "score": 78,
     "difficulty_rating": 5,
+    "is_final": true,
     "remark": "期末周渡劫课程"
   },
   {
@@ -15,6 +16,7 @@
     "credits": 4,
     "score": 85,
     "difficulty_rating": 4,
+    "is_final": true,
     "remark": "头发减半"
   },
   {
@@ -24,6 +26,7 @@
     "credits": 2,
     "score": 92,
     "difficulty_rating": 1,
+    "is_final": false,
     "remark": "神仙通识课"
   }
 ]
