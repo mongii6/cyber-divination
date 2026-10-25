@@ -177,6 +177,23 @@
         .quick-submit:focus-visible { outline: 2px solid #a7f3d0; outline-offset: 2px; }
         .quick-status[data-tone="ok"] { color: #34d399; }
         .quick-status[data-tone="error"] { color: #fb7185; }
+        .is-hidden { display: none !important; }
+        /* ================= 按需占卜：图表待机遮罩 ================= */
+        .chart-gate-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 30;
+            display: grid;
+            place-content: center;
+            justify-items: center;
+            gap: 0.65rem;
+            padding: 1.5rem;
+            border: 1px dashed rgba(34, 211, 238, 0.28);
+            border-radius: 1rem;
+            background: rgba(2, 6, 23, 0.80);
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
         .cyber-toast {
             position: fixed;
             left: 50%;
@@ -381,6 +398,20 @@
             pointer-events: none;
             text-align: center;
         }
+        .exam-gauge-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            display: grid;
+            place-content: center;
+            justify-items: center;
+            gap: 0.4rem;
+            padding: 1rem;
+            border: 1px dashed rgba(251, 191, 36, 0.28);
+            border-radius: 0.75rem;
+            background: rgba(2, 6, 23, 0.82);
+            text-align: center;
+        }
         .talisman-card {
             overflow: hidden;
             border: 1px solid rgba(251, 191, 36, 0.45);
@@ -453,7 +484,7 @@
                         <p class="text-[10px] tracking-[0.35em] text-cyan-300/80">DATA INGESTION // CSV UPLOAD</p>
                         <h2 id="uploadTitle" class="mt-1 text-lg font-bold text-slate-100">📡 导入你的消费流水</h2>
                         <p class="mt-1 text-xs leading-5 text-slate-400">
-                            拖拽 CSV 到右侧区域，或点击选择文件。解析成功后会实时刷新消费图表，并重新生成 AI 玄学报告；未上传时继续使用内置 Mock 数据。
+                            拖拽 CSV 到右侧区域，或点击选择文件。解析成功后先暂存数据；点击「开始占卜 / 生成运势」后才会刷新消费图表并生成 AI 玄学报告。
                         </p>
                         <p class="mt-1 text-[10px] tracking-wider text-slate-500">列格式：date,time,location,category,amount,remark（UTF-8，≤ 2 MB）</p>
                     </div>
@@ -466,13 +497,13 @@
                         <input id="csvFileInput" type="file" accept=".csv,text/csv" class="sr-only">
                         <button id="resetDataBtn" type="button"
                             class="hidden rounded-lg border border-slate-600/70 bg-slate-800/60 px-3 py-2 text-[11px] tracking-widest text-slate-300 transition hover:border-fuchsia-400/60 hover:text-fuchsia-200">
-                            ↺ 恢复 Mock 数据
+                            ↺ 载入示例流水
                         </button>
                     </div>
                 </div>
                 <div class="relative mt-3 flex flex-col gap-1 border-t border-slate-700/50 pt-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p id="uploadStatus" class="upload-status text-[11px]" data-tone="idle" role="status" aria-live="polite">● 当前使用内置 Mock 数据（expenses.csv）</p>
-                    <p id="dataSummary" class="text-[10px] tracking-wider text-slate-500">—</p>
+                    <p id="uploadStatus" class="upload-status text-[11px]" data-tone="idle" role="status" aria-live="polite">● 等待输入：上传消费 CSV，或使用下方快捷记账。</p>
+                    <p id="dataSummary" class="text-[10px] tracking-wider text-slate-500">数据源：等待输入 ｜ 0 条消费记录</p>
                 </div>
             </div>
         </section>
@@ -487,7 +518,7 @@
                         <span class="min-w-0">
                             <span class="block text-[10px] tracking-[0.35em] text-emerald-300/80">MOBILE LEDGER // QUICK ENTRY</span>
                             <span id="quickEntryTitle" class="mt-1 block text-lg font-bold text-slate-100">手机快捷记账</span>
-                            <span class="mt-1 block text-xs leading-5 text-slate-400">随手补一笔，立即追加到当前数据并刷新图表与 AI 运势。</span>
+                            <span class="mt-1 block text-xs leading-5 text-slate-400">随手补一笔，先暂存到当前数据；点击「开始占卜 / 生成运势」后刷新图表与 AI 运势。</span>
                         </span>
                     </span>
                     <span class="shrink-0 rounded-lg border border-slate-600/60 px-2.5 py-1 text-[10px] tracking-wider text-slate-400">
@@ -531,7 +562,7 @@
                             ➕ 记一笔 / 插入流水
                         </button>
                         <p id="quickEntryStatus" class="quick-status text-[11px] leading-5 text-slate-500 sm:text-right" data-tone="idle" role="status" aria-live="polite">
-                            本笔会追加到当前数据，不会覆盖 CSV / Mock。
+                            本笔会先追加到当前数据；生成结果需点击「开始占卜 / 生成运势」。
                         </p>
                     </div>
                 </form>
@@ -571,11 +602,11 @@
                             <input id="courseFileInput" type="file" accept=".csv,.json,text/csv,application/json" class="sr-only">
                             <button id="resetCoursesBtn" type="button"
                                 class="hidden min-h-[48px] shrink-0 rounded-lg border border-slate-600/70 bg-slate-800/60 px-3 py-2 text-[10px] tracking-widest text-slate-300 transition hover:border-fuchsia-400/60 hover:text-fuchsia-200">
-                                ↺ 恢复课程 Mock
+                                ↺ 载入示例课表
                             </button>
                         </div>
                         <p class="mt-2 text-[10px] leading-4 text-slate-500">CSV 列：course_name, difficulty_rating, is_final；可选 credits, score, semester, remark。JSON 支持数组或 { courses: [] }。</p>
-                        <p id="courseUploadStatus" class="upload-status mt-1 text-[11px]" data-tone="idle" role="status" aria-live="polite">● 当前使用内置 Mock 课表（courses.json）</p>
+                        <p id="courseUploadStatus" class="upload-status mt-1 text-[11px]" data-tone="idle" role="status" aria-live="polite">● 等待录入：上传课表 / 成绩单，或使用快捷表单添加课程。</p>
                         <form id="courseQuickForm" class="mt-3 border-t border-slate-700/50 pt-3" novalidate>
                             <p class="mb-2 text-[10px] tracking-[0.22em] text-fuchsia-300/80">MOBILE QUICK COURSE // 快捷录入</p>
                             <div class="grid grid-cols-2 gap-3">
@@ -608,7 +639,7 @@
                                     ➕ 录入课程
                                 </button>
                                 <p id="courseQuickStatus" class="quick-status text-[11px] leading-5 text-slate-500" data-tone="idle" role="status" aria-live="polite">
-                                    新课程会追加到当前课表，并同步刷新占卜结果。
+                                    新课程会先追加到当前课表；点击「开始占卜 / 生成运势」后刷新占卜结果。
                                 </p>
                             </div>
                         </form>
@@ -630,7 +661,7 @@
                             <span class="min-w-0">
                                 <span class="block text-[10px] tracking-[0.3em] text-emerald-300/80">LIFESTYLE SIGNAL</span>
                                 <span class="mt-1 block text-base font-bold text-slate-100">近期饮食 / 生活状态</span>
-                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">选择标签，让课程难度与生活状态在占卜引擎中联动。</span>
+                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">选择标签，点击「开始占卜 / 生成运势」后让课程难度与生活状态在引擎中联动。</span>
                             </span>
                         </span>
                         <span class="shrink-0 text-[10px] tracking-wider text-slate-500">折叠 ⌄</span>
@@ -650,7 +681,7 @@
                         </div>
                         <div id="lifestyleTagList" class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
                         <p id="lifestyleSummary" class="mt-3 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-3 py-2 text-[11px] leading-5 text-emerald-200/90" role="status" aria-live="polite">
-                            正在载入生活状态信号...
+                            未选择生活状态：占卜引擎仅使用课程与消费数据。
                         </p>
                         <p class="mt-2 text-[10px] leading-4 text-slate-500">
                             标签只参与 AI 解读与考试概率预测，不会写入或伪造消费流水。单选模式下每次只保留一个状态。
@@ -670,18 +701,53 @@
             </div>
         </section>
 
-        <!-- 图表展示区域 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- 图表1：最高频消费地点占比 -->
-            <div class="bg-slate-900 border border-purple-500/30 p-4 rounded-xl shadow-lg shadow-purple-500/10">
-                <h3 id="locationChartTitle" class="text-lg font-semibold mb-4 text-purple-300">⚡ 最高频消费磁场 (Location)</h3>
-                <div id="locationChart" style="width: 100%; height: 300px;"></div>
+        <!-- ================= 按需占卜触发区 ================= -->
+        <section id="divinationGate" class="mb-6" aria-labelledby="divinationGateTitle">
+            <div class="cyber-oracle relative overflow-hidden rounded-2xl border border-fuchsia-400/30 p-4 sm:p-5">
+                <div class="cyber-grid pointer-events-none absolute inset-0 opacity-50"></div>
+                <div class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="min-w-0">
+                        <p class="text-[10px] tracking-[0.35em] text-fuchsia-300/80">ORACLE IGNITION // ON-DEMAND</p>
+                        <h2 id="divinationGateTitle" class="mt-1 text-lg font-bold text-slate-100">🔮 开始占卜 / 生成运势</h2>
+                        <p id="divinationGateHint" class="mt-1 text-xs leading-5 text-slate-400">
+                            当前处于等待输入状态。先提交课程录入 / 记录一笔 / 选择生活状态，或上传消费流水，再点击「开始占卜 / 生成运势」按钮唤醒玄学终端。
+                        </p>
+                        <p id="divinationPrompt" class="is-hidden mt-2 rounded-lg border border-amber-400/35 bg-amber-400/10 px-3 py-2 text-[11px] leading-5 text-amber-200" role="alert" aria-live="assertive">
+                            请先输入您的赛博课表或近期饮食状态，再来连线玄学终端！
+                        </p>
+                    </div>
+                    <button id="startDivinationBtn" type="button"
+                        class="min-h-[48px] w-full shrink-0 rounded-xl border border-fuchsia-300/50 bg-gradient-to-r from-fuchsia-400 to-cyan-300 px-5 py-3 text-sm font-bold tracking-widest text-slate-950 transition hover:brightness-110 hover:shadow-[0_0_26px_rgba(217,70,239,0.35)] focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-200 disabled:cursor-wait disabled:opacity-60 sm:w-auto">
+                        🔮 开始占卜 / 生成运势
+                    </button>
+                </div>
             </div>
+        </section>
 
-            <!-- 图表2：深夜渡劫/夜宵消费暴涨趋势 -->
-            <div class="bg-slate-900 border border-cyan-500/30 p-4 rounded-xl shadow-lg shadow-cyan-500/10">
-                <h3 id="nightChartTitle" class="text-lg font-semibold mb-4 text-cyan-300">🌙 深夜渡劫与夜宵暴涨曲线</h3>
-                <div id="nightChart" style="width: 100%; height: 300px;"></div>
+        <!-- 图表展示区域 -->
+        <div class="relative">
+            <div id="chartGateOverlay" class="chart-gate-overlay" role="status" aria-live="polite">
+                <p class="text-[10px] tracking-[0.35em] text-cyan-300/80">CHARTS // STANDBY</p>
+                <p id="chartGateText" class="max-w-md text-xs leading-5 text-slate-300">
+                    等待消费数据接入；点击「开始占卜 / 生成运势」后生成图表。
+                </p>
+                <button id="chartGateBtn" type="button"
+                    class="min-h-[44px] rounded-lg border border-cyan-300/45 bg-cyan-400/10 px-4 py-2 text-[11px] font-semibold tracking-widest text-cyan-100 transition hover:bg-cyan-400/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200">
+                    🔮 开始占卜 / 生成运势
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 图表1：最高频消费地点占比 -->
+                <div class="bg-slate-900 border border-purple-500/30 p-4 rounded-xl shadow-lg shadow-purple-500/10">
+                    <h3 id="locationChartTitle" class="text-lg font-semibold mb-4 text-purple-300">⚡ 最高频消费磁场 (Location)</h3>
+                    <div id="locationChart" style="width: 100%; height: 300px;"></div>
+                </div>
+
+                <!-- 图表2：深夜渡劫/夜宵消费暴涨趋势 -->
+                <div class="bg-slate-900 border border-cyan-500/30 p-4 rounded-xl shadow-lg shadow-cyan-500/10">
+                    <h3 id="nightChartTitle" class="text-lg font-semibold mb-4 text-cyan-300">🌙 深夜渡劫与夜宵暴涨曲线</h3>
+                    <div id="nightChart" style="width: 100%; height: 300px;"></div>
+                </div>
             </div>
         </div>
 
@@ -696,11 +762,11 @@
                         <div>
                             <p class="text-[10px] tracking-[0.4em] text-fuchsia-400/80">CYBER-ORACLE // NEURAL DIVINATION ENGINE</p>
                             <h2 id="oracleTitle" class="cyber-glitch mt-2 text-2xl font-bold text-slate-100">🛰️ AI 趣味玄学解读终端</h2>
-                            <p id="oracleSource" class="mt-2 text-xs text-slate-400">数据源：expenses.csv · courses.json</p>
+                            <p id="oracleSource" class="mt-2 text-xs text-slate-400">数据源：等待输入 · 尚未开始推演</p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span id="oracleStatus" class="text-[10px] tracking-widest text-emerald-400/90">● ONLINE</span>
-                            <button id="rerollBtn" type="button"
+                            <span id="oracleStatus" class="text-[10px] tracking-widest text-slate-400">● STANDBY</span>
+                            <button id="rerollBtn" type="button" hidden
                                 class="rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-xs font-semibold tracking-widest text-cyan-200 transition hover:bg-cyan-400/20 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] disabled:cursor-wait disabled:opacity-50">
                                 ⟲ 重新卜一卦
                             </button>
@@ -711,7 +777,10 @@
 
                     <!-- 推演中：模拟大模型终端输出 -->
                     <div id="oracleLoading" class="min-h-[220px] rounded-xl border border-cyan-500/20 bg-slate-950/70 p-4 text-xs leading-6 text-emerald-300/90" role="status" aria-live="polite">
-                        <div id="oracleLog" class="space-y-1"></div>
+                        <div id="oracleLog" class="space-y-1">
+                            <p class="text-slate-400">SYSTEM STANDBY // 等待输入</p>
+                            <p class="text-slate-500">请先在上方录入课表、消费流水或生活状态，然后点击「开始占卜 / 生成运势」激活 AI 玄学终端。</p>
+                        </div>
                     </div>
 
                     <!-- 推演结果 -->
@@ -726,7 +795,7 @@
                                 <div class="mt-4 flex items-start gap-4">
                                     <div id="personaEmoji" class="grid h-16 w-16 shrink-0 place-items-center rounded-xl border border-fuchsia-400/30 bg-fuchsia-500/10 text-4xl">🧋</div>
                                     <div class="min-w-0">
-                                        <h3 id="personaTitle" class="text-lg font-bold leading-6 text-slate-100">正在推演...</h3>
+                                        <h3 id="personaTitle" class="text-lg font-bold leading-6 text-slate-100">等待输入...</h3>
                                         <p id="personaCode" class="mt-1 text-[10px] tracking-widest text-cyan-300/80">PENDING // Lv.0</p>
                                     </div>
                                 </div>
@@ -742,7 +811,7 @@
                                         <h3 class="mt-1 text-lg font-bold text-slate-100">今日运势报告</h3>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <span id="fortuneTier" class="rounded-full border px-3 py-1 text-[11px] tracking-wider text-cyan-200">推演中</span>
+                                        <span id="fortuneTier" class="rounded-full border px-3 py-1 text-[11px] tracking-wider text-cyan-200">待机</span>
                                         <div class="fortune-ring" id="fortuneRing" aria-hidden="true">
                                             <div class="fortune-ring-inner">
                                                 <span id="fortuneScore" class="text-2xl font-bold text-slate-100">0</span>
@@ -818,7 +887,7 @@
                             <h2 id="examTitle" class="cyber-glitch mt-2 text-2xl font-bold text-slate-100">🧧 考试渡劫专属终端</h2>
                             <p class="mt-2 text-xs leading-5 text-slate-400">赛博签筒 × 概率仪表盘 × 考神护体符咒。数据依据：当前课程难度 + 生活状态标签 + 已叠加 Buff。</p>
                         </div>
-                        <span id="examStatus" class="shrink-0 rounded-full border border-emerald-400/35 bg-emerald-400/10 px-3 py-1 text-[10px] tracking-widest text-emerald-300">● READY</span>
+                        <span id="examStatus" class="shrink-0 rounded-full border border-slate-500/35 bg-slate-500/10 px-3 py-1 text-[10px] tracking-widest text-slate-300">● STANDBY</span>
                     </div>
                     <div class="mt-5 flex flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-950/55 p-3 sm:flex-row sm:items-center sm:justify-between">
                         <label for="examSubjectSelect" class="text-[10px] tracking-[0.22em] text-cyan-200/80">渡劫科目 / EXAM SUBJECT</label>
@@ -832,7 +901,7 @@
                             <div class="flex items-center justify-between gap-2">
                                 <div>
                                     <h3 class="text-sm font-semibold tracking-widest text-amber-100">🎋 考前玄学签筒</h3>
-                                    <p class="mt-1 text-[10px] tracking-wider text-slate-500">CYBER LOTTERY // 概率随数据实时重算</p>
+                                    <p class="mt-1 text-[10px] tracking-wider text-slate-500">CYBER LOTTERY // 点击占卜后重算</p>
                                 </div>
                                 <span class="text-[10px] tracking-widest text-slate-500">LIVE</span>
                             </div>
@@ -843,6 +912,10 @@
                                     <span id="examPassRate" class="text-3xl font-bold text-amber-200">--%</span>
                                     <span class="mt-1 text-[9px] tracking-[0.2em] text-slate-500">COMPOSITE PASS</span>
                                     <span class="mt-0.5 text-[10px] text-slate-400">综合过关率</span>
+                                </div>
+                                <div id="examGaugeOverlay" class="exam-gauge-overlay is-hidden" role="status" aria-live="polite">
+                                    <span class="text-[10px] tracking-[0.3em] text-amber-300/80">PROBABILITY // STALE</span>
+                                    <span id="examGaugeOverlayText" class="text-[11px] leading-5 text-slate-400">数据已更新，等待重新占卜。</span>
                                 </div>
                             </div>
 
@@ -873,7 +946,7 @@
                                         class="mt-2 min-h-[48px] w-full rounded-lg border border-amber-300/50 bg-gradient-to-r from-amber-400 to-yellow-300 px-4 py-2 text-xs font-bold tracking-widest text-slate-950 transition hover:brightness-110 hover:shadow-[0_0_24px_rgba(251,191,36,0.35)] disabled:cursor-wait disabled:opacity-60 sm:w-auto">
                                         🎲 开始抽签
                                     </button>
-                                    <p id="examLotStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">签筒已就绪。点击后由课程压力与生活状态共同推演签文。</p>
+                                    <p id="examLotStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">签筒处于待机状态；请先点击「开始占卜 / 生成运势」激活终端。</p>
                                 </div>
                             </div>
 
@@ -902,7 +975,7 @@
                                 ✨ 一键生成赛博符咒
                             </button>
                             <p id="talismanStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">
-                                尚未生成符咒。已选 Buff 会实时参与概率预测。
+                                尚未生成符咒。开始占卜后，已选 Buff 会参与概率预测。
                             </p>
 
                             <div id="talismanCard" class="talisman-card relative mt-4 hidden p-4" role="status" aria-live="polite">
@@ -912,7 +985,7 @@
                     </div>
                     <p class="mt-4 text-[10px] leading-5 text-slate-500">
                         签文、概率和符咒均由本地规则引擎根据当前数据生成，仅用于考前娱乐减压，不构成考试结果预测或任何真实建议。<br>
-                        概率模型不会保存到服务器；刷新页面后恢复默认课程、生活状态与消费数据。
+                        概率模型不会保存到服务器；刷新页面后回到等待输入的干净初始状态。
                     </p>
                 </div>
             </div>
@@ -920,7 +993,7 @@
     </div>
 
     <div id="quickToast" class="cyber-toast" role="status" aria-live="polite" aria-atomic="true">
-        <span aria-hidden="true">✓</span> <span id="quickToastText">记账成功！运势已更新</span>
+        <span aria-hidden="true">✓</span> <span id="quickToastText">记账成功！点击「开始占卜」更新运势</span>
     </div>
 
     <script>
@@ -947,8 +1020,9 @@
             { course_id: 'CS102', course_name: '数据结构与算法', semester: '2025-2026-1', credits: 4, score: 85, difficulty_rating: 4, is_final: true, remark: '头发减半' },
             { course_id: 'GE201', course_name: '赛博朋克与未来哲学', semester: '2025-2026-2', credits: 2, score: 92, difficulty_rating: 1, is_final: false, remark: '神仙通识课' }
         ];
-        let COURSE_RECORDS = MOCK_COURSE_RECORDS.map((course) => ({ ...course }));
-        let activeCourseSource = '内置 Mock 数据（courses.json）';
+        // 页面初始不注入任何默认课程；用户主动录入/上传后才进入占卜流程
+        let COURSE_RECORDS = [];
+        let activeCourseSource = '等待录入';
 
         const FINALS_WINDOW = { start: '2026-06-15', end: '2026-06-21' };
         const FORTUNE_TIERS = [
@@ -967,7 +1041,7 @@
             { id: 'early-sleep', label: '早睡早起', emoji: '🌅', risk: -10, note: '稀有作息结界' }
         ];
         let lifestyleMode = 'multi';
-        let selectedLifestyleIds = new Set(['milk-tea', 'night-snack']);
+        let selectedLifestyleIds = new Set();
         let selectedExamBuffIds = new Set();
         let currentExamLot = null;
         let examGaugeChart = null;
@@ -1360,10 +1434,166 @@
             return { courses: ensureUniqueCourseIds(courses), skipped, errorSamples, format: 'JSON' };
         }
 
+        // 示例数据仅由“载入示例流水”按钮显式启用，页面加载时不参与任何渲染
         const MOCK_EXPENSES = parseExpensesCsv(RAW_EXPENSE_CSV).rows;
-        // 当前生效的消费数据：默认 Mock，上传 CSV 后会整体替换
-        let EXPENSES = MOCK_EXPENSES.slice();
-        let activeExpenseSource = '内置 Mock 数据（expenses.csv）';
+        // 当前生效的消费数据：初始为空；上传 CSV / 快捷记账后先暂存
+        let EXPENSES = [];
+        let activeExpenseSource = '等待输入';
+        let divinationActivated = false;
+        let divinationDirty = false;
+
+        function getDivinationInputSummary() {
+            const parts = [];
+            if (EXPENSES.length) parts.push(`${EXPENSES.length} 条消费记录`);
+            if (COURSE_RECORDS.length) parts.push(`${COURSE_RECORDS.length} 门课程`);
+            const lifestyle = getLifestyleState();
+            if (lifestyle.count) parts.push(`${lifestyle.count} 个生活状态`);
+            return parts.join(' · ');
+        }
+
+        function hasDivinationInput() {
+            return Boolean(getDivinationInputSummary());
+        }
+
+        function setDivinationPrompt(message = '') {
+            const prompt = document.getElementById('divinationPrompt');
+            if (!prompt) return;
+            prompt.textContent = message || '请先输入您的赛博课表或近期饮食状态，再来连线玄学终端！';
+            prompt.classList.toggle('is-hidden', !message);
+        }
+
+        function setChartGate(visible, message = '') {
+            const overlay = document.getElementById('chartGateOverlay');
+            const text = document.getElementById('chartGateText');
+            if (text && message) text.textContent = message;
+            if (overlay) overlay.classList.toggle('is-hidden', !visible);
+        }
+
+        function setExamGaugeGate(visible, message = '') {
+            const overlay = document.getElementById('examGaugeOverlay');
+            const text = document.getElementById('examGaugeOverlayText');
+            if (text && message) text.textContent = message;
+            if (overlay) overlay.classList.toggle('is-hidden', !visible);
+        }
+
+        function updateDivinationGate(mode = 'idle') {
+            const startButton = document.getElementById('startDivinationBtn');
+            const chartButton = document.getElementById('chartGateBtn');
+            const hint = document.getElementById('divinationGateHint');
+            const summary = getDivinationInputSummary();
+            if (!startButton || !hint) return;
+
+            startButton.disabled = mode === 'busy';
+            if (mode === 'busy') {
+                startButton.textContent = '◌ 推演中...';
+                return;
+            }
+            const actionLabel = divinationActivated
+                ? '🔄 重新占卜 / 更新运势'
+                : '🔮 开始占卜 / 生成运势';
+            startButton.textContent = actionLabel;
+            if (chartButton) chartButton.textContent = actionLabel;
+
+            if (!summary) {
+                hint.textContent = '当前处于等待输入状态。先提交课程录入 / 记录一笔 / 选择生活状态，或上传消费流水，再点击「开始占卜 / 生成运势」按钮唤醒玄学终端。';
+                setChartGate(true, '等待输入：上传消费流水或快捷记账后，点击「开始占卜 / 生成运势」生成图表。');
+                return;
+            }
+            if (!divinationActivated) {
+                hint.textContent = `已暂存 ${summary}。系统不会自动跑分，点击按钮后才生成 AI 报告、图表与考试概率。`;
+                setChartGate(true, `已暂存 ${summary}，点击「开始占卜 / 生成运势」后生成图表。`);
+                return;
+            }
+            if (divinationDirty) {
+                hint.textContent = `数据已更新（${summary}）。当前结果已冻结，点击按钮重新生成。`;
+                setChartGate(true, '数据已更新，旧图表已冻结；点击「重新占卜 / 更新运势」刷新。');
+                return;
+            }
+            hint.textContent = `已生成占卜结果 · 当前输入：${summary}。继续调整数据后需重新占卜。`;
+            setChartGate(false);
+        }
+
+        // 数据变更只暂存，不自动跑分；已激活时冻结旧结果，等待用户再次点击占卜
+        function markDivinationInputsChanged() {
+            updateDataSummary();
+            if (divinationActivated) {
+                divinationDirty = true;
+                oracleRunId += 1;
+                const status = document.getElementById('oracleStatus');
+                if (status) {
+                    status.textContent = '● STALE';
+                    status.className = 'text-[10px] tracking-widest text-amber-300';
+                }
+                const content = document.getElementById('oracleContent');
+                if (content) content.classList.add('hidden');
+                const loading = document.getElementById('oracleLoading');
+                if (loading) loading.classList.remove('hidden');
+                const log = document.getElementById('oracleLog');
+                if (log) {
+                    log.innerHTML = `
+                        <p class="text-amber-300">SYSTEM STALE // 数据已更新</p>
+                        <p class="text-slate-500">旧推演已冻结；点击「重新占卜 / 更新运势」生成最新结果。</p>`;
+                }
+                const reroll = document.getElementById('rerollBtn');
+                if (reroll) {
+                    reroll.hidden = false;
+                    reroll.disabled = false;
+                    reroll.textContent = '⟲ 重新卜一卦';
+                }
+                currentExamLot = null;
+                updateExamSubjects();
+                const result = document.getElementById('examLotResult');
+                if (result) result.classList.add('hidden');
+                setExamStatus('● STALE', 'warn');
+                setExamGaugeGate(true, '数据已更新，旧概率已冻结；等待重新占卜。');
+                const ticker = document.getElementById('examLotTicker');
+                if (ticker) ticker.textContent = 'SYNC // 数据已更新，等待重新占卜';
+                const lotStatus = document.getElementById('examLotStatus');
+                if (lotStatus) lotStatus.textContent = '数据已更新，旧签文与概率已冻结；请先重新占卜。';
+                const drawButton = document.getElementById('drawLotBtn');
+                if (drawButton) {
+                    drawButton.disabled = true;
+                    drawButton.textContent = '🎲 等待重新占卜';
+                }
+                const talismanButton = document.getElementById('generateTalismanBtn');
+                if (talismanButton) talismanButton.disabled = true;
+                const card = document.getElementById('talismanCard');
+                if (card) card.classList.add('hidden');
+                const talismanStatus = document.getElementById('talismanStatus');
+                if (talismanStatus) talismanStatus.textContent = '数据已更新，旧符咒已失效；请先重新占卜。';
+            } else {
+                setDivinationPrompt('');
+            }
+            updateDivinationGate('staged');
+        }
+
+        function requestDivination() {
+            const summary = getDivinationInputSummary();
+            if (!summary) {
+                setDivinationPrompt('请先输入您的赛博课表或近期饮食状态，再来连线玄学终端！');
+                updateDivinationGate('empty');
+                document.getElementById('divinationGate')?.scrollIntoView({
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                    block: 'center'
+                });
+                document.getElementById('startDivinationBtn')?.focus({ preventScroll: true });
+                return;
+            }
+
+            setDivinationPrompt('');
+            divinationActivated = true;
+            divinationDirty = false;
+            updateDataSummary();
+            setChartGate(false);
+            updateExpenseCharts(EXPENSES);
+            refreshExamAfterDataChange();
+            setExamGaugeGate(false);
+            const drawButton = document.getElementById('drawLotBtn');
+            if (drawButton && !examDrawing) drawButton.textContent = '🎲 摇一签';
+            updateDivinationGate('busy');
+            runOracle();
+        }
+
         const hourOf = (time) => {
             const match = /^(\d{1,2}):\d{2}/.exec(String(time || ''));
             return match ? Number(match[1]) : -1;
@@ -1560,7 +1790,11 @@
                 .join('、') || '未记录具体物资';
             const sourceTag = activeExpenseSource.startsWith('本地文件')
                 ? '上传 CSV'
-                : (activeExpenseSource.includes('手动记账') ? '手动记账' : 'expenses.csv');
+                : (activeExpenseSource === '等待输入'
+                    ? '未提供消费数据'
+                    : (activeExpenseSource.includes('手动记账')
+                        ? '手动记账'
+                        : (activeExpenseSource.includes('示例') ? '示例数据' : '实时输入')));
             // 幸运时辰随生活状态与本次卦象变化，避免固定展示与当前数据脱节
             const luckyTime = facts.lifestyle.hasEarlySleep
                 ? '06:30–08:00'
@@ -1833,7 +2067,23 @@
             };
         }
 
+        // 图表实例延迟到用户主动占卜时创建，避免页面加载即渲染
+        var locChart = null;
+        var nightChart = null;
+
+        function ensureExpenseCharts() {
+            if (!locChart) {
+                const locationEl = document.getElementById('locationChart');
+                if (locationEl) locChart = echarts.init(locationEl, 'dark');
+            }
+            if (!nightChart) {
+                const nightEl = document.getElementById('nightChart');
+                if (nightEl) nightChart = echarts.init(nightEl, 'dark');
+            }
+        }
+
         function updateExpenseCharts(rows) {
+            ensureExpenseCharts();
             const hasLocation = rows.some((row) => Boolean(row.location));
             const hasNight = rows.some(isNightRow);
             const locationTitle = document.getElementById('locationChartTitle');
@@ -1850,14 +2100,9 @@
                     : '🌙 每日消费趋势 (Daily)';
             }
 
-            locChart.setOption(buildLocationOption(rows), true);
-            nightChart.setOption(buildNightOption(rows), true);
+            if (locChart) locChart.setOption(buildLocationOption(rows), true);
+            if (nightChart) nightChart.setOption(buildNightOption(rows), true);
         }
-
-        // 初始化图表：默认使用 Mock 数据，后续由上传逻辑调用 updateExpenseCharts 刷新
-        var locChart = echarts.init(document.getElementById('locationChart'), 'dark');
-        var nightChart = echarts.init(document.getElementById('nightChart'), 'dark');
-        updateExpenseCharts(EXPENSES);
 
         /* ============================================================
          * 3. 渲染：把模拟大模型 JSON 映射到赛博朋克卡片
@@ -2151,7 +2396,8 @@
             const select = document.getElementById('examSubjectSelect');
             const courseId = select && select.value;
             if (!courseId) {
-                setExamStatus('● NO DATA', 'warn');
+                setExamGaugeGate(false);
+                setExamStatus(divinationActivated ? '● NO DATA' : '● STANDBY', 'warn');
                 if (examGaugeChart) {
                     examGaugeChart.dispose();
                     examGaugeChart = null;
@@ -2168,9 +2414,17 @@
                     if (node) node.textContent = '--%';
                 });
                 const ticker = document.getElementById('examLotTicker');
-                if (ticker) ticker.textContent = 'SYNC // 暂无课程数据，请先上传课表或快捷录入';
+                if (ticker) {
+                    ticker.textContent = divinationActivated
+                        ? 'SYNC // 暂无课程数据，请先上传课表或快捷录入'
+                        : 'SYNC // 等待输入课表 / 生活状态 / 消费流水';
+                }
                 const lotStatus = document.getElementById('examLotStatus');
-                if (lotStatus) lotStatus.textContent = '暂无科目可抽签，请先上传课表或快捷录入课程。';
+                if (lotStatus) {
+                    lotStatus.textContent = divinationActivated
+                        ? '暂无科目可抽签，请先上传课表或快捷录入课程。'
+                        : '签筒处于待机状态；请先点击「开始占卜 / 生成运势」激活终端。';
+                }
                 const result = document.getElementById('examLotResult');
                 if (result) result.classList.add('hidden');
                 currentExamLot = null;
@@ -2188,9 +2442,13 @@
                 if (talismanStatus) talismanStatus.textContent = '暂无可渡劫科目：请先录入或上传课程数据。';
                 return;
             }
+            setExamGaugeGate(false);
             const drawButton = document.getElementById('drawLotBtn');
             // 抽签动画进行中即使数据刷新也不要提前解锁按钮
-            if (drawButton) drawButton.disabled = examDrawing;
+            if (drawButton) {
+                drawButton.disabled = examDrawing;
+                if (!examDrawing) drawButton.textContent = currentExamLot ? '🎲 再抽一签' : '🎲 摇一签';
+            }
             const talismanButton = document.getElementById('generateTalismanBtn');
             if (talismanButton) talismanButton.disabled = false;
             // 课程恢复后清除“暂无可渡劫科目”的旧提示；已有符咒时保留生成反馈
@@ -2198,8 +2456,9 @@
             const talismanStatus = document.getElementById('talismanStatus');
             if (talismanStatus
                 && (!talismanCard || talismanCard.classList.contains('hidden'))
-                && talismanStatus.textContent.startsWith('暂无可渡劫科目')) {
-                talismanStatus.textContent = '尚未生成符咒。已选 Buff 会实时参与概率预测。';
+                && (talismanStatus.textContent.startsWith('暂无可渡劫科目')
+                    || talismanStatus.textContent.startsWith('数据已更新'))) {
+                talismanStatus.textContent = '尚未生成符咒。已选 Buff 会参与概率预测。';
             }
             const rates = renderExamGauge(courseId);
             const ticker = document.getElementById('examLotTicker');
@@ -2215,7 +2474,11 @@
                 if (drawButton && !examDrawing) drawButton.textContent = '🎲 摇一签';
             }
             const lotStatus = document.getElementById('examLotStatus');
-            if (lotStatus && !currentExamLot && lotStatus.textContent.startsWith('暂无科目')) {
+            if (lotStatus && !currentExamLot
+                && (lotStatus.textContent.startsWith('暂无科目')
+                    || lotStatus.textContent.startsWith('签筒处于待机')
+                    || lotStatus.textContent.startsWith('数据已更新')
+                    || lotStatus.textContent.startsWith('签筒已重置'))) {
                 lotStatus.textContent = '签筒已就绪：选择科目与 Buff 后即可抽签。';
             }
             // 抽签动画进行中保持 DRAWING 徽标；数据刷新后不要把状态误重置为 READY
@@ -2257,6 +2520,16 @@
             const card = document.getElementById('talismanCard');
             const status = document.getElementById('talismanStatus');
             if (!card) return;
+            // 未激活或数据已变更时，不生成基于旧数据的符咒
+            if (!divinationActivated || divinationDirty) {
+                card.classList.add('hidden');
+                if (status) {
+                    status.textContent = !divinationActivated
+                        ? '请先点击「开始占卜 / 生成运势」激活终端。'
+                        : '数据已更新，请先重新占卜再生成符咒。';
+                }
+                return;
+            }
             // 无课程时不再生成兜底符咒，避免按钮被程序化触发后展示虚假科目
             if (!COURSE_RECORDS.length) {
                 card.classList.add('hidden');
@@ -2382,6 +2655,16 @@
 
         async function drawExamLot() {
             if (examDrawing) return;
+            if (!divinationActivated || divinationDirty) {
+                const guardStatus = document.getElementById('examLotStatus');
+                if (guardStatus) {
+                    guardStatus.textContent = !divinationActivated
+                        ? '请先点击「开始占卜 / 生成运势」激活终端，再抽签。'
+                        : '数据已更新，请先重新占卜再抽签。';
+                }
+                setExamStatus(!divinationActivated ? '● STANDBY' : '● STALE', 'warn');
+                return;
+            }
             const select = document.getElementById('examSubjectSelect');
             const courseId = select && select.value;
             if (!courseId) {
@@ -2426,6 +2709,20 @@
                 await sleep(prefersReducedMotion ? 35 : 70 + Math.random() * 45);
             }
 
+            // 动画期间若数据被改动或终端被重置，旧签文不得继续结算
+            if (!divinationActivated || divinationDirty) {
+                examDrawing = false;
+                currentExamLot = null;
+                tube?.classList.remove('is-drawing');
+                if (button) {
+                    button.disabled = true;
+                    button.textContent = '🎲 等待重新占卜';
+                }
+                if (result) result.classList.add('hidden');
+                setExamStatus(!divinationActivated ? '● STANDBY' : '● STALE', 'warn');
+                return;
+            }
+
             // 抽签动画期间课程 / 生活状态可能变化，最终结果按最新状态结算
             const latestSelect = document.getElementById('examSubjectSelect');
             const latestCourseId = latestSelect ? latestSelect.value : '';
@@ -2467,7 +2764,7 @@
             if (result) result.classList.add('hidden');
             if (hadLot) {
                 const lotStatus = document.getElementById('examLotStatus');
-                if (lotStatus) lotStatus.textContent = '数据已更新，旧签文已失效；请重新抽签获取当前状态下的结果。';
+                if (lotStatus) lotStatus.textContent = '签筒已重置，旧签文已失效；可重新抽签获取当前状态下的结果。';
                 const drawButton = document.getElementById('drawLotBtn');
                 if (drawButton && !examDrawing) drawButton.textContent = '🎲 摇一签';
             }
@@ -2482,6 +2779,10 @@
 
             const select = document.getElementById('examSubjectSelect');
             select?.addEventListener('change', () => {
+                if (!divinationActivated || divinationDirty) {
+                    setExamStatus(!divinationActivated ? '● STANDBY' : '● STALE', 'warn');
+                    return;
+                }
                 refreshExamTerminal(select.value);
                 // 科目切换后，已生成的符咒必须同步为新科目
                 const card = document.getElementById('talismanCard');
@@ -2498,8 +2799,8 @@
                     selectedExamBuffIds.add(buffId);
                 }
                 renderBuffList();
-                // Buff 会改变概率：旧签文一并作废，符咒按新概率重绘
-                refreshExamAfterDataChange();
+                // Buff 也是占卜输入：只冻结旧结果，等待用户重新点击占卜
+                markDivinationInputsChanged();
             });
 
             document.getElementById('drawLotBtn')?.addEventListener('click', drawExamLot);
@@ -2567,8 +2868,24 @@
             const content = document.getElementById('oracleContent');
             const log = document.getElementById('oracleLog');
 
-            button.disabled = true;
-            button.textContent = '◌ 推演中...';
+            // 防呆：任何内部调用都不能绕过显式占卜按钮
+            if (!divinationActivated || !hasDivinationInput()) {
+                setDivinationPrompt('请先输入您的赛博课表或近期饮食状态，再来连线玄学终端！');
+                updateDivinationGate('empty');
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = '⟲ 重新卜一卦';
+                }
+                return;
+            }
+
+            setDivinationPrompt('');
+            if (button) {
+                button.hidden = false;
+                button.disabled = true;
+                button.textContent = '◌ 推演中...';
+            }
+            updateDivinationGate('busy');
             status.textContent = '◌ CALCULATING';
             status.className = 'text-[10px] tracking-widest text-amber-300';
             content.classList.add('hidden');
@@ -2609,12 +2926,16 @@
             await playReading(result.reportLines, runId);
             if (runId !== oracleRunId) return;
 
-            button.disabled = false;
-            button.textContent = '⟲ 重新卜一卦';
+            if (button) {
+                button.disabled = false;
+                button.textContent = '⟲ 重新卜一卦';
+            }
+            updateDivinationGate('active');
         }
 
-        document.getElementById('rerollBtn').addEventListener('click', runOracle);
-        runOracle();
+        document.getElementById('startDivinationBtn')?.addEventListener('click', requestDivination);
+        document.getElementById('chartGateBtn')?.addEventListener('click', requestDivination);
+        document.getElementById('rerollBtn')?.addEventListener('click', requestDivination);
 
         /* ============================================================
          * 4.5 多维输入：课表上传 / 快捷录入 / 生活状态标签
@@ -2636,7 +2957,6 @@
         const lifestyleSummary = document.getElementById('lifestyleSummary');
         const clearLifestyleBtn = document.getElementById('clearLifestyleBtn');
         let courseUploadBusy = false;
-        let lifestyleOracleTimer = null;
 
         function setCourseUploadStatus(message, tone = 'idle') {
             if (!courseUploadStatus) return;
@@ -2693,8 +3013,7 @@
             renderCourseRoster();
             resetCoursesBtn?.classList.remove('hidden');
             if (extraMessage) setCourseUploadStatus(extraMessage, 'ok');
-            runOracle();
-            refreshExamAfterDataChange();
+            markDivinationInputsChanged();
         }
 
         function handleCourseFile(file) {
@@ -2732,11 +3051,11 @@
                     applyCourseData(
                         parsed.courses,
                         `本地文件：${file.name}`,
-                        `✓ 已载入 ${parsed.courses.length} 门课程（${parsed.format}）${skippedText}；AI 报告与考试概率已刷新。`
+                        `✓ 已载入 ${parsed.courses.length} 门课程（${parsed.format}）${skippedText}；数据已暂存，点击「开始占卜 / 生成运势」刷新 AI 报告与考试概率。`
                     );
                     if (courseUploadTitle) courseUploadTitle.textContent = '⬆ 更换课表 / 成绩单';
                     if (courseUploadHint) courseUploadHint.textContent = file.name;
-                    setCourseQuickStatus('课程档案已更新；可继续快捷录入追加课程。', 'ok');
+                    setCourseQuickStatus('课程档案已更新；可继续快捷录入，或点击「开始占卜 / 生成运势」。', 'ok');
                 } catch (error) {
                     setCourseUploadStatus(`✕ 课程导入失败：${error.message}`, 'error');
                 } finally {
@@ -2786,23 +3105,17 @@
             lifestyleSummary.textContent = `已选择 ${state.count} 项（${lifestyleMode === 'single' ? '单选' : '多选'}）：${state.labels.join(' + ')}｜生活业力 ${riskText}。${synergy}`;
         }
 
-        function scheduleLifestyleOracle() {
-            clearTimeout(lifestyleOracleTimer);
-            lifestyleOracleTimer = setTimeout(() => runOracle(), 260);
-        }
-
         function removeCourse(courseId) {
             const removed = COURSE_RECORDS.find((course) => course.course_id === courseId);
             COURSE_RECORDS = COURSE_RECORDS.filter((course) => course.course_id !== courseId);
             if (!activeCourseSource.includes('手动调整')) activeCourseSource = `${activeCourseSource} · 手动调整`;
             renderCourseRoster();
             setCourseUploadStatus(
-                removed ? `✕ 已移除《${removed.course_name}》；AI 报告与考试概率已重新计算。` : '课程已移除。',
+                removed ? `✕ 已移除《${removed.course_name}》；点击「开始占卜 / 生成运势」更新结果。` : '课程已移除。',
                 'idle'
             );
             resetCoursesBtn?.classList.remove('hidden');
-            runOracle();
-            refreshExamAfterDataChange();
+            markDivinationInputsChanged();
         }
 
         function bindCourseAndLifestylePanel() {
@@ -2844,15 +3157,14 @@
 
             resetCoursesBtn?.addEventListener('click', () => {
                 COURSE_RECORDS = MOCK_COURSE_RECORDS.map((course) => ({ ...course }));
-                activeCourseSource = '内置 Mock 数据（courses.json）';
+                activeCourseSource = '示例课表（courses.json）';
                 renderCourseRoster();
                 resetCoursesBtn.classList.add('hidden');
                 if (courseUploadTitle) courseUploadTitle.textContent = '⬆ 上传课表 / 成绩单';
                 if (courseUploadHint) courseUploadHint.textContent = '支持 .csv / .json · 最大 2 MB';
-                setCourseUploadStatus('↺ 已恢复内置 Mock 课表；AI 报告与考试概率已刷新。', 'idle');
-                setCourseQuickStatus('已恢复默认课程，可继续快捷录入。', 'idle');
-                runOracle();
-                refreshExamAfterDataChange();
+                setCourseUploadStatus('↺ 已载入示例课表；点击「开始占卜 / 生成运势」后刷新结果。', 'idle');
+                setCourseQuickStatus('示例课程已暂存，可继续快捷录入或开始占卜。', 'idle');
+                markDivinationInputsChanged();
             });
 
             courseQuickForm?.addEventListener('submit', (event) => {
@@ -2877,14 +3189,18 @@
                     setCourseQuickStatus('✕ 课程数据无效，请检查课程名。', 'error');
                     return;
                 }
+                const hadCourses = COURSE_RECORDS.length > 0;
                 COURSE_RECORDS = ensureUniqueCourseIds([...COURSE_RECORDS, newCourse]);
-                if (!activeCourseSource.includes('快捷录入')) activeCourseSource = `${activeCourseSource} + 快捷录入`;
+                if (!hadCourses) {
+                    activeCourseSource = '手动快捷录入';
+                } else if (!activeCourseSource.includes('快捷录入')) {
+                    activeCourseSource = `${activeCourseSource} + 快捷录入`;
+                }
                 renderCourseRoster();
                 resetCoursesBtn?.classList.remove('hidden');
-                setCourseQuickStatus(`✓ 已录入《${newCourse.course_name}》（难度 ${difficulty}/5${newCourse.is_final ? ' · 期末' : ''}），玄学报告与考试概率已刷新。`, 'ok');
+                setCourseQuickStatus(`✓ 已录入《${newCourse.course_name}》（难度 ${difficulty}/5${newCourse.is_final ? ' · 期末' : ''}）；点击「开始占卜 / 生成运势」刷新结果。`, 'ok');
                 courseQuickForm.reset();
-                runOracle();
-                refreshExamAfterDataChange();
+                markDivinationInputsChanged();
                 courseNameInput?.focus();
             });
 
@@ -2907,8 +3223,7 @@
                     });
                     renderLifestyleTags();
                     renderLifestyleSummary();
-                    refreshExamAfterDataChange();
-                    scheduleLifestyleOracle();
+                    markDivinationInputsChanged();
                 });
             });
 
@@ -2927,23 +3242,21 @@
                 }
                 renderLifestyleTags();
                 renderLifestyleSummary();
-                refreshExamAfterDataChange();
-                scheduleLifestyleOracle();
+                markDivinationInputsChanged();
             });
 
             clearLifestyleBtn?.addEventListener('click', () => {
                 selectedLifestyleIds.clear();
                 renderLifestyleTags();
                 renderLifestyleSummary();
-                refreshExamAfterDataChange();
-                scheduleLifestyleOracle();
+                markDivinationInputsChanged();
             });
         }
 
         bindCourseAndLifestylePanel();
 
         /* ============================================================
-         * 5. CSV 自定义数据导入：FileReader → 解析 → 图表 + 玄学卡片
+         * 5. CSV 自定义数据导入：FileReader → 解析 → 暂存，等待显式占卜
          * ============================================================ */
         const fileInput = document.getElementById('csvFileInput');
         const uploadZone = document.getElementById('uploadZone');
@@ -2961,6 +3274,10 @@
         }
 
         function updateDataSummary() {
+            if (!EXPENSES.length) {
+                dataSummary.textContent = '数据源：等待输入 ｜ 0 条消费记录';
+                return;
+            }
             const facts = analyzeCampusData();
             const missing = [];
             if (!facts.hasTime) missing.push('time');
@@ -2972,10 +3289,7 @@
         function applyExpenseData(rows, sourceLabel) {
             EXPENSES = rows;
             activeExpenseSource = sourceLabel;
-            updateExpenseCharts(EXPENSES);
-            updateDataSummary();
-            runOracle(); // 数据变更后重新生成 AI 玄学解读
-            refreshExamAfterDataChange();
+            markDivinationInputsChanged();
         }
 
         function readCsvFile(file) {
@@ -3029,7 +3343,7 @@
                     const adaptText = optionalMissing.length
                         ? `；未提供 ${optionalMissing.join(' / ')} 列，相关视图已按可用字段自动适配`
                         : '';
-                    setUploadStatus(`✓ 已载入 ${parsed.rows.length} 条记录${skippedText}${adaptText}；图表与玄学报告已刷新。`, 'ok');
+                    setUploadStatus(`✓ 已载入 ${parsed.rows.length} 条记录${skippedText}${adaptText}；数据已暂存，点击「开始占卜 / 生成运势」刷新图表与玄学报告。`, 'ok');
                 } catch (error) {
                     setUploadStatus(`✕ 导入失败：${error.message}`, 'error');
                 } finally {
@@ -3084,16 +3398,16 @@
         });
 
         resetDataBtn.addEventListener('click', () => {
-            applyExpenseData(MOCK_EXPENSES.slice(), '内置 Mock 数据（expenses.csv）');
+            applyExpenseData(MOCK_EXPENSES.slice(), '示例流水（expenses.csv）');
             resetDataBtn.classList.add('hidden');
             uploadZoneTitle.textContent = '⬆ 拖拽 / 点击上传 CSV';
             uploadZoneHint.textContent = '支持 .csv · 最大 2 MB';
             fileInput.value = '';
-            setUploadStatus('↺ 已恢复内置 Mock 数据；图表与玄学报告已重新生成。', 'idle');
+            setUploadStatus('↺ 已载入示例流水；点击「开始占卜 / 生成运势」后刷新图表与玄学报告。', 'idle');
         });
 
         /* ============================================================
-         * 6. 手机快捷记账：追加到当前数据 → 图表 + AI 重算
+         * 6. 手机快捷记账：追加到当前数据 → 暂存，等待显式占卜
          * ============================================================ */
         const quickEntryForm = document.getElementById('quickEntryForm');
         const quickDate = document.getElementById('quickDate');
@@ -3179,35 +3493,36 @@
                 remark: note
             };
 
+            const hadExpenses = EXPENSES.length > 0;
             EXPENSES = EXPENSES.concat(entry).sort((a, b) =>
                 `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
             );
-            if (!activeExpenseSource.includes('手动记账')) {
+            if (!hadExpenses) {
+                activeExpenseSource = '手动记账';
+            } else if (!activeExpenseSource.includes('手动记账')) {
                 activeExpenseSource = `${activeExpenseSource} + 手动记账`;
             }
             resetDataBtn.classList.remove('hidden');
 
-            updateExpenseCharts(EXPENSES);
-            updateDataSummary();
-            runOracle(); // 追加后重新生成 AI 赛博玄学解读
-            refreshExamAfterDataChange();
+            markDivinationInputsChanged();
 
             quickAmount.value = '';
             quickNote.value = '';
             const notePreview = note
                 ? ` · ${note.length > 18 ? `${note.slice(0, 18)}…` : note}`
                 : '';
-            setQuickEntryStatus(`✓ 已追加：${date} · ${category} · ${yuan(roundedAmount)}${notePreview}`, 'ok');
-            showQuickToast('记账成功！运势已更新');
+            setQuickEntryStatus(`✓ 已追加：${date} · ${category} · ${yuan(roundedAmount)}${notePreview}；点击「开始占卜 / 生成运势」更新结果。`, 'ok');
+            showQuickToast('记账成功！点击「开始占卜」更新运势');
             quickAmount.focus();
         });
 
         updateDataSummary();
+        updateDivinationGate('standby');
 
         // 图表自适应：窗口尺寸变化时重绘
         window.addEventListener('resize', function () {
-            locChart.resize();
-            nightChart.resize();
+            if (locChart) locChart.resize();
+            if (nightChart) nightChart.resize();
             if (examGaugeChart) examGaugeChart.resize();
         });
     </script>
