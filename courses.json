@@ -4,19 +4,21 @@
     "course_name": "计算机网络",
     "semester": "2025-2026-2",
     "credits": 4,
-    "score": 78,
     "difficulty_rating": 5,
     "is_final": true,
-    "remark": "期末周渡劫课程"
+    "start_time": "08:00",
+    "end_time": "09:40",
+    "remark": "今日重点渡劫课程"
   },
   {
     "course_id": "CS102",
     "course_name": "数据结构与算法",
     "semester": "2025-2026-1",
     "credits": 4,
-    "score": 85,
     "difficulty_rating": 4,
     "is_final": true,
+    "start_time": "14:00",
+    "end_time": "15:40",
     "remark": "头发减半"
   },
   {
@@ -24,9 +26,10 @@
     "course_name": "赛博朋克与未来哲学",
     "semester": "2025-2026-2",
     "credits": 2,
-    "score": 92,
     "difficulty_rating": 1,
     "is_final": false,
+    "start_time": "19:00",
+    "end_time": "20:40",
     "remark": "神仙通识课"
   }
 ]
