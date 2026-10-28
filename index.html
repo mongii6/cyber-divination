@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>校园赛博玄学 · 今日晨间运势</title>
-    <!-- 引入 ECharts -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <!-- 引入 Tailwind CSS 做赛博暗黑风格排版 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -100,40 +98,13 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: none; }
         }
-        /* ================= CSV 导入区 ================= */
-        .upload-zone {
-            cursor: pointer;
-            border: 1px dashed rgba(34, 211, 238, 0.45);
-            background: rgba(34, 211, 238, 0.05);
-            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-        }
-        .upload-zone:hover,
-        .upload-zone:focus-visible,
-        .upload-zone.is-dragover {
-            border-color: rgba(217, 70, 239, 0.8);
-            background: rgba(217, 70, 239, 0.12);
-            box-shadow: 0 0 24px rgba(217, 70, 239, 0.28), inset 0 0 22px rgba(34, 211, 238, 0.08);
-            outline: none;
-        }
-        .upload-zone.is-dragover { transform: translateY(-1px) scale(1.01); }
-        .upload-zone.is-loading { cursor: wait; opacity: 0.7; }
         .upload-status { min-height: 1.25rem; }
         .upload-status[data-tone="idle"] { color: #94a3b8; }
         .upload-status[data-tone="busy"] { color: #fcd34d; }
         .upload-status[data-tone="ok"] { color: #34d399; }
         .upload-status[data-tone="error"] { color: #fb7185; }
 
-        /* ================= 手机快捷记账 ================= */
-        .quick-entry {
-            background:
-                radial-gradient(700px 260px at 0% 0%, rgba(52, 211, 153, 0.10), transparent 65%),
-                linear-gradient(160deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.90));
-            box-shadow: 0 20px 50px -30px rgba(16, 185, 129, 0.45);
-        }
-        .quick-entry summary { list-style: none; }
-        .quick-entry summary::-webkit-details-marker { display: none; }
-        .quick-chevron { transition: transform 0.2s ease; }
-        .quick-entry[open] .quick-chevron { transform: rotate(180deg); }
+        /* ================= 接入端快捷录入 ================= */
         .quick-label {
             display: block;
             font-size: 10px;
@@ -165,61 +136,9 @@
         }
         .quick-input option { background: #020617; color: #e2e8f0; }
         .quick-input::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.65; cursor: pointer; }
-        .quick-submit {
-            background: linear-gradient(135deg, #22d3ee, #34d399);
-            box-shadow: 0 0 24px rgba(34, 211, 238, 0.22);
-        }
-        .quick-submit:hover {
-            filter: brightness(1.08);
-            box-shadow: 0 0 30px rgba(52, 211, 153, 0.36);
-        }
-        .quick-submit:active { transform: translateY(1px); }
-        .quick-submit:focus-visible { outline: 2px solid #a7f3d0; outline-offset: 2px; }
         .quick-status[data-tone="ok"] { color: #34d399; }
         .quick-status[data-tone="error"] { color: #fb7185; }
         .is-hidden { display: none !important; }
-        /* ================= 按需占卜：图表待机遮罩 ================= */
-        .chart-gate-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 30;
-            display: grid;
-            place-content: center;
-            justify-items: center;
-            gap: 0.65rem;
-            padding: 1.5rem;
-            border: 1px dashed rgba(34, 211, 238, 0.28);
-            border-radius: 1rem;
-            background: rgba(2, 6, 23, 0.80);
-            backdrop-filter: blur(5px);
-            text-align: center;
-        }
-        .cyber-toast {
-            position: fixed;
-            left: 50%;
-            bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-            z-index: 70;
-            width: max-content;
-            max-width: calc(100vw - 2rem);
-            transform: translate(-50%, 16px);
-            opacity: 0;
-            pointer-events: none;
-            border: 1px solid rgba(52, 211, 153, 0.45);
-            border-radius: 0.85rem;
-            background: rgba(2, 6, 23, 0.97);
-            color: #a7f3d0;
-            padding: 0.8rem 1rem;
-            text-align: center;
-            font-size: 0.75rem;
-            letter-spacing: 0.08em;
-            line-height: 1.4;
-            box-shadow: 0 0 30px rgba(34, 211, 238, 0.2), 0 18px 40px rgba(0, 0, 0, 0.45);
-            transition: opacity 0.22s ease, transform 0.22s ease;
-        }
-        .cyber-toast.is-visible {
-            opacity: 1;
-            transform: translate(-50%, 0);
-        }
         /* ================= 赛博数据接入端 ================= */
         .data-panel {
             background:
@@ -312,6 +231,97 @@
             white-space: nowrap;
         }
 
+        /* ================= 期末渡劫隐藏通道 ================= */
+        .exam-channel-entry { display: flex; justify-content: center; }
+        @media (min-width: 640px) { .exam-channel-entry { justify-content: flex-end; } }
+        .exam-channel-btn {
+            position: relative;
+            display: inline-flex;
+            min-height: 40px;
+            align-items: center;
+            gap: 0.65rem;
+            overflow: hidden;
+            border: 1px dashed rgba(148, 163, 184, 0.32);
+            border-radius: 9999px;
+            background: rgba(2, 6, 23, 0.55);
+            padding: 0.4rem 0.8rem;
+            color: #94a3b8;
+            text-align: left;
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+        }
+        .exam-channel-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(110deg, transparent 20%, rgba(251, 191, 36, 0.10) 48%, transparent 76%);
+            transform: translateX(-120%);
+            pointer-events: none;
+            animation: exam-channel-scan 5.5s ease-in-out infinite;
+        }
+        .exam-channel-btn:hover,
+        .exam-channel-btn:focus-visible {
+            border-color: rgba(251, 191, 36, 0.65);
+            background: rgba(251, 191, 36, 0.06);
+            color: #fde68a;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.14);
+            outline: none;
+        }
+        .exam-channel-btn[aria-expanded="true"] {
+            border-style: solid;
+            border-color: rgba(251, 191, 36, 0.55);
+            background: rgba(251, 191, 36, 0.08);
+            color: #fef3c7;
+        }
+        .exam-channel-icon { position: relative; z-index: 1; font-size: 14px; }
+        .exam-channel-copy { position: relative; z-index: 1; display: block; }
+        .exam-channel-eyebrow { display: block; font-size: 8px; letter-spacing: 0.22em; color: #64748b; }
+        .exam-channel-label { display: block; margin-top: 1px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: #cbd5e1; }
+        .exam-channel-btn:hover .exam-channel-label,
+        .exam-channel-btn[aria-expanded="true"] .exam-channel-label { color: #fde68a; }
+        .exam-channel-state {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 9999px;
+            padding: 0.15rem 0.4rem;
+            font-size: 8px;
+            letter-spacing: 0.12em;
+            color: #64748b;
+        }
+        .exam-channel-state::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 9999px;
+            background: #fbbf24;
+            box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+            animation: exam-channel-pulse 2.4s ease-in-out infinite;
+        }
+        .exam-channel-btn[aria-expanded="true"] .exam-channel-state {
+            border-color: rgba(251, 191, 36, 0.4);
+            color: #fcd34d;
+        }
+        .exam-channel-btn[aria-expanded="true"] .exam-channel-state::before {
+            background: #34d399;
+            box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+        }
+        #examDivination.is-revealing { animation: exam-channel-reveal 0.48s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes exam-channel-scan {
+            0%, 58% { transform: translateX(-120%); }
+            82%, 100% { transform: translateX(120%); }
+        }
+        @keyframes exam-channel-pulse {
+            0%, 100% { opacity: 0.45; }
+            50% { opacity: 1; }
+        }
+        @keyframes exam-channel-reveal {
+            from { opacity: 0; transform: translateY(16px) scale(0.995); }
+            to { opacity: 1; transform: none; }
+        }
+
         /* ================= 考试渡劫终端 ================= */
         .exam-terminal {
             background:
@@ -390,6 +400,21 @@
         }
         .exam-lot-result { border: 1px solid rgba(251, 191, 36, 0.36); background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(2, 6, 23, 0.72)); }
         .exam-gauge-wrap { position: relative; min-height: 270px; }
+        .exam-gauge-ring {
+            position: relative;
+            width: min(250px, 76vw);
+            aspect-ratio: 1;
+            margin: 8px auto 0;
+            border-radius: 50%;
+            background: conic-gradient(from 210deg,
+                #fb7185 0deg var(--fail-angle, 30deg),
+                #22d3ee var(--fail-angle, 30deg) var(--low-angle, 70deg),
+                #34d399 var(--low-angle, 70deg) 300deg,
+                transparent 300deg 360deg);
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 18px), #000 calc(100% - 17px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 18px), #000 calc(100% - 17px));
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.22));
+        }
         .exam-gauge-center {
             position: absolute;
             inset: 0;
@@ -463,7 +488,9 @@
         @media (prefers-reduced-motion: reduce) {
             .cyber-scan::after, .caret::after, .terminal-line, .fade-up,
             .exam-lot-tube::before, .exam-lot-tube.is-drawing,
-            .exam-lot-tube.is-drawing .exam-lot-stick { animation: none !important; }
+            .exam-lot-tube.is-drawing .exam-lot-stick,
+            .exam-channel-btn::after, .exam-channel-state::before,
+            #examDivination.is-revealing { animation: none !important; }
             .aura-fill { transition: none; }
         }
     </style>
@@ -473,6 +500,18 @@
         <header class="text-center mb-6 sm:mb-10">
             <h1 class="text-2xl sm:text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学 · 今日晨间运势</h1>
             <p class="text-xs sm:text-sm text-slate-400 mt-2">—— 昨晚状态 × 今日课程时间线，只算今天这一卦的晨间播报</p>
+            <div class="exam-channel-entry mt-4">
+                <button id="examChannelToggle" type="button" class="exam-channel-btn"
+                    aria-expanded="false" aria-controls="examDivination" aria-describedby="examChannelHint">
+                    <span id="examChannelIcon" class="exam-channel-icon" aria-hidden="true">⚠️</span>
+                    <span class="exam-channel-copy">
+                        <span class="exam-channel-eyebrow">FINAL WEEK // SEALED CHANNEL</span>
+                        <span id="examChannelText" class="exam-channel-label">开启期末渡劫通道</span>
+                    </span>
+                    <span id="examChannelState" class="exam-channel-state" aria-live="polite">封印中</span>
+                </button>
+                <span id="examChannelHint" class="sr-only">默认隐藏的期末考试概率、签筒与符咒模块，点击后展开并跳转。</span>
+            </div>
         </header>
 
         <!-- ================= 赛博数据接入端：统一输入区 ================= -->
@@ -482,7 +521,7 @@
                     <p class="text-[10px] tracking-[0.35em] text-cyan-300/80">DATA HUB // UNIFIED INGESTION</p>
                     <h2 id="dataHubTitle" class="mt-1 text-lg font-bold text-slate-100">🛰️ 赛博数据接入端</h2>
                 </div>
-                <p class="text-[10px] tracking-wider text-slate-500">今日课表 × 昨晚睡眠 × 今日消费 → 晨间单日播报</p>
+                <p class="text-[10px] tracking-wider text-slate-500">今日课表 × 昨晚睡眠 × 今日饮食 → 晨间单日播报</p>
             </div>
             <div class="mb-4 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-amber-100">
                 <p class="text-[10px] tracking-[0.3em] text-amber-300/80">MORNING BRIEF // 晨间输入引导</p>
@@ -575,86 +614,8 @@
                         </div>
                     </div>
                 </details>
-                <details class="data-panel relative overflow-hidden rounded-2xl border border-fuchsia-400/25" open>
-                    <div class="cyber-grid pointer-events-none absolute inset-0 opacity-40"></div>
-                    <summary class="relative flex cursor-pointer items-start justify-between gap-3 p-4">
-                        <span class="flex min-w-0 items-start gap-3">
-                            <span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-fuchsia-400/30 bg-fuchsia-400/10 text-lg" aria-hidden="true">💳</span>
-                            <span class="min-w-0">
-                                <span class="block text-[10px] tracking-[0.3em] text-fuchsia-300/80">EXPENSE LEDGER</span>
-                                <span class="mt-1 block text-base font-bold text-slate-100">消费账单接入</span>
-                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">上传 CSV 或快捷记一笔；数据先暂存，点击占卜后只生成今天的消费图表。</span>
-                            </span>
-                        </span>
-                        <span class="shrink-0 text-[10px] tracking-wider text-slate-500">折叠 ⌄</span>
-                    </summary>
-                    <div class="relative border-t border-slate-700/50 p-4">
-                        <div class="flex flex-col gap-2 sm:flex-row">
-                            <label id="uploadZone" for="csvFileInput" role="button" tabindex="0"
-                                class="mini-upload min-w-0 flex-1">
-                                <span id="uploadZoneTitle" class="text-xs font-semibold tracking-wider text-cyan-200">⬆ 拖拽 / 点击上传 CSV</span>
-                                <span id="uploadZoneHint" class="mt-1 text-[10px] tracking-wider text-slate-500">支持 .csv · 最大 2 MB</span>
-                            </label>
-                            <input id="csvFileInput" type="file" accept=".csv,text/csv" class="sr-only">
-                            <button id="resetDataBtn" type="button"
-                                class="hidden min-h-[48px] shrink-0 rounded-lg border border-slate-600/70 bg-slate-800/60 px-3 py-2 text-[10px] tracking-widest text-slate-300 transition hover:border-fuchsia-400/60 hover:text-fuchsia-200">
-                                ↺ 载入今日示例流水
-                            </button>
-                        </div>
-                        <p class="mt-2 text-[10px] leading-4 text-slate-500">列格式：date,time,location,category,amount,remark（UTF-8，≤ 2 MB）。</p>
-                        <div class="mt-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                            <p id="uploadStatus" class="upload-status text-[11px]" data-tone="idle" role="status" aria-live="polite">● 等待输入：上传消费 CSV，或使用下方快捷记账。</p>
-                            <p id="dataSummary" class="text-[10px] tracking-wider text-slate-500">数据源：等待输入 ｜ 今日 0 条消费记录</p>
-                        </div>
-                        <div class="mt-3 border-t border-slate-700/50 pt-3">
-                            <div class="mb-2 flex items-center justify-between gap-2">
-                                <p class="text-[10px] tracking-[0.22em] text-emerald-300/80">MOBILE LEDGER // 快捷记账</p>
-                                <span class="text-[10px] tracking-wider text-slate-500">追加流水</span>
-                            </div>
-                            <form id="quickEntryForm" novalidate>
-                                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                    <div>
-                                        <label for="quickDate" class="quick-label">日期</label>
-                                        <input id="quickDate" name="date" type="date" required class="quick-input mt-1.5">
-                                    </div>
-                                    <div>
-                                        <label for="quickCategory" class="quick-label">分类</label>
-                                        <select id="quickCategory" name="category" required class="quick-input mt-1.5">
-                                            <option value="餐饮" selected>餐饮</option>
-                                            <option value="学习">学习</option>
-                                            <option value="娱乐">娱乐</option>
-                                            <option value="交通">交通</option>
-                                            <option value="购物">购物</option>
-                                            <option value="其他">其他</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label for="quickAmount" class="quick-label">金额（元）</label>
-                                        <div class="relative mt-1.5">
-                                            <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-sm text-cyan-300/70">¥</span>
-                                            <input id="quickAmount" name="amount" type="number" inputmode="decimal" min="0.01" step="0.01" required
-                                                class="quick-input pl-8" placeholder="0.00" enterkeyhint="next">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label for="quickNote" class="quick-label">备注（选填）</label>
-                                        <input id="quickNote" name="note" type="text" maxlength="80" class="quick-input mt-1.5"
-                                            placeholder="例如：食堂午饭 / 奶茶" enterkeyhint="done">
-                                    </div>
-                                </div>
-                                <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                                    <button id="quickEntrySubmit" type="submit"
-                                        class="quick-submit inline-flex min-h-[48px] w-full items-center justify-center rounded-xl px-4 py-2.5 text-xs font-semibold tracking-widest text-slate-950 transition sm:w-auto">
-                                        ➕ 记一笔 / 插入流水
-                                    </button>
-                                    <p id="quickEntryStatus" class="quick-status text-[11px] leading-5 text-slate-500" data-tone="idle" role="status" aria-live="polite">
-                                        本笔会先追加到当前数据；生成结果需点击「开始占卜 · 今日运势」。
-                                    </p>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </details>
+
+
                 <details class="data-panel relative overflow-hidden rounded-2xl border border-emerald-400/25 lg:col-span-2" open>
                     <div class="cyber-grid pointer-events-none absolute inset-0 opacity-40"></div>
                     <summary class="relative flex cursor-pointer items-start justify-between gap-3 p-4">
@@ -663,7 +624,7 @@
                             <span class="min-w-0">
                                 <span class="block text-[10px] tracking-[0.3em] text-emerald-300/80">MORNING SIGNAL</span>
                                 <span class="mt-1 block text-base font-bold text-slate-100">昨晚状态 / 今日补给</span>
-                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">先选昨晚睡眠 / 精神状态（单选），再补今日饮食标签；两者一起决定晨间回蓝与分时段渡劫策略。</span>
+                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">先选昨晚睡眠 / 精神状态（单选），再补今日饮食标签；两者一起决定晨间回蓝与今日饮食状态。</span>
                             </span>
                         </span>
                         <span class="shrink-0 text-[10px] tracking-wider text-slate-500">折叠 ⌄</span>
@@ -701,10 +662,10 @@
                         </div>
 
                         <p id="lifestyleSummary" class="mt-3 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-3 py-2 text-[11px] leading-5 text-emerald-200/90" role="status" aria-live="polite">
-                            未选择昨晚状态与饮食标签：占卜引擎仅使用今日课程时间线与消费数据。
+                            未选择昨晚状态与饮食标签：占卜引擎仅使用今日课程时间线。
                         </p>
                         <p class="mt-2 text-[10px] leading-4 text-slate-500">
-                            昨晚状态只影响 AI 解读与考试概率预测；饮食标签不会写入或伪造消费流水。点击已选中的昨晚状态可取消。
+                            昨晚状态只影响 AI 解读与考试概率预测；饮食标签只用于今日晨间推演。点击已选中的昨晚状态可取消。
                         </p>
                         <div class="mt-3 grid grid-cols-2 gap-2 text-[10px] leading-4 text-slate-500">
                             <div class="rounded-lg border border-slate-700/50 bg-slate-950/45 p-2">
@@ -730,53 +691,16 @@
                         <p class="text-[10px] tracking-[0.35em] text-fuchsia-300/80">ORACLE IGNITION // ON-DEMAND</p>
                         <h2 id="divinationGateTitle" class="mt-1 text-lg font-bold text-slate-100">🔮 开始占卜 · 今日运势</h2>
                         <p id="divinationGateHint" class="mt-1 text-xs leading-5 text-slate-400">
-                            当前处于等待输入状态。请录入今日课程与具体时间、昨晚睡眠 / 精神状态或今日消费账单，再点击「开始占卜 · 今日运势」唤醒晨间玄学终端。
+                            当前处于等待输入状态。请录入今日课程与具体时间、昨晚睡眠 / 精神状态，再点击「开始占卜 · 今日运势」唤醒晨间玄学终端。
                         </p>
                         <p id="divinationPrompt" class="is-hidden mt-2 rounded-lg border border-amber-400/35 bg-amber-400/10 px-3 py-2 text-[11px] leading-5 text-amber-200" role="alert" aria-live="assertive">
-                            请先录入今日课程与具体时间、昨晚状态或今日消费账单，再来连线玄学终端！
+                            请先录入今日课程与具体时间、昨晚状态，再来连线玄学终端！
                         </p>
                     </div>
                     <button id="startDivinationBtn" type="button"
                         class="min-h-[48px] w-full shrink-0 rounded-xl border border-fuchsia-300/50 bg-gradient-to-r from-fuchsia-400 to-cyan-300 px-5 py-3 text-sm font-bold tracking-widest text-slate-950 transition hover:brightness-110 hover:shadow-[0_0_26px_rgba(217,70,239,0.35)] focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-200 disabled:cursor-wait disabled:opacity-60 sm:w-auto">
                         🔮 开始占卜 · 今日运势
                     </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= 今日赛博黄历：只展示今天这一天的切片 ================= -->
-        <section class="mt-10" aria-labelledby="almanacTitle">
-            <div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <p class="text-[10px] tracking-[0.35em] text-cyan-300/80">TODAY'S CYBER ALMANAC // SINGLE-DAY SLICE</p>
-                    <h2 id="almanacTitle" class="mt-1 text-lg font-bold text-slate-100">🗓️ 今日赛博黄历</h2>
-                    <p id="almanacSubtitle" class="mt-1 text-xs leading-5 text-slate-400">只看今天这一天的消费磁场与破财时间轴，不统计历史周期。</p>
-                </div>
-                <span id="almanacDateBadge" class="shrink-0 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-[10px] tracking-widest text-cyan-200">TODAY // --</span>
-            </div>
-            <div class="relative">
-                <div id="chartGateOverlay" class="chart-gate-overlay" role="status" aria-live="polite">
-                    <p class="text-[10px] tracking-[0.35em] text-cyan-300/80">TODAY'S CHARTS // STANDBY</p>
-                    <p id="chartGateText" class="max-w-md text-xs leading-5 text-slate-300">
-                        等待今日消费数据接入；点击「开始占卜 · 今日运势」后生成今日赛博黄历。
-                    </p>
-                    <button id="chartGateBtn" type="button"
-                        class="min-h-[44px] rounded-lg border border-cyan-300/45 bg-cyan-400/10 px-4 py-2 text-[11px] font-semibold tracking-widest text-cyan-100 transition hover:bg-cyan-400/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200">
-                        🔮 开始占卜 · 今日运势
-                    </button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- 图表1：今日消费磁场 -->
-                    <div class="bg-slate-900 border border-purple-500/30 p-4 rounded-xl shadow-lg shadow-purple-500/10">
-                        <h3 id="locationChartTitle" class="text-lg font-semibold mb-4 text-purple-300">⚡ 今日消费磁场 (Location)</h3>
-                        <div id="locationChart" style="width: 100%; height: 300px;"></div>
-                    </div>
-
-                    <!-- 图表2：今日破财时间轴 -->
-                    <div class="bg-slate-900 border border-cyan-500/30 p-4 rounded-xl shadow-lg shadow-cyan-500/10">
-                        <h3 id="nightChartTitle" class="text-lg font-semibold mb-4 text-cyan-300">🌙 今日破财时间轴 (24H)</h3>
-                        <div id="nightChart" style="width: 100%; height: 300px;"></div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -809,7 +733,7 @@
                     <div id="oracleLoading" class="min-h-[220px] rounded-xl border border-cyan-500/20 bg-slate-950/70 p-4 text-xs leading-6 text-emerald-300/90" role="status" aria-live="polite">
                         <div id="oracleLog" class="space-y-1">
                             <p class="text-slate-400">SYSTEM STANDBY // 等待今日输入</p>
-                            <p class="text-slate-500">请先在上方录入今日课程与具体时间、昨晚睡眠 / 精神状态或今日消费，然后点击「开始占卜 · 今日运势」激活晨间赛博播报。</p>
+                            <p class="text-slate-500">请先在上方录入今日课程与具体时间、昨晚睡眠 / 精神状态或今日饮食标签，然后点击「开始占卜 · 今日运势」激活晨间赛博播报。</p>
                         </div>
                     </div>
 
@@ -919,26 +843,32 @@
 
                         <p class="mt-4 text-[10px] leading-5 text-slate-500">
                             <span id="oracleMeta"></span><br>
-                            本卡片由本地「今日消费/课业规则引擎 + 模拟大模型 JSON」生成，只读取今日单日切片，仅用于娱乐，不构成任何选课、消费或医疗建议。
+                            本卡片由本地「今日课业 / 睡眠饮食规则引擎 + 模拟大模型 JSON」生成，只读取今日单日切片，仅用于娱乐，不构成任何选课或医疗建议。
                         </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ================= 今日渡劫指南 · 考试概率终端 ================= -->
-        <section id="examDivination" class="mt-10" aria-labelledby="examTitle">
+        <!-- ================= 期末渡劫占卜 · 隐藏考试概率终端 ================= -->
+        <section id="examDivination" class="mt-10 hidden" aria-labelledby="examTitle" aria-hidden="true" data-exam-channel>
             <div class="exam-terminal relative overflow-hidden rounded-2xl border border-amber-400/30">
                 <div class="cyber-grid pointer-events-none absolute inset-0 opacity-50"></div>
                 <div class="cyber-scan pointer-events-none absolute inset-0 opacity-40"></div>
                 <div class="relative p-5 sm:p-7">
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                         <div>
-                            <p class="text-[10px] tracking-[0.4em] text-amber-300/80">TODAY'S EXAM GUIDE // SINGLE-DAY PROBABILITY</p>
-                            <h2 id="examTitle" class="cyber-glitch mt-2 text-2xl font-bold text-slate-100">🧧 今日渡劫指南 · 考试概率</h2>
-                            <p class="mt-2 text-xs leading-5 text-slate-400">只算今天：今日课程时间线 × 昨晚睡眠 / 精神状态 × 今日课业压力 × 今日破财指数，再叠加今日 Buff。</p>
+                            <p class="text-[10px] tracking-[0.4em] text-amber-300/80">FINAL WEEK EXAM DIVINATION // SINGLE-DAY PROBABILITY</p>
+                            <h2 id="examTitle" class="cyber-glitch mt-2 text-2xl font-bold text-slate-100">🧧 期末渡劫占卜 · 考试概率</h2>
+                            <p class="mt-2 text-xs leading-5 text-slate-400">期末渡劫通道已开启：只算今天，今日课程时间线 × 昨晚睡眠 / 精神状态 × 今日课业压力，再叠加今日 Buff。</p>
                         </div>
-                        <span id="examStatus" class="shrink-0 rounded-full border border-slate-500/35 bg-slate-500/10 px-3 py-1 text-[10px] tracking-widest text-slate-300">● STANDBY</span>
+                        <div class="flex shrink-0 flex-wrap items-center gap-2">
+                            <button id="examChannelCloseBtn" type="button"
+                                class="rounded-full border border-slate-600/60 bg-slate-950/40 px-2.5 py-1 text-[9px] tracking-widest text-slate-400 transition hover:border-amber-400/50 hover:text-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200">
+                                🔒 收起通道
+                            </button>
+                            <span id="examStatus" class="shrink-0 rounded-full border border-slate-500/35 bg-slate-500/10 px-3 py-1 text-[10px] tracking-widest text-slate-300">● STANDBY</span>
+                        </div>
                     </div>
                     <div class="mt-5 flex flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-950/55 p-3 sm:flex-row sm:items-center sm:justify-between">
                         <label for="examSubjectSelect" class="text-[10px] tracking-[0.22em] text-cyan-200/80">今日渡劫科目 / TODAY'S EXAM SUBJECT</label>
@@ -1043,38 +973,12 @@
         </section>
     </div>
 
-    <div id="quickToast" class="cyber-toast" role="status" aria-live="polite" aria-atomic="true">
-        <span aria-hidden="true">✓</span> <span id="quickToastText">记账成功！点击「开始占卜」更新今日运势</span>
-    </div>
-
     <script>
         /* ============================================================
-         * 0. 基础 Mock 数据
+         * 0. 基础课程 Mock 数据
          *    单文件页面在 file:// 协议下无法 fetch 本地文件，故内联一份，
          *    用来模拟真实项目中「后端 / 大模型返回 JSON」的数据层。
-         *    示例消费按“今天”动态生成，确保单日切片有演示数据。
          * ============================================================ */
-        /**
-         * 示例流水按“今天”动态生成：
-         * 今日 6 笔 + 昨日 / 前几日旧记录，用于验证单日切片只读取今天。
-         */
-        function buildMockExpenseCsv(baseDate = new Date()) {
-            const day = (offset) => {
-                const date = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate() - offset);
-                return formatDateForInput(date);
-            };
-            return `date,time,location,category,amount,remark
-${day(0)},01:15,蜜雪冰城,夜宵,15.00,椰果奶茶（今日深夜续命）
-${day(0)},02:30,校园超市,夜宵,12.00,咖啡+泡面（今日复习）
-${day(0)},08:15,一食堂,早餐,6.50,包子豆浆
-${day(0)},12:30,二食堂,午餐,15.00,双拼饭
-${day(0)},18:20,三食堂,晚餐,18.00,麻辣烫
-${day(0)},21:40,校园超市,夜宵,22.50,能量饮料+薯片
-${day(1)},01:30,蜜雪冰城,夜宵,15.00,椰果奶茶（昨日旧数据）
-${day(2)},12:10,二食堂,午餐,14.00,黄焖鸡（前日旧数据）
-${day(5)},02:10,校园超市,夜宵,35.00,红牛*2+咖啡（历史旧数据）
-${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
-        }
 
         const MOCK_COURSE_RECORDS = [
             { course_id: 'CS101', course_name: '计算机网络', semester: '2025-2026-2', credits: 4, difficulty_rating: 5, is_final: true, start_time: '08:00', end_time: '09:40', remark: '今日重点渡劫课程' },
@@ -1111,7 +1015,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
         let selectedSleepId = '';
         let selectedExamBuffIds = new Set();
         let currentExamLot = null;
-        let examGaugeChart = null;
         let examDrawing = false;
         let lastLotId = null;
         const EXAM_LOTS = [
@@ -1175,9 +1078,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
 
         /* ---------- 通用小工具 ---------- */
         const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-        const sumAmount = (rows) => rows.reduce((total, row) => total + row.amount, 0);
-        const yuan = (value) => `¥${value.toFixed(2)}`;
-        const percent = (part, whole) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
         const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({
             '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
         }[char]));
@@ -1210,11 +1110,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
 
         function getTodayLabel() {
             return `${getDayLabel(getTodayKey())} ${getTodayWeekday()}`;
-        }
-
-        function getTodayExpenseRows(rows = EXPENSES) {
-            const todayKey = getTodayKey();
-            return rows.filter((row) => row.date === todayKey);
         }
 
         /** 把 8 / 8:00 / 0800 统一成 HH:MM，供课程时间线与快捷表单复用 */
@@ -1421,7 +1316,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
 
         /**
          * 极简 CSV 解析：支持双引号包裹字段与字段内逗号。
-         * 返回 { rows, skipped, errorSamples }，单行错误不会中断整份文件。
+         * 课程 CSV 与示例数据共用此工具。
          */
         function splitCsvLine(line) {
             const fields = [];
@@ -1449,108 +1344,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             }
             fields.push(current);
             return fields;
-        }
-
-        function parseExpensesCsv(csv) {
-            const lines = String(csv).replace(/^\uFEFF/, '').split(/\r?\n/)
-                .map((line) => line.trim())
-                .filter(Boolean);
-            if (lines.length < 2) throw new Error('CSV 文件为空或缺少数据行');
-
-            // 表头：去首尾空格 + 统一小写；日期列兼容 date / data
-            const header = splitCsvLine(lines[0]).map((name) => name.trim().toLowerCase());
-            const dateIndex = header.indexOf('date') !== -1 ? header.indexOf('date') : header.indexOf('data');
-            const categoryIndex = header.indexOf('category');
-            const amountIndex = header.indexOf('amount');
-            const timeIndex = header.indexOf('time');
-            const locationIndex = header.indexOf('location');
-            const noteIndex = header.indexOf('remark') !== -1 ? header.indexOf('remark') : header.indexOf('note');
-
-            const missing = [];
-            if (dateIndex === -1) missing.push('date（或 data）');
-            if (categoryIndex === -1) missing.push('category');
-            if (amountIndex === -1) missing.push('amount');
-            if (missing.length) throw new Error(`缺少必需列：${missing.join('、')}`);
-
-            const rows = [];
-            let skipped = 0;
-            const errorSamples = [];
-            const reject = (lineNumber, reason) => {
-                skipped += 1;
-                if (errorSamples.length < 3) errorSamples.push(`第 ${lineNumber} 行：${reason}`);
-            };
-            const pad2 = (value) => String(value).padStart(2, '0');
-
-            lines.slice(1).forEach((line, offset) => {
-                const lineNumber = offset + 2;
-                const fields = splitCsvLine(line);
-                const pickIndex = (index) => (index >= 0 ? (fields[index] || '').trim() : '');
-                const dateRaw = pickIndex(dateIndex);
-                const category = pickIndex(categoryIndex);
-                const amountRaw = pickIndex(amountIndex);
-                // time / location 均为可选：缺失或无效时保留空字符串，不补默认值
-                const timeRaw = pickIndex(timeIndex);
-                const location = pickIndex(locationIndex);
-                const noteFields = noteIndex >= 0
-                    ? fields.slice(noteIndex).map((field) => field.trim())
-                    : [];
-                const remark = noteFields.join(',').trim();
-
-                const dateMatch = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(dateRaw);
-                if (!dateMatch) {
-                    reject(lineNumber, `日期格式无效「${dateRaw}」`);
-                    return;
-                }
-                const year = Number(dateMatch[1]);
-                const month = Number(dateMatch[2]);
-                const day = Number(dateMatch[3]);
-                const dateObj = new Date(year, month - 1, day);
-                if (dateObj.getFullYear() !== year || dateObj.getMonth() !== month - 1 || dateObj.getDate() !== day) {
-                    reject(lineNumber, `日期不存在「${dateRaw}」`);
-                    return;
-                }
-                const date = `${year}-${pad2(month)}-${pad2(day)}`;
-
-                if (!category) {
-                    reject(lineNumber, 'category 为空');
-                    return;
-                }
-
-                const amount = Number(amountRaw.replace(/[¥￥,\s]/g, ''));
-                if (!amountRaw || !Number.isFinite(amount) || amount < 0) {
-                    reject(lineNumber, `金额无效「${amountRaw}」`);
-                    return;
-                }
-
-                let time = '';
-                const timeMatch = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(timeRaw);
-                if (timeMatch) {
-                    const hour = Number(timeMatch[1]);
-                    const minute = Number(timeMatch[2]);
-                    if (hour <= 23 && minute <= 59) time = `${pad2(hour)}:${pad2(minute)}`;
-                }
-
-                rows.push({
-                    date,
-                    time,
-                    location,
-                    category,
-                    amount: Math.round(amount * 100) / 100,
-                    remark
-                });
-            });
-
-            rows.sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-            return {
-                rows,
-                skipped,
-                errorSamples,
-                columns: {
-                    time: timeIndex !== -1,
-                    location: locationIndex !== -1,
-                    note: noteIndex !== -1
-                }
-            };
         }
 
         /**
@@ -1654,23 +1447,11 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             return { courses: ensureUniqueCourseIds(courses), skipped, errorSamples, format: 'JSON' };
         }
 
-        // 示例数据仅由“载入示例流水”按钮显式启用，页面加载时不参与任何渲染；
-        // 点击按钮时再按当天日期生成，确保“今日切片”始终有演示数据。
-        function buildMockExpenses() {
-            return parseExpensesCsv(buildMockExpenseCsv()).rows;
-        }
-        // 当前生效的消费数据：初始为空；上传 CSV / 快捷记账后先暂存
-        let EXPENSES = [];
-        let activeExpenseSource = '等待输入';
         let divinationActivated = false;
         let divinationDirty = false;
 
         function getDivinationInputSummary() {
             const parts = [];
-            if (EXPENSES.length) {
-                const todayCount = getTodayExpenseRows().length;
-                parts.push(`${EXPENSES.length} 条消费记录（今日 ${todayCount} 条）`);
-            }
             if (COURSE_RECORDS.length) {
                 const timelineCount = getTodayCourseTimeline().length;
                 parts.push(`${COURSE_RECORDS.length} 门课程${timelineCount ? `（${timelineCount} 段今日时间线）` : ''}`);
@@ -1688,15 +1469,8 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
         function setDivinationPrompt(message = '') {
             const prompt = document.getElementById('divinationPrompt');
             if (!prompt) return;
-            prompt.textContent = message || '请先录入今日课程与具体时间、昨晚状态或今日消费账单，再来连线玄学终端！';
+            prompt.textContent = message || '请先录入今日课程与具体时间、昨晚状态，再来连线玄学终端！';
             prompt.classList.toggle('is-hidden', !message);
-        }
-
-        function setChartGate(visible, message = '') {
-            const overlay = document.getElementById('chartGateOverlay');
-            const text = document.getElementById('chartGateText');
-            if (text && message) text.textContent = message;
-            if (overlay) overlay.classList.toggle('is-hidden', !visible);
         }
 
         function setExamGaugeGate(visible, message = '') {
@@ -1708,7 +1482,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
 
         function updateDivinationGate(mode = 'idle') {
             const startButton = document.getElementById('startDivinationBtn');
-            const chartButton = document.getElementById('chartGateBtn');
             const hint = document.getElementById('divinationGateHint');
             const summary = getDivinationInputSummary();
             if (!startButton || !hint) return;
@@ -1722,30 +1495,24 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                 ? '🔄 重算今日运势'
                 : '🔮 开始占卜 · 今日运势';
             startButton.textContent = actionLabel;
-            if (chartButton) chartButton.textContent = actionLabel;
 
             if (!summary) {
-                hint.textContent = '当前处于等待输入状态。请录入今日课程与具体时间、昨晚睡眠 / 精神状态或今日消费账单，再点击「开始占卜 · 今日运势」唤醒晨间玄学终端。';
-                setChartGate(true, '等待输入：录入今日课程时间、昨晚状态或今日消费后，点击「开始占卜 · 今日运势」生成晨间播报。');
+                hint.textContent = '当前处于等待输入状态。请录入今日课程与具体时间、昨晚睡眠 / 精神状态，再点击「开始占卜 · 今日运势」唤醒晨间玄学终端。';
                 return;
             }
             if (!divinationActivated) {
-                hint.textContent = `已暂存 ${summary}。系统不会自动跑分，点击按钮后才生成今日赛博播报、今日赛博黄历与今日考试概率。`;
-                setChartGate(true, `已暂存 ${summary}，点击「开始占卜 · 今日运势」后生成今日赛博黄历。`);
+                hint.textContent = `已暂存 ${summary}。系统不会自动跑分，点击按钮后才生成今日晨间播报与考试概率。`;
                 return;
             }
             if (divinationDirty) {
                 hint.textContent = `数据已更新（${summary}）。当前今日结果已冻结，点击按钮重新生成。`;
-                setChartGate(true, '数据已更新，今日旧图表已冻结；点击「重算今日运势」刷新。');
                 return;
             }
             hint.textContent = `已生成今日运势 · 当前输入：${summary}。继续调整数据后需重算今日。`;
-            setChartGate(false);
         }
 
         // 数据变更只暂存，不自动跑分；已激活时冻结旧结果，等待用户再次点击占卜
         function markDivinationInputsChanged() {
-            updateDataSummary();
             if (divinationActivated) {
                 divinationDirty = true;
                 oracleRunId += 1;
@@ -1800,7 +1567,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
         function requestDivination() {
             const summary = getDivinationInputSummary();
             if (!summary) {
-                setDivinationPrompt('请先录入今日课程与具体时间、昨晚状态或今日消费账单，再来连线玄学终端！');
+                setDivinationPrompt('请先录入今日课程与具体时间、昨晚状态或今日饮食标签，再来连线玄学终端！');
                 updateDivinationGate('empty');
                 document.getElementById('divinationGate')?.scrollIntoView({
                     behavior: prefersReducedMotion ? 'auto' : 'smooth',
@@ -1813,9 +1580,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             setDivinationPrompt('');
             divinationActivated = true;
             divinationDirty = false;
-            updateDataSummary();
-            setChartGate(false);
-            updateExpenseCharts(getTodayExpenseRows());
             refreshExamAfterDataChange();
             setExamGaugeGate(false);
             const drawButton = document.getElementById('drawLotBtn');
@@ -1824,69 +1588,14 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             runOracle();
         }
 
-        const hourOf = (time) => {
-            const match = /^(\d{1,2}):\d{2}/.exec(String(time || ''));
-            return match ? Number(match[1]) : -1;
-        };
-        const isDeepNight = (time) => {
-            const hour = hourOf(time);
-            return hour >= 0 && hour < 5; // 00:00 - 04:59
-        };
-        const isNight = (time) => {
-            const hour = hourOf(time);
-            return hour >= 22 || (hour >= 0 && hour < 5); // 22:00 - 次日 04:59
-        };
-        const isNightRow = (row) => /夜宵|宵夜/.test(row.category || '') || isNight(row.time);
-        const isMilkTeaRow = (row) => /奶茶|柠檬水|果茶/.test(row.remark);
-        const isDailySupplyRow = (row) => /期末|复习|考试|红牛|咖啡|泡面|提神|通宵|熬夜/.test(`${row.category || ''} ${row.remark || ''}`);
-
         /* ============================================================
-         * 1. 数据分析：把消费 / 选课流水转成「玄学事实」
+         * 1. 数据分析：把课程时间线 / 昨晚状态 / 今日饮食转成「玄学事实」
          * ============================================================ */
         function analyzeCampusData() {
             const todayKey = getTodayKey();
-            const todayRows = getTodayExpenseRows();
-            const hasTodayExpenses = todayRows.length > 0;
-
-            // 单日切片：所有消费统计只来自今天，历史记录不参与报告
-            const hasTime = hasTodayExpenses && todayRows.some((row) => Boolean(row.time));
-            const hasLocation = hasTodayExpenses && todayRows.some((row) => Boolean(row.location));
-            const deepNightRows = todayRows.filter((row) => isDeepNight(row.time));
-            const nightRows = todayRows.filter(isNightRow);
-            const milkTeaRows = todayRows.filter(isMilkTeaRow);
-            const supplyRows = todayRows.filter(isDailySupplyRow);
-            const totalAmount = sumAmount(todayRows);
-            const nightTotal = sumAmount(nightRows);
-            const deepNightTotal = sumAmount(deepNightRows);
-            const milkTeaTotal = sumAmount(milkTeaRows);
-            const supplyTotal = sumAmount(supplyRows);
-
-            const locationMap = new Map();
-            todayRows.forEach((row) => {
-                if (!row.location) return; // 没有 location 字段时不伪造地点
-                const stat = locationMap.get(row.location) || { count: 0, amount: 0 };
-                stat.count += 1;
-                stat.amount += row.amount;
-                locationMap.set(row.location, stat);
-            });
-            const topLocation = Array.from(locationMap, ([name, stat]) => ({ name, ...stat }))
-                .sort((a, b) => b.count - a.count || b.amount - a.amount)[0]
-                || null;
-
-            const categoryMap = new Map();
-            todayRows.forEach((row) => {
-                const name = row.category || '未分类';
-                const stat = categoryMap.get(name) || { count: 0, amount: 0 };
-                stat.count += 1;
-                stat.amount += row.amount;
-                categoryMap.set(name, stat);
-            });
-            const topCategory = Array.from(categoryMap, ([name, stat]) => ({ name, ...stat }))
-                .sort((a, b) => b.amount - a.amount || b.count - a.count)[0]
-                || null;
-
             const lifestyle = getLifestyleState();
             const positiveRisk = Math.max(0, lifestyle.risk);
+
             const examCourses = COURSE_RECORDS.filter((course) => course.is_final);
             const hardCourses = COURSE_RECORDS.filter((course) => course.difficulty_rating >= 4);
             const avgDifficulty = COURSE_RECORDS.length
@@ -1896,10 +1605,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             const hardestCourse = COURSE_RECORDS.slice().sort((a, b) =>
                 b.difficulty_rating - a.difficulty_rating || a.course_name.localeCompare(b.course_name)
             )[0] || { course_name: '未知课程', credits: 0, difficulty_rating: 0, is_final: false, remark: '无' };
-
-            const sortedMilkTea = milkTeaRows.slice().sort((a, b) =>
-                `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
-            );
 
             // 今日课程时间线：昨晚睡眠 × 课程开始时间 × 难度 → 每个时段的渡劫压力
             const courseTimeline = getTodayCourseTimeline().map((course) => {
@@ -1922,7 +1627,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                 ? clamp(Math.round(courseTimeline.reduce((total, course) => total + course.pressure, 0) / timelineCount), 0, 100)
                 : 0;
 
-            // 今日指数：只把今天的行为、课业与昨晚状态压缩成单日能量条
+            // 今日课业压力：课程难度 × 时间线 × 昨晚睡眠
             const todayCoursePressure = COURSE_RECORDS.length
                 ? clamp(Math.round(
                     18 + avgDifficulty * 9 + hardCourses.length * 4 + examCourses.length * 4
@@ -1931,21 +1636,24 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                     + (lifestyle.hasPoorSleep ? 6 : 0) - (lifestyle.hasGoodSleep ? 5 : 0)
                 ), 0, 100)
                 : 0;
+
+            // 今日熬夜浓度：只由昨晚状态与今日生活标签推演
             const todayNightIndex = clamp(Math.round(
-                deepNightRows.length * 16 + nightRows.length * 7
-                + (lifestyle.hasNightSnack ? 14 : 0) + (lifestyle.hasTakeout ? 4 : 0)
-                + (lifestyle.hasPoorSleep ? 10 : 0) - (lifestyle.hasGoodSleep ? 3 : 0)
+                (lifestyle.hasPoorSleep ? 44 : 0)
+                + (lifestyle.hasNightSnack ? 24 : 0)
+                + (lifestyle.hasTakeout ? 10 : 0)
+                - (lifestyle.hasGoodSleep ? 18 : 0)
+                + positiveRisk * 1.2
             ), 0, 100);
+
+            // 今日糖分依赖：奶茶 / 外卖 / 夜宵标签
             const todaySugarIndex = clamp(Math.round(
-                milkTeaRows.length * 24 + milkTeaTotal * 0.6
-                + (lifestyle.hasMilkTea ? 18 : 0) + (lifestyle.hasTakeout ? 6 : 0)
+                (lifestyle.hasMilkTea ? 52 : 0)
+                + (lifestyle.hasTakeout ? 12 : 0)
+                + (lifestyle.hasNightSnack ? 10 : 0)
+                + positiveRisk * 1.1
             ), 0, 100);
-            const todayBreakIndex = hasTodayExpenses
-                ? clamp(Math.round(
-                    totalAmount * 0.55 + deepNightTotal * 0.7
-                    + (milkTeaRows.length > 0 ? 8 : 0) + positiveRisk * 0.45
-                ), 0, 100)
-                : 0;
+
             const todayBurnout = clamp(Math.round(
                 todayNightIndex * 0.55 + todayCoursePressure * 0.3
                 + positiveRisk * 0.3 - lifestyle.sleepEnergy * 0.6
@@ -1959,28 +1667,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                 dateKey: todayKey,
                 dateLabel: getDayLabel(todayKey),
                 weekday: getTodayWeekday(),
-                hasTodayExpenses,
-                totalRecords: todayRows.length,
-                totalAmount,
-                allRecordCount: EXPENSES.length,
-                allAmount: sumAmount(EXPENSES),
-                hasTime,
-                hasLocation,
-                deepNightRows,
-                deepNightCount: deepNightRows.length,
-                deepNightTotal,
-                nightRows,
-                nightCount: nightRows.length,
-                nightTotal,
-                milkTeaRows,
-                milkTeaCount: milkTeaRows.length,
-                milkTeaTotal,
-                latestMilkTea: sortedMilkTea[sortedMilkTea.length - 1] || null,
-                supplyRows,
-                supplyCount: supplyRows.length,
-                supplyTotal,
-                topLocation,
-                topCategory,
                 hardestCourse,
                 courseCount: COURSE_RECORDS.length,
                 examCourses,
@@ -1999,7 +1685,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                 todayCoursePressure,
                 todayNightIndex,
                 todaySugarIndex,
-                todayBreakIndex,
                 todayBurnout,
                 todayFocusIndex,
                 lifestyle
@@ -2014,15 +1699,15 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             const lifestyle = facts.lifestyle;
             const hasCourse = facts.courseCount > 0;
             const courseLabel = hasCourse ? `《${course.course_name}》` : '今日课业';
-            const todaySpend = yuan(facts.totalAmount);
+            const dietLabel = lifestyle.dietLabels.slice(0, 2).join(' + ') || '今日饮食';
 
-            if (lifestyle.hasEarlySleep && facts.deepNightCount === 0 && !lifestyle.hasNightSnack) {
+            if (lifestyle.hasGoodSleep && !lifestyle.hasNightSnack) {
                 return {
                     emoji: lifestyle.sleep.option ? lifestyle.sleep.option.emoji : '🌙',
                     title: '今日回蓝型 · 睡眠结界师',
                     code: 'TODAY-SLEEP-SHIELD // 回蓝系 Lv.99',
                     tags: ['昨晚上分', '晨间回蓝', '早八幸存者'],
-                    desc: `昨晚「${lifestyle.sleepLabel || '睡眠充足'}」，今日没有凌晨献祭记录，${todaySpend} 的消费都落在正常时段；你用睡眠结界给${courseLabel}提前套上护盾。`
+                    desc: `昨晚「${lifestyle.sleepLabel || '睡眠充足'}」，睡眠结界已经为${courseLabel}提前套上护盾；今日清醒指数 ${facts.todayFocusIndex}%，把最难的 25 分钟放在第一节课前。`
                 };
             }
 
@@ -2043,46 +1728,29 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                     title: '今日课业高压型 · 糖分护盾术士',
                     code: 'TODAY-DELIVERY-SHIELD // 外卖系 Lv.87',
                     tags: ['今日硬核', '外卖常驻', '五行缺觉'],
-                    desc: `今天要面对难度 ${course.difficulty_rating}/5 的${courseLabel}，而你把「${lifestyle.labels.slice(0, 2).join(' + ') || '外卖'}」当作护盾。今日消费 ${todaySpend}，课业在扣血，外卖在回血。`
+                    desc: `今天要面对难度 ${course.difficulty_rating}/5 的${courseLabel}，而你把「${dietLabel}」当作护盾；今日糖分依赖 ${facts.todaySugarIndex}%，课业在扣血，糖分在回血。`
                 };
             }
 
-            if (facts.deepNightCount >= 2 && facts.milkTeaCount >= 1) {
+            if (lifestyle.hasNightSnack) {
                 return pickBySeed([
                     {
                         emoji: '🧋',
                         title: '今日深夜渡劫型 · 奶茶续命法师',
                         code: 'TODAY-MIDNIGHT-ALCHEMIST // 糖分系 Lv.MAX',
-                        tags: ['今日熬夜', '奶茶续命', '凌晨灵能'],
-                        desc: `今天 00:00–05:00 有 ${facts.deepNightCount} 笔深夜订单，其中 ${facts.milkTeaCount} 杯是奶茶/果茶；${todaySpend} 的今日财库正在替${courseLabel}买单。`
+                        tags: ['今日夜宵', '糖分续命', '凌晨灵能'],
+                        desc: `今日饮食勾选了「${dietLabel}」，昨晚状态为「${lifestyle.sleepLabel || '未选择'}」；${courseLabel}还没渡完，糖分法阵先亮了起来。`
                     },
                     {
                         emoji: '🌙',
                         title: '今日月相绑定型 · 凌晨灵能者',
                         code: 'TODAY-LUNAR-CAFFEINE // 夜行系 Lv.99',
-                        tags: ['月亮不睡我不睡', '咖啡因成瘾', '早八绝缘体'],
-                        desc: `今天的作息与月亮同步，${facts.deepNightCount} 笔凌晨订单合计 ${yuan(facts.deepNightTotal)}；白天修学分，夜晚修玄学。`
+                        tags: ['月亮不睡我不睡', '夜宵成瘾', '早八绝缘体'],
+                        desc: `今天的作息与月亮同步，今日熬夜浓度 ${facts.todayNightIndex}%；白天修学分，夜晚修玄学，今晚 23:00 前记得回蓝。`
                     }
                 ], seed);
             }
-            if (facts.supplyCount >= 2) {
-                return {
-                    emoji: '📚',
-                    title: '今日补给型 · 渡劫采购员',
-                    code: 'TODAY-SUPPLY-RUNNER // 硬核系 Lv.88',
-                    tags: ['今日补给', '咖啡因战士', '复习物资'],
-                    desc: `今日为${courseLabel}采购了 ${facts.supplyCount} 笔补给，合计 ${yuan(facts.supplyTotal)}；你把咖啡当血瓶、把泡面当回城卷轴。`
-                };
-            }
-            if (facts.todayBreakIndex >= 60) {
-                return {
-                    emoji: '💸',
-                    title: '今日破财预警型 · 财库漏水者',
-                    code: 'TODAY-BUDGET-LEAK // 破财系 Lv.91',
-                    tags: ['今日破财', '消费失控', '财库告急'],
-                    desc: `今日破财指数 ${facts.todayBreakIndex}%，消费合计 ${todaySpend}；${courseLabel}还没渡完，财库先亮起了红灯。`
-                };
-            }
+
             if (hasCourse && course.difficulty_rating >= 4) {
                 return {
                     emoji: '🧗',
@@ -2092,12 +1760,13 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                     desc: `今日课业压力指数 ${facts.todayCoursePressure}%，压力源是难度 ${course.difficulty_rating}/5 的${courseLabel}；今天这一卦的主题是硬刚。`
                 };
             }
+
             return {
                 emoji: '🛋️',
                 title: '今日平稳型 · 低耗能散修',
                 code: 'TODAY-LOW-POWER-WANDERER // 摸鱼系 Lv.42',
                 tags: ['今日低耗能', '情绪稳定', '准点干饭'],
-                desc: `今日没有凌晨爆单，也没有地狱难度；消费 ${todaySpend}，今日破财指数 ${facts.todayBreakIndex}%，保持这份可贵的平静。`
+                desc: `今日没有凌晨献祭，也没有地狱难度；课业压力 ${facts.todayCoursePressure}%，清醒指数 ${facts.todayFocusIndex}%，保持这份可贵的平静。`
             };
         }
 
@@ -2138,8 +1807,8 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             }
 
             if (facts.hasEveningClass) donts.push('不宜把高难度复习拖到晚课后，晚课段只做低耗能整理与复盘。');
-            if (facts.lifestyle.hasMilkTea || facts.milkTeaCount > 0) donts.push('不宜用奶茶代替早餐或正餐，今日糖分依赖会被继续放大。');
-            if (facts.lifestyle.hasNightSnack) donts.push('不宜在 23:30 后再开夜宵副本，今日财库与睡眠会一起漏水。');
+            if (facts.lifestyle.hasMilkTea) donts.push('不宜用奶茶代替早餐或正餐，今日糖分依赖会被继续放大。');
+            if (facts.lifestyle.hasNightSnack) donts.push('不宜在 23:30 后再开夜宵副本，今晚的睡眠结界会一起漏水。');
             if (facts.hasMorningClass && sleep.hasPoorSleep) donts.push('不宜在早八课堂补觉，错过签到与老师口头重点的代价高于多睡十分钟。');
 
             let riskSentence;
@@ -2233,40 +1902,30 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             const courseLabel = hasCourse ? `《${course.course_name}》` : '今日课业';
             const variance = Math.round((roll - 0.5) * 6); // -3 ~ +3，模拟「今日玄学波动」
 
-            // 今日运势值：只由今天的深夜、糖分、破财、课业压力与昨晚状态决定
+            // 今日运势值：只由昨晚状态、今日饮食、课程压力与清醒指数决定
             const score = clamp(Math.round(
-                82
-                - facts.todayNightIndex * 0.16
-                + facts.milkTeaCount * 1.6
-                - facts.todayBreakIndex * 0.22
-                - facts.todayCoursePressure * 0.12
-                - Math.max(0, facts.lifestyle.risk) * 0.3
-                + (facts.todayFocusIndex - 60) * 0.12
+                84
+                - facts.todayNightIndex * 0.14
+                - facts.todaySugarIndex * 0.1
+                - facts.todayCoursePressure * 0.16
+                - Math.max(0, facts.lifestyle.risk) * 0.25
+                + (facts.todayFocusIndex - 60) * 0.15
             ) + variance, 32, 98);
 
             const tier = getFortuneTier(score);
             const persona = buildPersona(facts, roll);
             const hexagram = pickBySeed(HEXAGRAMS, roll);
             const serial = 1000 + Math.floor(roll * 8999);
-            const confidence = clamp(72 + facts.totalRecords * 2 + (hasCourse ? 8 : 0)
-                + (facts.hasTime ? 4 : 0) + (facts.hasTimeline ? 4 : 0)
-                + (facts.lifestyle.hasSleepSelection ? 3 : 0) + variance, 70, 96);
-            const lateNightShare = percent(facts.deepNightTotal, facts.totalAmount);
+            const confidence = clamp(
+                70 + (hasCourse ? 10 : 0) + facts.courseCount * 2
+                + (facts.hasTimeline ? 8 : 0)
+                + (facts.lifestyle.hasSleepSelection ? 5 : 0)
+                + (facts.lifestyle.dietCount ? 3 : 0) + variance,
+                70, 96
+            );
             const reviewHint = hasCourse
                 ? (course.course_name.includes('网络') ? 'TCP 三次握手' : '今日课程核心概念')
                 : '今日待办清单';
-            const todayMenu = (facts.supplyRows.length ? facts.supplyRows : facts.milkTeaRows)
-                .map((row) => row.remark)
-                .filter(Boolean)
-                .slice(0, 3)
-                .join('、') || (facts.topCategory ? `${facts.topCategory.name}消费` : '今日暂无可追溯物资');
-            const sourceTag = activeExpenseSource.startsWith('本地文件')
-                ? '上传 CSV'
-                : (activeExpenseSource === '等待输入'
-                    ? '未提供消费数据'
-                    : (activeExpenseSource.includes('手动记账')
-                        ? '手动记账'
-                        : (activeExpenseSource.includes('示例') ? '示例数据' : '实时输入')));
             // 今日吉时优先参考昨晚睡眠与课程时间线，避免固定展示与当前数据脱节
             const luckyTime = facts.lifestyle.hasPoorSleep
                 ? '12:30–13:30'
@@ -2292,37 +1951,29 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             // 三套「今日播报文风」模板，点击重算时轮换，事实仍来自同一份今日切片
             const readingVariants = [
                 [
-                    `今日赛博播报：${facts.dateLabel} ${facts.weekday}，今日课业压力指数 ${facts.todayCoursePressure}%，压力源是${courseLabel}；今日消费 ${yuan(facts.totalAmount)}。`,
-                    !facts.hasTodayExpenses
-                        ? '今天还没有消费记录，财库暂时静默；今日破财指数按 0 起算，若已产生支出请先补录今日账单。'
-                        : (facts.hasTime
-                            ? (facts.deepNightCount > 0
-                                ? `今天 00:00–05:00 有 ${facts.deepNightCount} 笔深夜订单（${yuan(facts.deepNightTotal)}），占今日消费 ${lateNightShare}%，其中 ${facts.milkTeaCount} 杯是奶茶/果茶。`
-                                : '今天 00:00–05:00 暂无深夜订单，今日作息结界稳定。')
-                            : `今天有 ${facts.totalRecords} 笔消费，但未提供 time 字段，深夜行为无法判定；其余指标按今日分类与金额推演。`),
-                    `今日破财指数 ${facts.todayBreakIndex}%${facts.topCategory ? `，主要流向「${facts.topCategory.name}」（${facts.topCategory.count} 笔 / ${yuan(facts.topCategory.amount)}）` : ''}；今日财库水位 ${clamp(100 - facts.todayBreakIndex, 0, 100)}%。`,
+                    `今日赛博播报：${facts.dateLabel} ${facts.weekday}，今日课业压力指数 ${facts.todayCoursePressure}%，压力源是${courseLabel}；今日清醒指数 ${facts.todayFocusIndex}%。`,
+                    facts.hasTimeline
+                        ? `今天共有 ${facts.timelineCount} 个课程时段，首节 ${first.start_time}《${first.course_name}》，末节 ${facts.lastCourse ? `${facts.lastCourse.start_time}《${facts.lastCourse.course_name}》` : '与首节相同'}；时间线压力 ${facts.todayTimelinePressure}%。`
+                        : '今天课程尚未录入开始 / 结束时间，分时段提示会退化为通用建议。',
+                    `昨晚状态「${facts.lifestyle.sleepLabel || '未选择'}」，今日饮食「${facts.lifestyle.dietLabels.join(' + ') || '未标注'}」；熬夜浓度 ${facts.todayNightIndex}%，糖分依赖 ${facts.todaySugarIndex}%。`,
                     `今日渡劫指南：把「${reviewHint}」安排在今日 ${luckyTime}，先完成最容易拿分的一件事，再处理${courseLabel}的硬骨头。`
                 ],
                 [
-                    `今日赛博播报：${facts.dateLabel} 的${courseLabel}压力指数 ${facts.todayCoursePressure}%，今日熬夜浓度 ${facts.todayNightIndex}%，今日破财指数 ${facts.todayBreakIndex}%。`,
-                    facts.topLocation
-                        ? `今天最常出没的消费磁场是「${facts.topLocation.name}」（${facts.topLocation.count} 次 / ${yuan(facts.topLocation.amount)}），深夜订单占今日消费 ${lateNightShare}%。`
-                        : (facts.hasTodayExpenses
-                            ? '今天未提供 location 字段，消费磁场暂不可测；已改用今日分类与金额推演。'
-                            : '今天暂无消费记录，消费磁场与破财曲线均按空盘处理。'),
-                    facts.milkTeaCount > 0
-                        ? `今日奶茶/果茶 ${facts.milkTeaCount} 杯 / ${yuan(facts.milkTeaTotal)}，糖分依赖 ${facts.todaySugarIndex}%；奶茶是续命符文，也是今日财库的漏水口。`
-                        : (facts.hasTodayExpenses
-                            ? '今天没有检测到奶茶/果茶记录，今日糖分法阵暂时休眠。'
-                            : '今天没有奶茶/果茶记录；若稍后购买，记得回录今日账单。'),
-                    `今日吉时 ${luckyTime}；宜做「${reviewHint}」，忌在 23:30 后再点夜宵。若 23:00 前上床，可锁定今日「回蓝结界」。`
+                    `今日赛博播报：${facts.dateLabel} 的${courseLabel}压力指数 ${facts.todayCoursePressure}%，今日熬夜浓度 ${facts.todayNightIndex}%，今日疲惫浓度 ${facts.todayBurnout}%。`,
+                    facts.lifestyle.hasPoorSleep
+                        ? '昨晚睡眠赤字已经记账；今天先保起床、早餐与午间 20 分钟闭眼，再谈复习效率。'
+                        : (facts.lifestyle.hasGoodSleep
+                            ? '昨晚睡眠回蓝成功，今日适合把最难的课程放在精力最高的时段。'
+                            : '昨晚状态尚未选择，今日推演按基础体力起算；补选后早八风险会更准。'),
+                    facts.lifestyle.hasNightSnack
+                        ? `今日饮食勾选了「${facts.lifestyle.dietLabels.join(' + ')}」，糖分依赖 ${facts.todaySugarIndex}%；夜宵法阵亮起时，记得在 23:30 前收手。`
+                        : '今天没有夜宵标签，糖分法阵暂时休眠；若稍后补餐，记得回「昨晚状态 / 今日饮食」更新。',
+                    `今日吉时 ${luckyTime}；宜做「${reviewHint}」，忌在 23:30 后再开一局；若 23:00 前上床，可锁定今日「回蓝结界」。`
                 ],
                 [
                     `今日卦象「${hexagram}」：${facts.dateLabel} 只算今天这一卦，今日运势值按单日切片计算，不累计历史周期。`,
-                    facts.supplyCount > 0
-                        ? `今天出现 ${facts.supplyCount} 笔渡劫补给（${yuan(facts.supplyTotal)}），物资包括「${todayMenu}」，今日考试风险正在被这些补给影响。`
-                        : '今天没有红牛、咖啡或泡面的补给记录；今日考试风险仍按课程时间线、昨晚状态与课业压力推演。',
-                    `今日课业压力 ${facts.todayCoursePressure}%，今日破财指数 ${facts.todayBreakIndex}%，今日熬夜浓度 ${facts.todayNightIndex}%；三项里最高的一项是今天最需要处理的劫。`,
+                    `今日饮食标签：「${facts.lifestyle.dietLabels.join('、') || '未标注'}」；${facts.lifestyle.hasMilkTea ? '奶茶已进入今日糖分账本，' : '今日暂无奶茶标签，'}糖分依赖 ${facts.todaySugarIndex}%。`,
+                    `今日课业压力 ${facts.todayCoursePressure}%，今日熬夜浓度 ${facts.todayNightIndex}%，今日清醒指数 ${facts.todayFocusIndex}%；三项里最弱的一项是今天最需要处理的劫。`,
                     `今日禁忌：把「今天没喝奶茶」当成放纵许可证；一旦破戒，今日糖分依赖会立刻上涨。`
                 ]
             ];
@@ -2337,52 +1988,22 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                 : '今日饮食未标注';
             const lifestyleLine = facts.lifestyle.count
                 ? `晨间状态联动：${sleepSignal} × ${dietSignal}，生活业力 ${facts.lifestyle.risk > 0 ? '+' : ''}${facts.lifestyle.risk}。${facts.lifestyle.hasGoodSleep ? '正向睡眠正在抵消部分课程伤害。' : (facts.lifestyle.hasPoorSleep ? '睡眠赤字正在放大早八与专注力风险。' : '建议尽快补充昨晚状态，让推演更准。')}`
-                : '晨间状态联动：昨晚状态与今日饮食都未选择，本次仅按今日课程时间线与消费流水推演；补选后晨间诊断会更准。';
+                : '晨间状态联动：昨晚状态与今日饮食都未选择，本次仅按今日课程时间线推演；补选后晨间诊断会更准。';
             reportLines.splice(Math.min(3, reportLines.length), 0, lifestyleLine);
 
-            const headline = `今日 ${facts.dateLabel} 单日切片：昨晚${sleepLabel} · 清醒指数 ${facts.todayFocusIndex}% · 课业压力 ${facts.todayCoursePressure}% · 破财指数 ${facts.todayBreakIndex}%${first ? ` · 首节 ${first.start_time}《${first.course_name}》` : ' · 课程时间线未接入'}。${facts.hasTodayExpenses
-                ? `今日已花 ${yuan(facts.totalAmount)}，${facts.todayBreakIndex >= 60 ? '财库正在漏水，先收手再谈渡劫。' : '财库水位尚可，按今日节奏推进即可。'}`
-                : '今天还没有消费记录，先补录今日账单，今日财库才算正式接入。'}`;
+            const headline = `今日 ${facts.dateLabel} 单日切片：昨晚${sleepLabel} · 清醒指数 ${facts.todayFocusIndex}% · 课业压力 ${facts.todayCoursePressure}% · 熬夜浓度 ${facts.todayNightIndex}%${first ? ` · 首节 ${first.start_time}《${first.course_name}》` : ' · 课程时间线未接入'}。${facts.lifestyle.hasPoorSleep
+                ? '睡眠赤字正在扣血，先回蓝再硬刚。'
+                : (facts.lifestyle.hasGoodSleep ? '睡眠护盾在线，适合先啃硬骨头。' : '补选昨晚状态后，晨间推演会更准。')}`;
 
             const auraStats = [
                 { label: '今日课业压力', value: facts.todayCoursePressure, color: '#fbbf24' },
-                { label: '今日破财指数', value: facts.todayBreakIndex, color: '#fb7185' },
                 { label: '今日熬夜浓度', value: facts.todayNightIndex, color: '#e879f9' },
                 { label: '今日糖分依赖', value: facts.todaySugarIndex, color: '#22d3ee' },
+                { label: '今日疲惫浓度', value: facts.todayBurnout, color: '#fb7185' },
                 { label: '今日清醒指数', value: facts.todayFocusIndex, color: '#34d399' }
             ];
 
             const evidence = [
-                {
-                    icon: '💳',
-                    title: '今日消费灵脉 · 单日流水',
-                    tag: `${sourceTag} · ${facts.hasTodayExpenses ? (facts.hasTime ? '今日 time' : 'time 缺失') : '今日空盘'}`,
-                    text: !facts.hasTodayExpenses
-                        ? `今日（${facts.dateLabel}）暂无消费记录；今日破财指数按 0 起算，图表显示为空盘。`
-                        : (facts.hasTime
-                            ? (facts.deepNightCount > 0
-                                ? `今日 00:00–05:00 共 ${facts.deepNightCount} 笔深夜订单，合计 ${yuan(facts.deepNightTotal)}，占今日消费 ${lateNightShare}%。`
-                                : '今日 00:00–05:00 暂无深夜订单，今日作息结界稳定。')
-                            : `今日有 ${facts.totalRecords} 笔消费（${yuan(facts.totalAmount)}），但未提供 time 字段，深夜行为无法判定。`)
-                },
-                {
-                    icon: '🧋',
-                    title: '今日糖分法阵 · 奶茶',
-                    tag: `${sourceTag} · 今日备注`,
-                    text: facts.milkTeaCount > 0
-                        ? `今日 ${facts.milkTeaCount} 杯奶茶/果茶，合计 ${yuan(facts.milkTeaTotal)}；最近一次「${facts.latestMilkTea.remark || '未备注'}」（${facts.latestMilkTea.date}${facts.latestMilkTea.time ? ` ${facts.latestMilkTea.time}` : ''}），今日糖分依赖 ${facts.todaySugarIndex}%。`
-                        : (facts.hasTodayExpenses
-                            ? '今日暂无奶茶/果茶记录，糖分法阵暂时休眠，今日财库漏水口已关闭。'
-                            : '今日暂无消费记录，糖分法阵没有输入；若稍后购买，记得回录今日账单。')
-                },
-                {
-                    icon: '💸',
-                    title: '今日破财流向 · 补给采购',
-                    tag: `${sourceTag} · 今日分类`,
-                    text: facts.hasTodayExpenses
-                        ? `今日破财指数 ${facts.todayBreakIndex}%${facts.topCategory ? `，最大流向「${facts.topCategory.name}」（${facts.topCategory.count} 笔 / ${yuan(facts.topCategory.amount)}）` : ''}${facts.supplyCount > 0 ? `；另有 ${facts.supplyCount} 笔渡劫补给（${yuan(facts.supplyTotal)}），含「${todayMenu}」` : ''}。`
-                        : `今日（${facts.dateLabel}）尚未产生消费，今日破财指数 0%；补录今日账单后才会进入单日统计。`
-                },
                 {
                     icon: '📚',
                     title: '今日课业压力 · 渡劫源',
@@ -2398,8 +2019,24 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                     title: '昨晚状态 · 晨间回蓝',
                     tag: `${facts.lifestyle.hasSleepSelection ? facts.lifestyle.sleepLabel : '未选择'} · 清醒 ${facts.todayFocusIndex}%`,
                     text: facts.lifestyle.hasSleepSelection
-                        ? `昨晚「${facts.lifestyle.sleepLabel}」（精力 ${facts.lifestyle.sleepEnergy > 0 ? '+' : ''}${facts.lifestyle.sleepEnergy}），${facts.lifestyle.hasPoorSleep ? '睡眠赤字会优先放大早八与上午课程的体力消耗。' : '正向睡眠正在为今日课程提供回蓝。'}${facts.lifestyle.dietCount ? `今日饮食「${facts.lifestyle.dietLabels.join('、')}」。` : '今日饮食未标注。'}${facts.hasTimeline ? `今日时间线 ${facts.timelineCount} 段，首节 ${facts.firstCourse.start_time}《${facts.firstCourse.course_name}》。` : '今日课程时间线尚未接入，分时段提示会退化为通用建议。'}`
+                        ? `昨晚「${facts.lifestyle.sleepLabel}」（精力 ${facts.lifestyle.sleepEnergy > 0 ? '+' : ''}${facts.lifestyle.sleepEnergy}），${facts.lifestyle.hasPoorSleep ? '睡眠赤字会优先放大早八与上午课程的体力消耗。' : '正向睡眠正在为今日课程提供回蓝。'}${facts.hasTimeline ? `今日时间线 ${facts.timelineCount} 段，首节 ${facts.firstCourse.start_time}《${facts.firstCourse.course_name}》。` : '今日课程时间线尚未接入，分时段提示会退化为通用建议。'}`
                         : '尚未选择昨晚睡眠 / 精神状态；请选择熬夜冲浪 / 优质睡眠 / 失眠焦虑 / 精力充沛，引擎会把睡眠与今日课程时间线合并推演。'
+                },
+                {
+                    icon: facts.lifestyle.dietEmojis[0] || '🍜',
+                    title: '今日饮食 · 糖分法阵',
+                    tag: `${facts.lifestyle.hasDietSelection ? `${facts.lifestyle.dietCount} 个标签` : '未标注'} · 糖分 ${facts.todaySugarIndex}%`,
+                    text: facts.lifestyle.hasDietSelection
+                        ? `今日饮食标签「${facts.lifestyle.dietLabels.join('、')}」，糖分依赖 ${facts.todaySugarIndex}%，夜间刺激 ${facts.todayNightIndex}%；${facts.lifestyle.hasNightSnack ? '夜宵已经进入今日账本，23:30 后建议关闭外卖 App。' : '暂未触发夜宵法阵，今晚的睡眠结界仍可保住。'}`
+                        : '今日饮食尚未标注；选择奶茶 / 外卖 / 夜宵 / 食堂标签后，糖分与夜间刺激指数会更准确。'
+                },
+                {
+                    icon: '⏱️',
+                    title: '今日课程时间线 · 分时段',
+                    tag: facts.hasTimeline ? `${facts.timelineCount} 段 · 首节 ${facts.firstCourse.start_time}` : '时间线未接入',
+                    text: facts.hasTimeline
+                        ? `今日第一节 ${facts.firstCourse.start_time}《${facts.firstCourse.course_name}》，${facts.hasMorningClass ? '早八已接入，晨间回蓝优先级最高' : '今日没有早八，起床窗口相对宽裕'}；${facts.hasEveningClass ? '晚间仍有课程，21:30 后停止高刺激任务' : '晚间无课，可安排复盘与早睡'}。`
+                        : '尚未录入课程开始 / 结束时间；补录后可按早八、午间、晚课分别生成渡劫提示。'
                 }
             ];
 
@@ -2409,16 +2046,14 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                     : (facts.lifestyle.hasPoorSleep
                         ? `昨晚「${facts.lifestyle.sleepLabel}」，今日 ${first ? `${first.start_time} 前` : '早八前'}先吃早餐再出门；咖啡最多一杯，午间补 20 分钟闭眼恢复。`
                         : `昨晚「${facts.lifestyle.sleepLabel}」，今日趁回蓝窗口在 ${first ? `${first.start_time} 前` : '第一节课前'}先解决最难的 25 分钟。`),
-                facts.supplyCount > 0
-                    ? (todayMenu.includes('红牛')
-                        ? `把今日补给里的「红牛 × 2」替换为温水 + 25 分钟番茄钟，预计让今日财库回血 ${yuan(35)}。`
-                        : `把今日 ${facts.supplyCount} 笔渡劫补给（${yuan(facts.supplyTotal)}）拆成两次使用，预计让今日财库回血 ${yuan(30)}。`)
-                    : '今日暂无红牛、咖啡或泡面的补给记录；把省下的预算投入早餐，可提升今日早八存活率。',
-                facts.milkTeaCount > 0
-                    ? '今日 23:30 后关闭外卖 App，避免再次触发「深夜奶茶召唤阵」。'
-                    : (facts.hasTodayExpenses && !facts.hasTime
-                        ? '今日有消费记录但未提供 time，无法追踪深夜奶茶；仍建议 23:30 前关闭外卖 App。'
-                        : '今日未检测到奶茶召唤阵，建议 23:30 前上床锁定「回蓝结界」成就。'),
+                facts.lifestyle.hasDietSelection
+                    ? (facts.lifestyle.hasMilkTea || facts.lifestyle.hasNightSnack
+                        ? '今天已触发糖分 / 夜宵法阵：把奶茶或夜宵换成温水 + 水果，23:30 后关闭外卖 App。'
+                        : `今日饮食「${facts.lifestyle.dietLabels.join('、')}」已计入糖分账本，保持 23:30 前收手即可。`)
+                    : '今日饮食尚未标注；勾选奶茶 / 外卖 / 夜宵 / 食堂后，AI 才能计算今日糖分依赖。',
+                facts.lifestyle.hasNightSnack
+                    ? '今日已勾选夜宵标签，23:30 后关闭外卖 App，避免触发「深夜奶茶召唤阵」。'
+                    : '今日未检测到夜宵标签，建议 23:30 前上床锁定「回蓝结界」成就。',
                 `宜：把${reviewHint}讲给室友听；忌：凌晨 3 点刷新选课系统。`,
                 facts.lifestyle.hasPoorSleep
                     ? '今日 23:00 前上床，把睡眠补回来；明天早八的护盾比今晚多刷一套题更值。'
@@ -2455,175 +2090,10 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                 confidence,
                 dateKey: facts.dateKey,
                 todayLabel: `${facts.dateLabel} ${facts.weekday}`,
-                warning: `⚠ 今日业力来源：昨晚${sleepLabel}${facts.hasTimeline ? ` × 首节 ${first.start_time}《${first.course_name}》` : ' × 课程时间线未接入'}${hasCourse ? ` × ${courseLabel}难度 ${course.difficulty_rating}/5` : ''} × 今日破财指数 ${facts.todayBreakIndex}%。只算今天，不累计历史周期。`,
+                warning: `⚠ 今日业力来源：昨晚${sleepLabel}${facts.hasTimeline ? ` × 首节 ${first.start_time}《${first.course_name}》` : ' × 课程时间线未接入'}${hasCourse ? ` × ${courseLabel}难度 ${course.difficulty_rating}/5` : ''} × 今日熬夜浓度 ${facts.todayNightIndex}%。只算今天，不累计历史周期。`,
                 serial: `DIV-${String(serial).padStart(4, '0')}`,
                 generatedAt: new Date().toLocaleString('zh-CN', { hour12: false })
             };
-        }
-
-        /* ============================================================
-         * 3. 今日赛博黄历：只从今天的消费切片派生，上传后复用同一套配置刷新
-         * ============================================================ */
-        function buildLocationOption(rows) {
-            // 今日切片内：有 location 时按地点统计；没有 location 列时降级为今日分类构成
-            const locatedRows = rows.filter((row) => Boolean(row.location));
-            const useLocation = locatedRows.length > 0;
-            const sourceRows = useLocation ? locatedRows : rows;
-            const dimension = useLocation ? 'location' : 'category';
-
-            const counts = new Map();
-            sourceRows.forEach((row) => {
-                const name = (row[dimension] || '').trim();
-                if (!name) return;
-                counts.set(name, (counts.get(name) || 0) + 1);
-            });
-            const data = Array.from(counts, ([name, value]) => ({ name, value }))
-                .sort((a, b) => b.value - a.value || a.name.localeCompare(b.name));
-
-            return {
-                backgroundColor: 'transparent',
-                tooltip: { trigger: 'item', formatter: '{b}<br/>今日 {c} 次 ({d}%)' },
-                series: [{
-                    name: '今日消费次数',
-                    type: 'pie',
-                    radius: ['40%', '70%'],
-                    itemStyle: { borderRadius: 8, borderColor: '#0f172a', borderWidth: 2 },
-                    label: { color: '#cbd5e1' },
-                    data
-                }],
-                graphic: data.length ? [] : [{
-                    type: 'text',
-                    left: 'center',
-                    top: 'middle',
-                    style: { text: '今日暂无消费记录', fill: '#64748b', fontSize: 12, fontFamily: 'monospace' }
-                }]
-            };
-        }
-
-        function buildNightOption(rows) {
-            // 今日破财时间轴：有 time 时按 00–23 时聚合；无 time 时降级为今日分类柱状图
-            const timedRows = rows.filter((row) => hourOf(row.time) >= 0);
-            const useTime = timedRows.length > 0;
-            let labels = [];
-            let values = [];
-            let seriesType = 'line';
-
-            if (useTime) {
-                const hourly = new Array(24).fill(0);
-                timedRows.forEach((row) => {
-                    const hour = hourOf(row.time);
-                    hourly[hour] += row.amount;
-                });
-                labels = hourly.map((_, hour) => `${String(hour).padStart(2, '0')}时`);
-                values = hourly.map((amount) => Number(amount.toFixed(2)));
-            } else {
-                seriesType = 'bar';
-                const categories = new Map();
-                rows.forEach((row) => {
-                    const name = row.category || '未分类';
-                    categories.set(name, (categories.get(name) || 0) + row.amount);
-                });
-                labels = Array.from(categories.keys());
-                values = Array.from(categories.values()).map((amount) => Number(amount.toFixed(2)));
-            }
-
-            return {
-                backgroundColor: 'transparent',
-                tooltip: { trigger: 'axis' },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: seriesType === 'bar',
-                    data: labels,
-                    axisLabel: {
-                        color: '#94a3b8',
-                        interval: useTime ? 2 : 0,
-                        rotate: useTime ? 0 : 20
-                    },
-                    axisLine: { lineStyle: { color: '#475569' } }
-                },
-                yAxis: {
-                    type: 'value',
-                    name: '元',
-                    nameTextStyle: { color: '#94a3b8' },
-                    axisLabel: { color: '#94a3b8' },
-                    splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.12)' } }
-                },
-                series: [{
-                    name: useTime ? '今日消费 (元)' : '今日分类消费 (元)',
-                    type: seriesType,
-                    smooth: useTime,
-                    itemStyle: { color: '#22d3ee' },
-                    ...(useTime ? {
-                        areaStyle: {
-                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                { offset: 0, color: 'rgba(34, 211, 238, 0.5)' },
-                                { offset: 1, color: 'rgba(34, 211, 238, 0)' }
-                            ])
-                        }
-                    } : {}),
-                    data: values
-                }],
-                graphic: values.length ? [] : [{
-                    type: 'text',
-                    left: 'center',
-                    top: 'middle',
-                    style: { text: '今日暂无消费记录', fill: '#64748b', fontSize: 12, fontFamily: 'monospace' }
-                }]
-            };
-        }
-
-        // 图表实例延迟到用户主动占卜时创建，避免页面加载即渲染
-        var locChart = null;
-        var nightChart = null;
-
-        function ensureExpenseCharts() {
-            if (!locChart) {
-                const locationEl = document.getElementById('locationChart');
-                if (locationEl) locChart = echarts.init(locationEl, 'dark');
-            }
-            if (!nightChart) {
-                const nightEl = document.getElementById('nightChart');
-                if (nightEl) nightChart = echarts.init(nightEl, 'dark');
-            }
-        }
-
-        function updateAlmanacHeader(rows = getTodayExpenseRows()) {
-            const todayRows = getTodayExpenseRows(rows);
-            const almanacSubtitle = document.getElementById('almanacSubtitle');
-            const almanacDateBadge = document.getElementById('almanacDateBadge');
-            if (almanacSubtitle) {
-                almanacSubtitle.textContent = todayRows.length
-                    ? `只统计 ${getTodayLabel()} 的 ${todayRows.length} 笔消费（${yuan(sumAmount(todayRows))}），历史记录不参与今日黄历。`
-                    : `今日（${getTodayLabel()}）暂无消费记录；补录今日账单后，这里会显示单日消费磁场与破财时间轴。`;
-            }
-            if (almanacDateBadge) {
-                almanacDateBadge.textContent = `TODAY // ${getTodayLabel()} · ${todayRows.length} 笔`;
-            }
-        }
-
-        function updateExpenseCharts(rows) {
-            ensureExpenseCharts();
-            const todayRows = getTodayExpenseRows(rows);
-            const hasLocation = todayRows.some((row) => Boolean(row.location));
-            const hasTime = todayRows.some((row) => hourOf(row.time) >= 0);
-            const locationTitle = document.getElementById('locationChartTitle');
-            const nightTitle = document.getElementById('nightChartTitle');
-
-            updateAlmanacHeader(todayRows);
-
-            if (locationTitle) {
-                locationTitle.textContent = hasLocation
-                    ? '⚡ 今日消费磁场 (Location)'
-                    : '⚡ 今日消费分类 (Category)';
-            }
-            if (nightTitle) {
-                nightTitle.textContent = hasTime
-                    ? '🌙 今日破财时间轴 (24H)'
-                    : '🌙 今日破财分类图 (Category)';
-            }
-
-            if (locChart) locChart.setOption(buildLocationOption(todayRows), true);
-            if (nightChart) nightChart.setOption(buildNightOption(todayRows), true);
         }
 
         /* ============================================================
@@ -2654,8 +2124,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
 
         function renderOracle(result) {
             const $ = (id) => document.getElementById(id);
-            const expenseSource = result.facts.hasTodayExpenses ? activeExpenseSource : '今日无消费数据';
-            $('oracleSource').textContent = `今日切片：${result.todayLabel} · 昨晚 ${result.facts.lifestyle.hasSleepSelection ? result.facts.lifestyle.sleepLabel : '未选择'} · ${activeCourseSource} ${COURSE_RECORDS.length} 门 / 时间线 ${result.facts.timelineCount} 段 · ${expenseSource} 今日 ${result.facts.totalRecords} 笔 / ${yuan(result.facts.totalAmount)} · 今日破财指数 ${result.facts.todayBreakIndex}% · 晨间规则推理完成`;
+            $('oracleSource').textContent = `今日切片：${result.todayLabel} · 昨晚 ${result.facts.lifestyle.hasSleepSelection ? result.facts.lifestyle.sleepLabel : '未选择'} · ${activeCourseSource} ${COURSE_RECORDS.length} 门 / 时间线 ${result.facts.timelineCount} 段 · 今日课业压力 ${result.facts.todayCoursePressure}% · 今日清醒指数 ${result.facts.todayFocusIndex}% · 晨间规则推理完成`;
 
             /* ---------- 今日赛博人设 ---------- */
             $('personaSerial').textContent = `#${result.serial.replace('DIV-', '')}`;
@@ -2774,7 +2243,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
         }
 
         /* ============================================================
-         * 3.5 今日渡劫指南：今日课程时间线 × 昨晚状态 × 今日消费 × Buff → 今日概率 / 签文 / 符咒
+         * 3.5 今日渡劫指南：今日课程时间线 × 昨晚状态 × 今日饮食标签 × Buff → 今日概率 / 签文 / 符咒
          * ============================================================ */
         const EXAM_FALLBACK_COURSE = {
             course_id: 'FINAL-404',
@@ -2806,18 +2275,18 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             const positiveRisk = Math.max(0, lifestyle.risk);
             const todayPressure = facts.todayCoursePressure;
             const todayBurnout = facts.todayBurnout;
-            const todayBreak = facts.todayBreakIndex;
+            const todaySugar = facts.todaySugarIndex;
 
-            // 今日考试概率：课程难度 + 今日课业压力 + 今日熬夜浓度 + 今日破财指数 + 生活标签
+            // 今日考试概率：课程难度 + 今日课业压力 + 今日熬夜浓度 + 今日糖分依赖 + 生活标签
             let fail = clamp(
                 6 + difficulty * 4.5 + todayPressure * 0.12 + todayBurnout * 0.12
-                + todayBreak * 0.06 + positiveRisk * 0.45 + (course.is_final ? 3 : 0)
+                + todaySugar * 0.06 + positiveRisk * 0.45 + (course.is_final ? 3 : 0)
                 - buffBoost - (lifestyle.hasEarlySleep ? 8 : 0),
                 3, 82
             );
             let high = clamp(
                 36 - difficulty * 4 - todayPressure * 0.08 - todayBurnout * 0.08
-                - todayBreak * 0.03 + buffBoost * 1.4
+                - todaySugar * 0.03 + buffBoost * 1.4
                 + (lifestyle.hasEarlySleep ? 6 : 0) - (course.is_final ? 2 : 0),
                 2, 78
             );
@@ -2832,13 +2301,12 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                 todayPressure,
                 todayBurnout,
                 todayNightIndex: facts.todayNightIndex,
-                todayBreak,
+                todaySugar,
                 todayFocusIndex: facts.todayFocusIndex,
                 sleepLabel: facts.lifestyle.hasSleepSelection ? facts.lifestyle.sleepLabel : '未选择',
                 firstCourseLabel: facts.firstCourse
                     ? `${facts.firstCourse.start_time}《${facts.firstCourse.course_name}》`
                     : '时间线未接入',
-                hasTodayExpenses: facts.hasTodayExpenses,
                 fail,
                 low,
                 high,
@@ -2889,73 +2357,14 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             const container = document.getElementById('examGaugeChart');
             if (!container) return null;
             const rates = calculateExamRates(courseId);
-            if (examGaugeChart && examGaugeChart.getDom() !== container) {
-                examGaugeChart.dispose();
-                examGaugeChart = null;
-            }
-            if (!examGaugeChart) {
-                container.innerHTML = '';
-                examGaugeChart = echarts.init(container, null, { renderer: 'canvas' });
-            }
+            // 期末模块默认隐藏：隐藏状态下不渲染刻度盘，展开后会重新渲染。
+            if (!container.clientWidth || !container.clientHeight) return rates;
 
-            const option = {
-                backgroundColor: 'transparent',
-                animationDuration: prefersReducedMotion ? 0 : 780,
-                animationEasing: 'cubicOut',
-                tooltip: {
-                    trigger: 'item',
-                    backgroundColor: 'rgba(2,6,23,0.95)',
-                    borderColor: 'rgba(251,191,36,0.35)',
-                    textStyle: { color: '#e2e8f0', fontSize: 11 },
-                    formatter: () => [
-                        `今日过关概率：${rates.pass}%`,
-                        `今日挂科 ${rates.fail}% · 今日低空 ${rates.low}% · 今日高分 ${rates.high}%`,
-                        `今日课业压力 ${rates.todayPressure}% · 今日熬夜浓度 ${rates.todayNightIndex}% · 今日破财指数 ${rates.todayBreak}%`,
-                        `昨晚 ${rates.sleepLabel} · 今日清醒 ${rates.todayFocusIndex}% · 首节 ${rates.firstCourseLabel}`
-                    ].join('<br/>')
-                },
-                series: [{
-                    name: '今日考试概率',
-                    type: 'gauge',
-                    center: ['50%', '58%'],
-                    radius: '78%',
-                    startAngle: 210,
-                    endAngle: -30,
-                    min: 0,
-                    max: 100,
-                    splitNumber: 5,
-                    progress: { show: false },
-                    pointer: {
-                        show: true,
-                        length: '54%',
-                        width: 3,
-                        itemStyle: { color: '#fcd34d' }
-                    },
-                    axisLine: {
-                        lineStyle: {
-                            width: 14,
-                            color: [
-                                [rates.fail / 100, '#fb7185'],
-                                [(rates.fail + rates.low) / 100, '#22d3ee'],
-                                [1, '#34d399']
-                            ]
-                        }
-                    },
-                    axisTick: { show: false },
-                    splitLine: { length: 6, lineStyle: { color: 'rgba(148,163,184,0.35)', width: 1 } },
-                    axisLabel: {
-                        distance: -20,
-                        color: '#64748b',
-                        fontSize: 8,
-                        formatter: (value) => (value % 25 === 0 ? `${value}` : '')
-                    },
-                    anchor: { show: false },
-                    title: { show: false },
-                    detail: { show: false },
-                    data: [{ value: rates.pass, name: '今日过关概率' }]
-                }]
-            };
-            examGaugeChart.setOption(option, true);
+            container.innerHTML = `
+                <div class="exam-gauge-ring" role="img"
+                    aria-label="今日挂科 ${rates.fail}%，今日低空飞过 ${rates.low}%，今日高分 ${rates.high}%"
+                    style="--fail-angle:${rates.fail * 3.6}deg; --low-angle:${(rates.fail + rates.low) * 3.6}deg;">
+                </div>`;
 
             document.getElementById('examPassRate').textContent = `${rates.pass}%`;
             document.getElementById('examFailRate').textContent = `${rates.fail}%`;
@@ -2971,10 +2380,6 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             if (!courseId) {
                 setExamGaugeGate(false);
                 setExamStatus(divinationActivated ? '● NO DATA' : '● STANDBY', 'warn');
-                if (examGaugeChart) {
-                    examGaugeChart.dispose();
-                    examGaugeChart = null;
-                }
                 const gauge = document.getElementById('examGaugeChart');
                 if (gauge) {
                     gauge.innerHTML = `
@@ -2990,7 +2395,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
                 if (ticker) {
                     ticker.textContent = divinationActivated
                         ? 'SYNC // 今日暂无课程数据，请先上传课表或快捷录入'
-                        : 'SYNC // 等待输入今日课程时间 / 昨晚状态 / 今日消费';
+                        : 'SYNC // 等待输入今日课程时间 / 昨晚状态 / 今日饮食标签';
                 }
                 const lotStatus = document.getElementById('examLotStatus');
                 if (lotStatus) {
@@ -3115,7 +2520,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             const facts = analyzeCampusData();
             const lifestyle = getLifestyleState();
             const buffs = EXAM_BUFFS.filter((buff) => selectedExamBuffIds.has(buff.id));
-            const seed = hashText(`${getTodayKey()}-${course.course_id}-${lifestyle.labels.join('-')}-${buffs.map((buff) => buff.id).join('-')}-${facts.todayBreakIndex}-${facts.todayCoursePressure}`);
+            const seed = hashText(`${getTodayKey()}-${course.course_id}-${lifestyle.labels.join('-')}-${buffs.map((buff) => buff.id).join('-')}-${facts.todaySugarIndex}-${facts.todayCoursePressure}`);
             const code = `TAL-${(seed % 9000 + 1000)}`;
             const blessings = [
                 '考神已接入你的草稿纸，步骤分自动对齐采分点。',
@@ -3381,6 +2786,65 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             document.getElementById('generateTalismanBtn')?.addEventListener('click', generateTalisman);
         }
 
+        /**
+         * 期末渡劫隐藏通道：默认封闭，点击后展开并平滑滚动至考试概率终端。
+         * 只控制展示状态，不改动晨间占卜 / 课程与生活标签的任何计算状态。
+         */
+        function setExamChannelOpen(open, options = {}) {
+            const panel = document.getElementById('examDivination');
+            const toggle = document.getElementById('examChannelToggle');
+            if (!panel || !toggle) return;
+            const shouldOpen = Boolean(open);
+
+            toggle.setAttribute('aria-expanded', String(shouldOpen));
+            panel.setAttribute('aria-hidden', String(!shouldOpen));
+            panel.classList.toggle('hidden', !shouldOpen);
+
+            const icon = document.getElementById('examChannelIcon');
+            const text = document.getElementById('examChannelText');
+            const state = document.getElementById('examChannelState');
+            if (icon) icon.textContent = shouldOpen ? '🔒' : '⚠️';
+            if (text) text.textContent = shouldOpen ? '收起期末渡劫通道' : '开启期末渡劫通道';
+            if (state) state.textContent = shouldOpen ? '通道开启' : '封印中';
+
+            if (!shouldOpen) {
+                if (options.scrollToEntry) {
+                    toggle.focus({ preventScroll: true });
+                    toggle.scrollIntoView({
+                        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                        block: 'center'
+                    });
+                }
+                return;
+            }
+
+            // 先取消 hidden 再重算，确保刻度盘能拿到可见容器尺寸
+            panel.classList.remove('is-revealing');
+            void panel.offsetWidth;
+            panel.classList.add('is-revealing');
+            // 已冻结（STALE）时不重绘考试概率，保留旧数据与 STALE 覆盖层；
+            // 正常状态下再刷新，让隐藏期间未渲染的刻度盘拿到可见容器尺寸。
+            if (!divinationDirty) refreshExamTerminal();
+            requestAnimationFrame(() => {
+                panel.scrollIntoView({
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                    block: 'start'
+                });
+            });
+        }
+
+        function bindExamChannel() {
+            const toggle = document.getElementById('examChannelToggle');
+            if (!toggle) return;
+            toggle.addEventListener('click', () => {
+                const expanded = toggle.getAttribute('aria-expanded') === 'true';
+                setExamChannelOpen(!expanded);
+            });
+            document.getElementById('examChannelCloseBtn')?.addEventListener('click', () => {
+                setExamChannelOpen(false, { scrollToEntry: true });
+            });
+        }
+
         /* ============================================================
          * 4. 交互：终端打字机 / 重新卜卦 / 加载动画
          * ============================================================ */
@@ -3444,7 +2908,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
 
             // 防呆：任何内部调用都不能绕过显式占卜按钮
             if (!divinationActivated || !hasDivinationInput()) {
-                setDivinationPrompt('请先录入今日课程与具体时间、昨晚状态或今日消费账单，再来连线玄学终端！');
+                setDivinationPrompt('请先录入今日课程与具体时间、昨晚状态或今日饮食标签，再来连线玄学终端！');
                 updateDivinationGate('empty');
                 if (button) {
                     button.disabled = false;
@@ -3468,10 +2932,9 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             log.innerHTML = '';
 
             const bootLines = [
-                `> 锁定今日单日切片 ... OK (${getTodayKey()} / ${getTodayExpenseRows().length} rows)`,
-                `> 隔离历史消费记录 ... OK (${EXPENSES.length} rows archived)`,
+                `> 锁定今日单日切片 ... OK (${getTodayKey()} / ${getTodayCourseTimeline().length} blocks)`,
                 `> 载入今日课业压力档案 ... OK (${COURSE_RECORDS.length} courses)`,
-                `> 锁定今日课程时间线 ... OK (${getTodayCourseTimeline().length} blocks)`,
+                `> 解锁晨间生活标签 ... OK (${getLifestyleState().labels.length} tags)`,
                 `> 读取昨晚睡眠状态 ... OK (${getSleepState().label || '未选择'})`,
                 '> 加载 cyber-oracle-7b 今日权重 ... OK',
                 '> 正在计算今日赛博播报 ...'
@@ -3694,7 +3157,7 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
             if (!lifestyleSummary) return;
             const state = getLifestyleState();
             if (!state.count) {
-                lifestyleSummary.textContent = '未选择昨晚状态与饮食标签：今日占卜引擎仅使用课程时间线与今日消费数据；补选后可激活晨间联动解读。';
+                lifestyleSummary.textContent = '未选择昨晚状态与饮食标签：今日占卜引擎仅使用课程时间线；补选后可激活晨间联动解读。';
                 return;
             }
             const riskText = `${state.risk > 0 ? '+' : ''}${state.risk}`;
@@ -3888,288 +3351,9 @@ ${day(12)},03:00,蜜雪冰城,夜宵,18.00,全套奶茶（历史旧数据）`;
         }
 
         bindCourseAndLifestylePanel();
-
-        /* ============================================================
-         * 5. 消费账单导入：FileReader → 解析 → 暂存，等待显式占卜
-         * ============================================================ */
-        const fileInput = document.getElementById('csvFileInput');
-        const uploadZone = document.getElementById('uploadZone');
-        const uploadZoneTitle = document.getElementById('uploadZoneTitle');
-        const uploadZoneHint = document.getElementById('uploadZoneHint');
-        const uploadStatus = document.getElementById('uploadStatus');
-        const dataSummary = document.getElementById('dataSummary');
-        const resetDataBtn = document.getElementById('resetDataBtn');
-        const MAX_CSV_BYTES = 2 * 1024 * 1024;
-        let uploadBusy = false;
-
-        function setUploadStatus(message, tone) {
-            uploadStatus.textContent = message;
-            uploadStatus.dataset.tone = tone || 'idle';
-        }
-
-        function updateDataSummary() {
-            updateAlmanacHeader();
-            if (!EXPENSES.length) {
-                const facts = analyzeCampusData();
-                const courseText = facts.courseCount
-                    ? ` · 今日课程 ${facts.courseCount} 门 / 时间线 ${facts.timelineCount} 段`
-                    : '';
-                const sleepText = facts.lifestyle.hasSleepSelection
-                    ? ` · 昨晚 ${facts.lifestyle.sleepLabel}`
-                    : '';
-                dataSummary.textContent = `数据源：等待输入 ｜ 今日 0 条消费记录${courseText}${sleepText}`;
-                return;
-            }
-            const facts = analyzeCampusData();
-            const missing = [];
-            if (facts.hasTodayExpenses && !facts.hasTime) missing.push('time');
-            if (facts.hasTodayExpenses && !facts.hasLocation) missing.push('location');
-            const missingText = missing.length ? ` · 今日未提供 ${missing.join(' / ')}` : '';
-            const todayText = facts.hasTodayExpenses
-                ? `今日 ${facts.totalRecords} 条 · ${yuan(facts.totalAmount)} · 深夜 ${facts.deepNightCount} 笔 · 奶茶 ${facts.milkTeaCount} 杯`
-                : '今日 0 条（历史记录不参与今日切片）';
-            dataSummary.textContent = `数据源：${activeExpenseSource} ｜ 已接入 ${EXPENSES.length} 条 · ${todayText}${missingText}`;
-        }
-
-        function applyExpenseData(rows, sourceLabel) {
-            EXPENSES = rows;
-            activeExpenseSource = sourceLabel;
-            markDivinationInputsChanged();
-        }
-
-        function readCsvFile(file) {
-            if (!file || uploadBusy) {
-                if (uploadBusy) fileInput.value = '';
-                return;
-            }
-
-            const isCsv = /\.csv$/i.test(file.name)
-                || file.type === 'text/csv'
-                || file.type === 'application/vnd.ms-excel';
-            if (!isCsv) {
-                setUploadStatus('✕ 仅支持 .csv 文件，请重新选择。', 'error');
-                fileInput.value = '';
-                return;
-            }
-            if (file.size > MAX_CSV_BYTES) {
-                setUploadStatus('✕ 文件超过 2 MB，请精简后再上传。', 'error');
-                fileInput.value = '';
-                return;
-            }
-            if (file.size === 0) {
-                setUploadStatus('✕ 文件为空，请检查后重新上传。', 'error');
-                fileInput.value = '';
-                return;
-            }
-
-            uploadBusy = true;
-            uploadZone.classList.add('is-loading');
-            setUploadStatus(`◌ 正在读取 ${file.name} ...`, 'busy');
-
-            const reader = new FileReader();
-            reader.onload = () => {
-                try {
-                    const parsed = parseExpensesCsv(reader.result);
-                    if (!parsed.rows.length) {
-                        const detail = parsed.errorSamples.length ? `（${parsed.errorSamples[0]}）` : '';
-                        throw new Error(`没有解析到有效数据行${detail}`);
-                    }
-                    applyExpenseData(parsed.rows, `本地文件：${file.name}`);
-                    uploadZoneTitle.textContent = '⬆ 更换 CSV 文件';
-                    uploadZoneHint.textContent = file.name;
-                    resetDataBtn.classList.remove('hidden');
-                    const skippedText = parsed.skipped
-                        ? `，已跳过 ${parsed.skipped} 行无效数据（${parsed.errorSamples[0]}）`
-                        : '';
-                    const optionalMissing = [];
-                    if (!parsed.columns.time) optionalMissing.push('time');
-                    if (!parsed.columns.location) optionalMissing.push('location');
-                    if (!parsed.columns.note) optionalMissing.push('note/remark');
-                    const adaptText = optionalMissing.length
-                        ? `；未提供 ${optionalMissing.join(' / ')} 列，相关视图已按可用字段自动适配`
-                        : '';
-                    setUploadStatus(`✓ 已载入 ${parsed.rows.length} 条记录（今日 ${getTodayExpenseRows(parsed.rows).length} 条）${skippedText}${adaptText}；数据已暂存，点击「开始占卜 · 今日运势」刷新今日赛博黄历与播报。`, 'ok');
-                } catch (error) {
-                    setUploadStatus(`✕ 导入失败：${error.message}`, 'error');
-                } finally {
-                    uploadBusy = false;
-                    uploadZone.classList.remove('is-loading');
-                    fileInput.value = '';
-                }
-            };
-            reader.onerror = () => {
-                uploadBusy = false;
-                uploadZone.classList.remove('is-loading');
-                fileInput.value = '';
-                setUploadStatus('✕ 文件读取失败，请确认文件未被占用后重试。', 'error');
-            };
-            reader.readAsText(file, 'UTF-8');
-        }
-
-        fileInput.addEventListener('change', () => {
-            readCsvFile(fileInput.files && fileInput.files[0]);
-        });
-
-        ['dragenter', 'dragover'].forEach((eventName) => {
-            uploadZone.addEventListener(eventName, (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                uploadZone.classList.add('is-dragover');
-            });
-        });
-
-        ['dragleave', 'dragend'].forEach((eventName) => {
-            uploadZone.addEventListener(eventName, () => uploadZone.classList.remove('is-dragover'));
-        });
-
-        uploadZone.addEventListener('drop', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            uploadZone.classList.remove('is-dragover');
-            const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-            readCsvFile(file);
-        });
-
-        uploadZone.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                fileInput.click();
-            }
-        });
-
-        // 文件拖到页面其他位置时，阻止浏览器直接打开文件
-        ['dragover', 'drop'].forEach((eventName) => {
-            window.addEventListener(eventName, (event) => event.preventDefault());
-        });
-
-        resetDataBtn.addEventListener('click', () => {
-            applyExpenseData(buildMockExpenses(), '示例流水（今日动态生成）');
-            resetDataBtn.classList.add('hidden');
-            uploadZoneTitle.textContent = '⬆ 拖拽 / 点击上传 CSV';
-            uploadZoneHint.textContent = '支持 .csv · 最大 2 MB';
-            fileInput.value = '';
-            setUploadStatus('↺ 已载入今日示例流水；点击「开始占卜 · 今日运势」后刷新今日赛博黄历与播报。', 'idle');
-        });
-
-        /* ============================================================
-         * 6. 手机快捷记账：追加到当前数据 → 暂存，等待显式占卜
-         * ============================================================ */
-        const quickEntryForm = document.getElementById('quickEntryForm');
-        const quickDate = document.getElementById('quickDate');
-        const quickCategory = document.getElementById('quickCategory');
-        const quickAmount = document.getElementById('quickAmount');
-        const quickNote = document.getElementById('quickNote');
-        const quickEntryStatus = document.getElementById('quickEntryStatus');
-        const quickToast = document.getElementById('quickToast');
-        const quickToastText = document.getElementById('quickToastText');
-        const QUICK_CATEGORIES = new Set(['餐饮', '学习', '娱乐', '交通', '购物', '其他']);
-        let quickToastTimer = null;
-
-        function formatDateForInput(date) {
-            return getDateKey(date);
-        }
-
-        function isValidQuickDate(value) {
-            const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-            if (!match) return false;
-            const year = Number(match[1]);
-            const month = Number(match[2]);
-            const day = Number(match[3]);
-            const date = new Date(year, month - 1, day);
-            return date.getFullYear() === year
-                && date.getMonth() === month - 1
-                && date.getDate() === day;
-        }
-
-        function setQuickEntryStatus(message, tone) {
-            quickEntryStatus.textContent = message;
-            quickEntryStatus.dataset.tone = tone || 'idle';
-        }
-
-        function showQuickToast(message) {
-            quickToastText.textContent = message;
-            quickToast.classList.add('is-visible');
-            clearTimeout(quickToastTimer);
-            quickToastTimer = setTimeout(() => quickToast.classList.remove('is-visible'), 2600);
-        }
-
-        // 日期默认今天，格式 YYYY-MM-DD
-        quickDate.value = formatDateForInput(new Date());
-
-        quickEntryForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            const date = quickDate.value.trim();
-            const category = quickCategory.value;
-            const amountRaw = quickAmount.value.trim();
-            const note = quickNote.value.trim();
-
-            if (!isValidQuickDate(date)) {
-                setQuickEntryStatus('✕ 请选择有效的日期。', 'error');
-                quickDate.focus();
-                return;
-            }
-            if (!QUICK_CATEGORIES.has(category)) {
-                setQuickEntryStatus('✕ 请选择消费分类。', 'error');
-                quickCategory.focus();
-                return;
-            }
-
-            const amount = Number(amountRaw);
-            if (!amountRaw || !Number.isFinite(amount) || amount <= 0) {
-                setQuickEntryStatus('✕ 请输入大于 0 的金额。', 'error');
-                quickAmount.focus();
-                return;
-            }
-            const roundedAmount = Math.round(amount * 100) / 100;
-            if (roundedAmount <= 0) {
-                setQuickEntryStatus('✕ 金额过小，请至少输入 0.01 元。', 'error');
-                quickAmount.focus();
-                return;
-            }
-
-            // 不伪造 time / location：表单没有的字段保持空字符串
-            const entry = {
-                date,
-                time: '',
-                location: '',
-                category,
-                amount: roundedAmount,
-                remark: note
-            };
-
-            const hadExpenses = EXPENSES.length > 0;
-            EXPENSES = EXPENSES.concat(entry).sort((a, b) =>
-                `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
-            );
-            if (!hadExpenses) {
-                activeExpenseSource = '手动记账';
-            } else if (!activeExpenseSource.includes('手动记账')) {
-                activeExpenseSource = `${activeExpenseSource} + 手动记账`;
-            }
-            resetDataBtn.classList.remove('hidden');
-
-            markDivinationInputsChanged();
-
-            quickAmount.value = '';
-            quickNote.value = '';
-            const notePreview = note
-                ? ` · ${note.length > 18 ? `${note.slice(0, 18)}…` : note}`
-                : '';
-            setQuickEntryStatus(`✓ 已追加：${date} · ${category} · ${yuan(roundedAmount)}${notePreview}；${date === getTodayKey() ? '计入今日切片' : '该日期不是今天，不计入今日切片'}，点击「开始占卜 · 今日运势」更新结果。`, 'ok');
-            showQuickToast(date === getTodayKey() ? '今日记账成功！点击「开始占卜」更新今日运势' : '记账成功！该笔为历史日期，不参与今日切片');
-            quickAmount.focus();
-        });
-
-        updateDataSummary();
+        bindExamChannel();
         updateDivinationGate('standby');
 
-        // 图表自适应：窗口尺寸变化时重绘
-        window.addEventListener('resize', function () {
-            if (locChart) locChart.resize();
-            if (nightChart) nightChart.resize();
-            if (examGaugeChart) examGaugeChart.resize();
-        });
     </script>
 </body>
 </html>
