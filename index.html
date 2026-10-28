@@ -485,33 +485,254 @@
             box-shadow: inset 0 0 16px rgba(251, 191, 36, 0.06);
         }
 
+        /* ================= 5 视图流转 / 赛博多页终端 ================= */
+        .view { position: relative; }
+        .view.hidden { display: none !important; }
+        .view.is-entering { animation: view-enter 0.48s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes view-enter {
+            from { opacity: 0; transform: translateY(14px) scale(0.995); filter: blur(3px); }
+            to { opacity: 1; transform: none; filter: none; }
+        }
+        .step-rail {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 0.35rem;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            border-radius: 1rem;
+            background: rgba(2, 6, 23, 0.62);
+            padding: 0.45rem;
+            backdrop-filter: blur(12px);
+        }
+        .step-node {
+            position: relative;
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            border: 1px solid transparent;
+            border-radius: 0.65rem;
+            padding: 0.45rem 0.3rem;
+            color: #475569;
+            font-size: 9px;
+            letter-spacing: 0.12em;
+            transition: all 0.25s ease;
+        }
+        .step-node b {
+            display: grid;
+            width: 18px;
+            height: 18px;
+            place-items: center;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 9999px;
+            font-size: 8px;
+            font-weight: 700;
+        }
+        .step-node.is-done { color: #34d399; }
+        .step-node.is-done b { border-color: rgba(52, 211, 153, 0.4); background: rgba(52, 211, 153, 0.1); }
+        .step-node.is-active {
+            border-color: rgba(34, 211, 238, 0.35);
+            background: linear-gradient(120deg, rgba(34, 211, 238, 0.12), rgba(217, 70, 239, 0.08));
+            color: #a5f3fc;
+            box-shadow: inset 0 0 18px rgba(34, 211, 238, 0.06), 0 0 18px rgba(34, 211, 238, 0.08);
+        }
+        .step-node.is-active b { border-color: rgba(34, 211, 238, 0.65); background: rgba(34, 211, 238, 0.16); color: #67e8f9; }
+        @media (max-width: 460px) {
+            .step-node span { display: none; }
+            .step-node b { width: 22px; height: 22px; font-size: 9px; }
+        }
+
+        /* 第 1 页：暗门角落 + 下一步 CTA */
+        .input-cta {
+            background:
+                radial-gradient(420px 150px at 12% 0%, rgba(34, 211, 238, 0.12), transparent 70%),
+                linear-gradient(120deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.94));
+            box-shadow: 0 20px 50px -34px rgba(34, 211, 238, 0.55);
+        }
+        .hidden-corner {
+            border-top: 1px dashed rgba(148, 163, 184, 0.14);
+            padding-top: 0.85rem;
+        }
+
+        /* 第 2 页：启动舱 */
+        .launch-hero {
+            background:
+                radial-gradient(620px 300px at 50% -8%, rgba(217, 70, 239, 0.18), transparent 62%),
+                radial-gradient(520px 260px at 100% 100%, rgba(34, 211, 238, 0.12), transparent 66%),
+                rgba(2, 6, 23, 0.9);
+        }
+        .launch-orb {
+            position: relative;
+            display: grid;
+            width: 118px;
+            height: 118px;
+            margin: 0 auto;
+            place-items: center;
+            border: 1px solid rgba(217, 70, 239, 0.35);
+            border-radius: 9999px;
+            background: radial-gradient(circle at 42% 34%, rgba(244, 114, 182, 0.28), rgba(2, 6, 23, 0.9) 68%);
+            box-shadow: inset 0 0 34px rgba(217, 70, 239, 0.12), 0 0 42px rgba(217, 70, 239, 0.18);
+        }
+        .launch-orb::before,
+        .launch-orb::after {
+            content: "";
+            position: absolute;
+            border-radius: 9999px;
+            pointer-events: none;
+        }
+        .launch-orb::before {
+            inset: -12px;
+            border: 1px dashed rgba(34, 211, 238, 0.32);
+            animation: launch-orbit 12s linear infinite;
+        }
+        .launch-orb::after {
+            inset: 16px;
+            border: 1px solid rgba(251, 191, 36, 0.22);
+            animation: launch-pulse 2.8s ease-in-out infinite;
+        }
+        .launch-orb-core { position: relative; z-index: 1; font-size: 38px; filter: drop-shadow(0 0 18px rgba(217, 70, 239, 0.55)); }
+        @keyframes launch-orbit { to { transform: rotate(360deg); } }
+        @keyframes launch-pulse {
+            0%, 100% { opacity: 0.4; transform: scale(0.94); }
+            50% { opacity: 1; transform: scale(1.04); }
+        }
+
+        /* 第 3 页：量子连线演算 */
+        .quantum-stage {
+            position: relative;
+            height: 210px;
+            margin: 0 auto 0.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(34, 211, 238, 0.16);
+            border-radius: 1rem;
+            background:
+                radial-gradient(320px 180px at 50% 50%, rgba(34, 211, 238, 0.10), transparent 68%),
+                rgba(2, 6, 23, 0.58);
+        }
+        .quantum-stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+            -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 20%, transparent 76%);
+            mask-image: radial-gradient(ellipse at 50% 50%, #000 20%, transparent 76%);
+        }
+        .quantum-links { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .quantum-path { fill: none; stroke: rgba(34, 211, 238, 0.25); stroke-width: 1; }
+        .quantum-path-live {
+            fill: none;
+            stroke: #22d3ee;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-dasharray: 8 14;
+            filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.7));
+            animation: quantum-flow 1.6s linear infinite;
+        }
+        @keyframes quantum-flow { to { stroke-dashoffset: -44; } }
+        .quantum-node {
+            position: absolute;
+            width: 9px;
+            height: 9px;
+            border: 1px solid rgba(34, 211, 238, 0.7);
+            border-radius: 9999px;
+            background: #020617;
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.65);
+        }
+        .quantum-node::after {
+            content: "";
+            position: absolute;
+            inset: -7px;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 9999px;
+            animation: quantum-node-ping 2s ease-out infinite;
+        }
+        @keyframes quantum-node-ping {
+            0% { transform: scale(0.6); opacity: 0.9; }
+            100% { transform: scale(1.9); opacity: 0; }
+        }
+        .quantum-core {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 2;
+            display: grid;
+            width: 86px;
+            height: 86px;
+            place-items: center;
+            border: 1px solid rgba(217, 70, 239, 0.45);
+            border-radius: 9999px;
+            background: radial-gradient(circle, rgba(217, 70, 239, 0.22), rgba(2, 6, 23, 0.92) 70%);
+            color: #f5d0fe;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 0 0 16px rgba(244, 114, 182, 0.75);
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 38px rgba(217, 70, 239, 0.3), inset 0 0 24px rgba(217, 70, 239, 0.12);
+        }
+        .quantum-core::before,
+        .quantum-core::after {
+            content: "";
+            position: absolute;
+            border-radius: 9999px;
+            border: 1px dashed rgba(34, 211, 238, 0.4);
+        }
+        .quantum-core::before { inset: -14px; animation: launch-orbit 7s linear infinite; }
+        .quantum-core::after { inset: -27px; border-color: rgba(217, 70, 239, 0.22); animation: launch-orbit 11s linear infinite reverse; }
+        .quantum-core span { animation: launch-pulse 1.4s ease-in-out infinite; }
+        .calc-track {
+            height: 5px;
+            overflow: hidden;
+            border-radius: 9999px;
+            background: rgba(148, 163, 184, 0.14);
+        }
+        .calc-bar {
+            display: block;
+            width: 0%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #22d3ee, #d946ef);
+            box-shadow: 0 0 14px rgba(34, 211, 238, 0.45);
+            transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .calc-percent { font-variant-numeric: tabular-nums; }
+        #oracleLoading { min-height: 0; }
+        #oracleLog { min-height: 5.5rem; }
+
         @media (prefers-reduced-motion: reduce) {
             .cyber-scan::after, .caret::after, .terminal-line, .fade-up,
             .exam-lot-tube::before, .exam-lot-tube.is-drawing,
             .exam-lot-tube.is-drawing .exam-lot-stick,
             .exam-channel-btn::after, .exam-channel-state::before,
-            #examDivination.is-revealing { animation: none !important; }
-            .aura-fill { transition: none; }
+            #examDivination.is-revealing, .view.is-entering { animation: none !important; }
+            .aura-fill, .calc-bar { transition: none; }
+            .launch-orb::before, .launch-orb::after,
+            .quantum-path-live, .quantum-core::before, .quantum-core::after,
+            .quantum-core span, .quantum-node::after { animation: none !important; }
         }
     </style>
 </head>
 <body class="p-4 sm:p-8">
     <div class="max-w-4xl mx-auto">
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
+            <p class="text-[9px] tracking-[0.32em] text-cyan-300/70">CYBER DIVINATION // 5-STAGE TERMINAL</p>
+            <span id="viewRouteLabel" class="text-[9px] tracking-[0.24em] text-slate-500">01 / INPUT</span>
+        </div>
+        <nav id="stepRail" class="step-rail mb-5" aria-label="占卜流程">
+            <div class="step-node is-active" data-step="input" aria-current="step"><b>01</b><span>录入</span></div>
+            <div class="step-node" data-step="launch"><b>02</b><span>启动</span></div>
+            <div class="step-node" data-step="calc"><b>03</b><span>演算</span></div>
+            <div class="step-node" data-step="result"><b>04</b><span>播报</span></div>
+            <div class="step-node" data-step="exam"><b>05</b><span>渡劫</span></div>
+        </nav>
+
+        <!-- ================= 第 1 页 · 今日数据录入 ================= -->
+        <section id="viewInput" class="view" data-view="input" aria-label="今日数据录入页">
         <header class="text-center mb-6 sm:mb-10">
             <h1 class="text-2xl sm:text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学 · 今日晨间运势</h1>
             <p class="text-xs sm:text-sm text-slate-400 mt-2">—— 昨晚状态 × 今日课程时间线，只算今天这一卦的晨间播报</p>
-            <div class="exam-channel-entry mt-4">
-                <button id="examChannelToggle" type="button" class="exam-channel-btn"
-                    aria-expanded="false" aria-controls="examDivination" aria-describedby="examChannelHint">
-                    <span id="examChannelIcon" class="exam-channel-icon" aria-hidden="true">⚠️</span>
-                    <span class="exam-channel-copy">
-                        <span class="exam-channel-eyebrow">FINAL WEEK // SEALED CHANNEL</span>
-                        <span id="examChannelText" class="exam-channel-label">开启期末渡劫通道</span>
-                    </span>
-                    <span id="examChannelState" class="exam-channel-state" aria-live="polite">封印中</span>
-                </button>
-                <span id="examChannelHint" class="sr-only">默认隐藏的期末考试概率、签筒与符咒模块，点击后展开并跳转。</span>
-            </div>
         </header>
 
         <!-- ================= 赛博数据接入端：统一输入区 ================= -->
@@ -529,7 +750,7 @@
                 <p class="mt-1 text-[11px] leading-5 text-amber-200/75">课程名称 + 上课时间段 + 昨晚睡眠 / 精神状态 → 生成今日宜 / 不宜、今日核心注意事项与分时段渡劫提示。</p>
             </div>
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <details class="data-panel relative overflow-hidden rounded-2xl border border-cyan-400/25" open>
+                <details class="data-panel relative overflow-hidden rounded-2xl border border-cyan-400/25 lg:col-span-2" open>
                     <div class="cyber-grid pointer-events-none absolute inset-0 opacity-40"></div>
                     <summary class="relative flex cursor-pointer items-start justify-between gap-3 p-4">
                         <span class="flex min-w-0 items-start gap-3">
@@ -682,8 +903,62 @@
             </div>
         </section>
 
+        <div class="input-cta relative mt-6 overflow-hidden rounded-2xl border border-cyan-400/25 p-4 sm:p-5">
+            <div class="cyber-grid pointer-events-none absolute inset-0 opacity-30"></div>
+            <div class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
+                    <p class="text-[10px] tracking-[0.32em] text-cyan-300/80">INPUT LOCK // 输入封存</p>
+                    <h2 class="mt-1 text-lg font-bold text-slate-100">数据接入完成？进入启动舱</h2>
+                    <p id="inputFlowStatus" class="mt-1 text-[11px] leading-5 text-slate-400" data-tone="idle" role="status" aria-live="polite">
+                        ○ 尚未接入数据：至少录入一门课程，或选择昨晚状态 / 今日饮食标签。
+                    </p>
+                </div>
+                <button id="goLaunchBtn" type="button"
+                    class="min-h-[48px] w-full shrink-0 rounded-xl border border-cyan-300/45 bg-gradient-to-r from-cyan-300 to-fuchsia-400 px-5 py-3 text-sm font-bold tracking-widest text-slate-950 transition hover:brightness-110 hover:shadow-[0_0_26px_rgba(34,211,238,0.32)] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 sm:w-auto">
+                    进入启动页 →
+                </button>
+            </div>
+        </div>
+
+        <div class="hidden-corner mt-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <p class="text-[9px] tracking-[0.30em] text-slate-600">HIDDEN CORNER // 不在流程图上的入口</p>
+                <p class="mt-1 text-[10px] leading-4 text-slate-600">如果今天不是普通的一天，也许你需要另一条通道。</p>
+            </div>
+            <div class="exam-channel-entry">
+                <button id="examChannelToggle" type="button" class="exam-channel-btn"
+                    aria-expanded="false" aria-controls="examDivination" aria-describedby="examChannelHint">
+                    <span id="examChannelIcon" class="exam-channel-icon" aria-hidden="true">⚠️</span>
+                    <span class="exam-channel-copy">
+                        <span class="exam-channel-eyebrow">FINAL WEEK // SEALED CHANNEL</span>
+                        <span id="examChannelText" class="exam-channel-label">开启期末渡劫通道</span>
+                    </span>
+                    <span id="examChannelState" class="exam-channel-state" aria-live="polite">封印中</span>
+                </button>
+                <span id="examChannelHint" class="sr-only">第 1 页角落的隐藏入口；点击后无缝切换至期末渡劫占卜页。</span>
+            </div>
+        </div>
+        </section>
+
+        <!-- ================= 第 2 页 · 占卜启动舱 ================= -->
+        <section id="viewLaunch" class="view hidden" data-view="launch" aria-label="占卜启动页">
+            <div class="launch-hero relative overflow-hidden rounded-2xl border border-fuchsia-400/25 p-6 text-center sm:p-8">
+                <div class="cyber-grid pointer-events-none absolute inset-0 opacity-40"></div>
+                <div class="relative">
+                    <div class="launch-orb" aria-hidden="true"><span class="launch-orb-core">🔮</span></div>
+                    <p class="mt-6 text-[10px] tracking-[0.38em] text-fuchsia-300/80">ORACLE LAUNCH SEQUENCE // READY</p>
+                    <h2 class="cyber-glitch mt-2 text-2xl font-bold text-slate-100 sm:text-3xl">今日运势 · 等待点火</h2>
+                    <p class="mx-auto mt-2 max-w-xl text-xs leading-6 text-slate-400">
+                        输入已锁定。启动后将进入量子连线演算，读取今日课表时间线、昨晚状态与今日补给，生成只属于今天的赛博播报。
+                    </p>
+                    <p id="launchSummary" class="mx-auto mt-4 max-w-xl rounded-lg border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-[11px] leading-5 text-cyan-100/85" role="status" aria-live="polite">
+                        已接入：等待生成今日数据摘要
+                    </p>
+                </div>
+            </div>
+
         <!-- ================= 按需占卜触发区 ================= -->
-        <section id="divinationGate" class="mb-6" aria-labelledby="divinationGateTitle">
+        <section id="divinationGate" class="mt-4 mb-6" aria-labelledby="divinationGateTitle">
             <div class="cyber-oracle relative overflow-hidden rounded-2xl border border-fuchsia-400/30 p-4 sm:p-5">
                 <div class="cyber-grid pointer-events-none absolute inset-0 opacity-50"></div>
                 <div class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -705,8 +980,59 @@
             </div>
         </section>
 
-        <!-- ================= 今日赛博播报 · AI 玄学卡片 ================= -->
-        <section class="mt-10" aria-labelledby="oracleTitle">
+            <div class="flex flex-col items-stretch justify-between gap-2 sm:flex-row sm:items-center">
+                <button id="backToInputBtn" type="button"
+                    class="min-h-[44px] rounded-lg border border-slate-600/60 bg-slate-950/40 px-4 py-2 text-[11px] tracking-widest text-slate-400 transition hover:border-cyan-400/50 hover:text-cyan-200">
+                    ← 返回修改今日输入
+                </button>
+                <p class="text-[10px] leading-4 text-slate-600">启动后不可中断；演算过程约需数秒。</p>
+            </div>
+        </section>
+
+        <!-- ================= 第 3 页 · 量子连线演算 ================= -->
+        <section id="viewCalc" class="view hidden" data-view="calc" aria-label="量子连线演算页">
+            <div class="cyber-oracle relative overflow-hidden rounded-2xl border border-cyan-400/25 p-5 sm:p-7">
+                <div class="cyber-grid pointer-events-none absolute inset-0 opacity-45"></div>
+                <div class="relative mx-auto max-w-2xl text-center">
+                    <p class="text-[10px] tracking-[0.40em] text-cyan-300/80">QUANTUM LINK // CALCULATING</p>
+                    <h2 class="cyber-glitch mt-2 text-2xl font-bold text-slate-100">正在连线今日玄学终端</h2>
+                    <p id="calcStageText" class="mt-1 text-[11px] leading-5 text-slate-400" role="status" aria-live="polite">
+                        初始化量子链路，准备读取今日单日切片…
+                    </p>
+
+                    <div class="quantum-stage mt-4" aria-hidden="true">
+                        <svg class="quantum-links" viewBox="0 0 600 210" preserveAspectRatio="none">
+                            <path class="quantum-path" d="M30 170 L115 72 L210 152 L300 105 L390 48 L485 145 L570 62" />
+                            <path class="quantum-path-live" d="M30 170 L115 72 L210 152 L300 105 L390 48 L485 145 L570 62" />
+                        </svg>
+                        <span class="quantum-node" style="left:5%;top:78%;"></span>
+                        <span class="quantum-node" style="left:19%;top:30%;"></span>
+                        <span class="quantum-node" style="left:35%;top:69%;"></span>
+                        <span class="quantum-node" style="left:64%;top:19%;"></span>
+                        <span class="quantum-node" style="left:81%;top:66%;"></span>
+                        <span class="quantum-node" style="left:95%;top:26%;"></span>
+                        <div class="quantum-core"><span>算</span></div>
+                    </div>
+
+                    <div class="mt-4 rounded-xl border border-slate-700/60 bg-slate-950/60 p-3 text-left">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[9px] tracking-[0.26em] text-slate-500">NEURAL SYNC PROGRESS</span>
+                            <span id="calcPercent" class="calc-percent text-sm font-bold text-cyan-200">00%</span>
+                        </div>
+                        <div class="calc-track mt-2"><span id="calcBar" class="calc-bar"></span></div>
+                    </div>
+
+                    <div id="oracleLoading" class="mt-4 rounded-xl border border-cyan-500/20 bg-slate-950/70 p-4 text-left text-xs leading-6 text-emerald-300/90" role="status" aria-live="polite">
+                        <div id="oracleLog" class="space-y-1">
+                            <p class="text-slate-400">QUANTUM LINK READY // 等待链路握手</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 第 4 页 · 今日赛博播报 ================= -->
+        <section id="viewResult" class="view hidden" data-view="result" aria-labelledby="oracleTitle">
             <div class="cyber-oracle relative overflow-hidden rounded-2xl border border-fuchsia-500/30">
                 <div class="cyber-grid pointer-events-none absolute inset-0"></div>
                 <div class="cyber-scan pointer-events-none absolute inset-0 opacity-60"></div>
@@ -728,14 +1054,6 @@
                     </div>
 
                     <div class="cyber-divider my-5"></div>
-
-                    <!-- 推演中：模拟大模型终端输出 -->
-                    <div id="oracleLoading" class="min-h-[220px] rounded-xl border border-cyan-500/20 bg-slate-950/70 p-4 text-xs leading-6 text-emerald-300/90" role="status" aria-live="polite">
-                        <div id="oracleLog" class="space-y-1">
-                            <p class="text-slate-400">SYSTEM STANDBY // 等待今日输入</p>
-                            <p class="text-slate-500">请先在上方录入今日课程与具体时间、昨晚睡眠 / 精神状态或今日饮食标签，然后点击「开始占卜 · 今日运势」激活晨间赛博播报。</p>
-                        </div>
-                    </div>
 
                     <!-- 推演结果 -->
                     <div id="oracleContent" class="hidden" aria-live="polite">
@@ -848,10 +1166,21 @@
                     </div>
                 </div>
             </div>
+
+        <div class="mt-5 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+            <button id="resultBackInputBtn" type="button"
+                class="min-h-[44px] rounded-lg border border-cyan-400/35 bg-cyan-400/5 px-4 py-2 text-[11px] tracking-widest text-cyan-200 transition hover:bg-cyan-400/15">
+                ← 修改今日输入
+            </button>
+            <button id="resultBackLaunchBtn" type="button"
+                class="min-h-[44px] rounded-lg border border-slate-600/60 px-4 py-2 text-[11px] tracking-widest text-slate-400 transition hover:border-fuchsia-400/50 hover:text-fuchsia-200">
+                回到启动页重算
+            </button>
+        </div>
         </section>
 
-        <!-- ================= 期末渡劫占卜 · 隐藏考试概率终端 ================= -->
-        <section id="examDivination" class="mt-10 hidden" aria-labelledby="examTitle" aria-hidden="true" data-exam-channel>
+        <!-- ================= 第 5 页 · 期末渡劫隐藏终端 ================= -->
+        <section id="examDivination" class="view hidden" data-view="exam" aria-labelledby="examTitle" aria-hidden="true" data-exam-channel>
             <div class="exam-terminal relative overflow-hidden rounded-2xl border border-amber-400/30">
                 <div class="cyber-grid pointer-events-none absolute inset-0 opacity-50"></div>
                 <div class="cyber-scan pointer-events-none absolute inset-0 opacity-40"></div>
@@ -865,7 +1194,7 @@
                         <div class="flex shrink-0 flex-wrap items-center gap-2">
                             <button id="examChannelCloseBtn" type="button"
                                 class="rounded-full border border-slate-600/60 bg-slate-950/40 px-2.5 py-1 text-[9px] tracking-widest text-slate-400 transition hover:border-amber-400/50 hover:text-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200">
-                                🔒 收起通道
+                                ← 返回输入页
                             </button>
                             <span id="examStatus" class="shrink-0 rounded-full border border-slate-500/35 bg-slate-500/10 px-3 py-1 text-[10px] tracking-widest text-slate-300">● STANDBY</span>
                         </div>
@@ -927,7 +1256,7 @@
                                         class="mt-2 min-h-[48px] w-full rounded-lg border border-amber-300/50 bg-gradient-to-r from-amber-400 to-yellow-300 px-4 py-2 text-xs font-bold tracking-widest text-slate-950 transition hover:brightness-110 hover:shadow-[0_0_24px_rgba(251,191,36,0.35)] disabled:cursor-wait disabled:opacity-60 sm:w-auto">
                                         🎲 开始抽签
                                     </button>
-                                    <p id="examLotStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">签筒处于待机状态；请先点击「开始占卜 · 今日运势」激活今日终端。</p>
+                                    <p id="examLotStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">签筒处于待机状态；接入今日课程与状态后即可抽签。</p>
                                 </div>
                             </div>
 
@@ -1219,6 +1548,7 @@
                 dietOptions,
                 dietCount: dietOptions.length,
                 dietLabels: dietOptions.map((option) => option.label),
+                dietEmojis: dietOptions.map((option) => option.emoji),
                 sleep,
                 sleepId: sleep.id,
                 hasSleepSelection: sleep.hasSelection,
@@ -1466,6 +1796,24 @@
             return Boolean(getDivinationInputSummary());
         }
 
+        // 期末暗线可脱离晨间播报独立使用：只要今日数据已接入且未冻结即可。
+        function canRunExamDivination() {
+            return hasDivinationInput() && !divinationDirty;
+        }
+
+        function refreshInputStatus() {
+            const status = document.getElementById('inputFlowStatus');
+            if (!status) return;
+            const summary = getDivinationInputSummary();
+            status.dataset.tone = summary ? 'ok' : 'idle';
+            status.className = summary
+                ? 'mt-1 text-[11px] leading-5 text-emerald-300'
+                : 'mt-1 text-[11px] leading-5 text-slate-400';
+            status.textContent = summary
+                ? `✓ 已接入 ${summary}。可进入启动页。`
+                : '○ 尚未接入数据：至少录入一门课程，或选择昨晚状态 / 今日饮食标签。';
+        }
+
         function setDivinationPrompt(message = '') {
             const prompt = document.getElementById('divinationPrompt');
             if (!prompt) return;
@@ -1478,6 +1826,175 @@
             const text = document.getElementById('examGaugeOverlayText');
             if (text && message) text.textContent = message;
             if (overlay) overlay.classList.toggle('is-hidden', !visible);
+        }
+
+        /* ============================================================
+         * 0.5 五视图路由：input → launch → calc → result，exam 为暗线
+         * ============================================================ */
+        const VIEW_ROUTES = {
+            viewInput: 'input',
+            viewLaunch: 'launch',
+            viewCalc: 'calc',
+            viewResult: 'result',
+            examDivination: 'exam'
+        };
+        const ROUTE_VIEWS = Object.fromEntries(
+            Object.entries(VIEW_ROUTES).map(([viewId, route]) => [route, viewId])
+        );
+        const VIEW_META = {
+            viewInput: { step: 'input', label: '01 / INPUT' },
+            viewLaunch: { step: 'launch', label: '02 / LAUNCH' },
+            viewCalc: { step: 'calc', label: '03 / CALCULATING' },
+            viewResult: { step: 'result', label: '04 / BROADCAST' },
+            examDivination: { step: 'exam', label: '05 / FINAL TRIAL' }
+        };
+        const STEP_ORDER = ['input', 'launch', 'calc', 'result', 'exam'];
+        let activeViewId = 'viewInput';
+
+        function getViewIdFromHash() {
+            const route = String(window.location.hash || '').replace(/^#/, '').toLowerCase();
+            return ROUTE_VIEWS[route] || '';
+        }
+
+        function updateStepRail(viewId) {
+            const step = VIEW_META[viewId]?.step || 'input';
+            const activeIndex = STEP_ORDER.indexOf(step);
+            document.querySelectorAll('#stepRail [data-step]').forEach((node) => {
+                const index = STEP_ORDER.indexOf(node.dataset.step);
+                const isActive = node.dataset.step === step;
+                node.classList.toggle('is-active', isActive);
+                node.classList.toggle('is-done', step !== 'exam' && index >= 0 && index < activeIndex);
+                if (isActive) {
+                    node.setAttribute('aria-current', 'step');
+                } else {
+                    node.removeAttribute('aria-current');
+                }
+            });
+            const routeLabel = document.getElementById('viewRouteLabel');
+            if (routeLabel) routeLabel.textContent = VIEW_META[viewId]?.label || '01 / INPUT';
+        }
+
+        function updateExamChannelUi(isOpen) {
+            const toggle = document.getElementById('examChannelToggle');
+            const icon = document.getElementById('examChannelIcon');
+            const text = document.getElementById('examChannelText');
+            const state = document.getElementById('examChannelState');
+            if (toggle) toggle.setAttribute('aria-expanded', String(Boolean(isOpen)));
+            if (icon) icon.textContent = isOpen ? '🔒' : '⚠️';
+            if (text) text.textContent = isOpen ? '期末渡劫通道已开启' : '开启期末渡劫通道';
+            if (state) state.textContent = isOpen ? '通道开启' : '封印中';
+        }
+
+        function setCalcProgress(value, label = '') {
+            const percent = clamp(Math.round(Number(value) || 0), 0, 100);
+            const bar = document.getElementById('calcBar');
+            const text = document.getElementById('calcPercent');
+            const stage = document.getElementById('calcStageText');
+            if (bar) bar.style.width = `${percent}%`;
+            if (text) text.textContent = `${String(percent).padStart(2, '0')}%`;
+            if (stage && label) stage.textContent = label;
+        }
+
+        function navigateToView(viewId, options = {}) {
+            let targetId = VIEW_ROUTES[viewId] ? viewId : 'viewInput';
+            if (!divinationActivated && (targetId === 'viewCalc' || targetId === 'viewResult')) {
+                targetId = 'viewInput';
+            }
+            if (targetId === 'viewResult'
+                && document.getElementById('oracleContent')?.classList.contains('hidden')) {
+                targetId = 'viewLaunch';
+            }
+            const target = document.getElementById(targetId);
+            if (!target) return;
+
+            document.querySelectorAll('[data-view]').forEach((view) => {
+                const isActive = view.id === targetId;
+                view.classList.toggle('hidden', !isActive);
+                view.setAttribute('aria-hidden', String(!isActive));
+                if (!isActive) view.classList.remove('is-entering');
+            });
+
+            activeViewId = targetId;
+            target.classList.remove('is-entering');
+            void target.offsetWidth;
+            target.classList.add('is-entering');
+            updateStepRail(targetId);
+            updateExamChannelUi(targetId === 'examDivination');
+
+            if (targetId === 'viewLaunch') {
+                const summary = getDivinationInputSummary();
+                const launchSummary = document.getElementById('launchSummary');
+                if (launchSummary) {
+                    launchSummary.textContent = summary
+                        ? `已接入：${summary}。量子链路就绪，等待点火。`
+                        : '未检测到今日输入，请先返回录入页接入数据。';
+                }
+                updateDivinationGate('staged');
+            }
+
+            if (targetId === 'examDivination') {
+                const panel = target;
+                panel.classList.remove('is-revealing');
+                void panel.offsetWidth;
+                panel.classList.add('is-revealing');
+                // 页面刚变为可见后再渲染刻度盘，确保容器有尺寸。
+                requestAnimationFrame(() => {
+                    if (activeViewId !== 'examDivination') return;
+                    if (!divinationDirty) refreshExamTerminal();
+                });
+            }
+
+            if (options.updateHistory !== false) {
+                const hash = `#${VIEW_ROUTES[targetId]}`;
+                const state = { view: targetId };
+                try {
+                    if (options.replace) {
+                        window.history.replaceState(state, '', hash);
+                    } else if (window.location.hash !== hash) {
+                        window.history.pushState(state, '', hash);
+                    }
+                } catch (error) {
+                    // file:// 下若浏览器限制 History API，退回 hash 导航。
+                    if (window.location.hash !== hash) window.location.hash = hash;
+                }
+            }
+
+            if (options.scroll !== false) {
+                window.scrollTo({
+                    top: 0,
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth'
+                });
+            }
+            return targetId;
+        }
+
+        function initViewRouter() {
+            window.addEventListener('popstate', () => {
+                const stateView = window.history.state?.view;
+                const viewId = VIEW_ROUTES[stateView] ? stateView : (getViewIdFromHash() || 'viewInput');
+                navigateToView(viewId, { updateHistory: false, scroll: false });
+            });
+            window.addEventListener('hashchange', () => {
+                const viewId = getViewIdFromHash();
+                if (viewId && viewId !== activeViewId) {
+                    navigateToView(viewId, { updateHistory: false, scroll: false });
+                }
+            });
+
+            let initialView = getViewIdFromHash() || 'viewInput';
+            if (!divinationActivated && (initialView === 'viewCalc' || initialView === 'viewResult')) {
+                initialView = 'viewInput';
+            }
+            navigateToView(initialView, { updateHistory: false, scroll: false });
+            try {
+                window.history.replaceState(
+                    { view: initialView },
+                    '',
+                    `#${VIEW_ROUTES[initialView]}`
+                );
+            } catch (error) {
+                // file:// 下忽略 History API 限制，页面仍保持当前视图。
+            }
         }
 
         function updateDivinationGate(mode = 'idle') {
@@ -1560,7 +2077,16 @@
                 if (talismanStatus) talismanStatus.textContent = '数据已更新，今日旧符咒已失效；请先重算今日运势。';
             } else {
                 setDivinationPrompt('');
+                // 期末暗线可独立运行：输入变化后清掉旧签文 / 旧符咒，避免展示过期结果
+                currentExamLot = null;
+                document.getElementById('examLotResult')?.classList.add('hidden');
+                document.getElementById('talismanCard')?.classList.add('hidden');
+                const lotStatus = document.getElementById('examLotStatus');
+                if (lotStatus) lotStatus.textContent = '数据已更新，今日签筒已重置；可重新抽签。';
+                const ticker = document.getElementById('examLotTicker');
+                if (ticker) ticker.textContent = 'SYNC // 今日数据已更新，签筒已重新校准';
             }
+            refreshInputStatus();
             updateDivinationGate('staged');
         }
 
@@ -1569,6 +2095,7 @@
             if (!summary) {
                 setDivinationPrompt('请先录入今日课程与具体时间、昨晚状态或今日饮食标签，再来连线玄学终端！');
                 updateDivinationGate('empty');
+                if (activeViewId !== 'viewLaunch') navigateToView('viewLaunch');
                 document.getElementById('divinationGate')?.scrollIntoView({
                     behavior: prefersReducedMotion ? 'auto' : 'smooth',
                     block: 'center'
@@ -1585,7 +2112,28 @@
             const drawButton = document.getElementById('drawLotBtn');
             if (drawButton && !examDrawing) drawButton.textContent = '🎲 摇一签';
             updateDivinationGate('busy');
+            navigateToView('viewCalc');
             runOracle();
+        }
+
+        function goToLaunchPage() {
+            const status = document.getElementById('inputFlowStatus');
+            if (!hasDivinationInput()) {
+                if (status) {
+                    status.dataset.tone = 'error';
+                    status.className = 'mt-1 text-[11px] leading-5 text-rose-300';
+                    status.textContent = '⚠ 至少录入一门今日课程，或选择昨晚状态 / 今日饮食标签，才能进入启动页。';
+                }
+                document.getElementById('dataHubTitle')?.scrollIntoView({
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                    block: 'start'
+                });
+                return;
+            }
+            refreshInputStatus();
+            setDivinationPrompt('');
+            updateDivinationGate('staged');
+            navigateToView('viewLaunch');
         }
 
         /* ============================================================
@@ -1961,7 +2509,7 @@
                 [
                     `今日赛博播报：${facts.dateLabel} 的${courseLabel}压力指数 ${facts.todayCoursePressure}%，今日熬夜浓度 ${facts.todayNightIndex}%，今日疲惫浓度 ${facts.todayBurnout}%。`,
                     facts.lifestyle.hasPoorSleep
-                        ? '昨晚睡眠赤字已经记账；今天先保起床、早餐与午间 20 分钟闭眼，再谈复习效率。'
+                        ? '昨晚睡眠赤字已经记录；今天先保起床、早餐与午间 20 分钟闭眼，再谈复习效率。'
                         : (facts.lifestyle.hasGoodSleep
                             ? '昨晚睡眠回蓝成功，今日适合把最难的课程放在精力最高的时段。'
                             : '昨晚状态尚未选择，今日推演按基础体力起算；补选后早八风险会更准。'),
@@ -2023,7 +2571,7 @@
                         : '尚未选择昨晚睡眠 / 精神状态；请选择熬夜冲浪 / 优质睡眠 / 失眠焦虑 / 精力充沛，引擎会把睡眠与今日课程时间线合并推演。'
                 },
                 {
-                    icon: facts.lifestyle.dietEmojis[0] || '🍜',
+                    icon: facts.lifestyle.dietOptions[0]?.emoji || '🍜',
                     title: '今日饮食 · 糖分法阵',
                     tag: `${facts.lifestyle.hasDietSelection ? `${facts.lifestyle.dietCount} 个标签` : '未标注'} · 糖分 ${facts.todaySugarIndex}%`,
                     text: facts.lifestyle.hasDietSelection
@@ -2393,15 +2941,11 @@
                 });
                 const ticker = document.getElementById('examLotTicker');
                 if (ticker) {
-                    ticker.textContent = divinationActivated
-                        ? 'SYNC // 今日暂无课程数据，请先上传课表或快捷录入'
-                        : 'SYNC // 等待输入今日课程时间 / 昨晚状态 / 今日饮食标签';
+                    ticker.textContent = 'SYNC // 今日暂无课程数据，请先在录入页添加今日课程';
                 }
                 const lotStatus = document.getElementById('examLotStatus');
                 if (lotStatus) {
-                    lotStatus.textContent = divinationActivated
-                        ? '今日暂无可抽签科目，请先上传课表或快捷录入课程。'
-                        : '签筒处于待机状态；请先点击「开始占卜 · 今日运势」激活今日终端。';
+                    lotStatus.textContent = '今日暂无可抽签科目，请先在录入页添加课程。';
                 }
                 const result = document.getElementById('examLotResult');
                 if (result) result.classList.add('hidden');
@@ -2498,12 +3042,12 @@
             const card = document.getElementById('talismanCard');
             const status = document.getElementById('talismanStatus');
             if (!card) return;
-            // 未激活或数据已变更时，不生成基于旧数据的符咒
-            if (!divinationActivated || divinationDirty) {
+            // 未接入数据或数据已冻结时，不生成基于旧数据的符咒
+            if (!canRunExamDivination()) {
                 card.classList.add('hidden');
                 if (status) {
-                    status.textContent = !divinationActivated
-                        ? '请先点击「开始占卜 · 今日运势」激活今日终端。'
+                    status.textContent = !hasDivinationInput()
+                        ? '请先在录入页接入今日课程 / 状态，再生成符咒。'
                         : '数据已更新，请先重算今日运势再生成符咒。';
                 }
                 return;
@@ -2634,14 +3178,14 @@
 
         async function drawExamLot() {
             if (examDrawing) return;
-            if (!divinationActivated || divinationDirty) {
+            if (!canRunExamDivination()) {
                 const guardStatus = document.getElementById('examLotStatus');
                 if (guardStatus) {
-                    guardStatus.textContent = !divinationActivated
-                        ? '请先点击「开始占卜 · 今日运势」激活今日终端，再抽签。'
+                    guardStatus.textContent = !hasDivinationInput()
+                        ? '请先在录入页接入今日课程 / 状态，再抽签。'
                         : '数据已更新，请先重算今日运势再抽签。';
                 }
-                setExamStatus(!divinationActivated ? '● STANDBY' : '● STALE', 'warn');
+                setExamStatus(!hasDivinationInput() ? '● STANDBY' : '● STALE', 'warn');
                 return;
             }
             const select = document.getElementById('examSubjectSelect');
@@ -2689,16 +3233,16 @@
             }
 
             // 动画期间若数据被改动或终端被重置，旧签文不得继续结算
-            if (!divinationActivated || divinationDirty) {
+            if (!canRunExamDivination()) {
                 examDrawing = false;
                 currentExamLot = null;
                 tube?.classList.remove('is-drawing');
                 if (button) {
                     button.disabled = true;
-                    button.textContent = '🎲 等待重算今日';
+                    button.textContent = '🎲 等待今日数据';
                 }
                 if (result) result.classList.add('hidden');
-                setExamStatus(!divinationActivated ? '● STANDBY' : '● STALE', 'warn');
+                setExamStatus(!hasDivinationInput() ? '● STANDBY' : '● STALE', 'warn');
                 return;
             }
 
@@ -2758,8 +3302,8 @@
 
             const select = document.getElementById('examSubjectSelect');
             select?.addEventListener('change', () => {
-                if (!divinationActivated || divinationDirty) {
-                    setExamStatus(!divinationActivated ? '● STANDBY' : '● STALE', 'warn');
+                if (!canRunExamDivination()) {
+                    setExamStatus(!hasDivinationInput() ? '● STANDBY' : '● STALE', 'warn');
                     return;
                 }
                 refreshExamTerminal(select.value);
@@ -2787,58 +3331,26 @@
         }
 
         /**
-         * 期末渡劫隐藏通道：默认封闭，点击后展开并平滑滚动至考试概率终端。
-         * 只控制展示状态，不改动晨间占卜 / 课程与生活标签的任何计算状态。
+         * 期末渡劫隐藏通道：第 1 页角落入口 → 第 5 页。
+         * 只改变视图，不改动晨间占卜 / 课程与生活标签的任何计算状态。
          */
         function setExamChannelOpen(open, options = {}) {
-            const panel = document.getElementById('examDivination');
-            const toggle = document.getElementById('examChannelToggle');
-            if (!panel || !toggle) return;
-            const shouldOpen = Boolean(open);
-
-            toggle.setAttribute('aria-expanded', String(shouldOpen));
-            panel.setAttribute('aria-hidden', String(!shouldOpen));
-            panel.classList.toggle('hidden', !shouldOpen);
-
-            const icon = document.getElementById('examChannelIcon');
-            const text = document.getElementById('examChannelText');
-            const state = document.getElementById('examChannelState');
-            if (icon) icon.textContent = shouldOpen ? '🔒' : '⚠️';
-            if (text) text.textContent = shouldOpen ? '收起期末渡劫通道' : '开启期末渡劫通道';
-            if (state) state.textContent = shouldOpen ? '通道开启' : '封印中';
-
-            if (!shouldOpen) {
-                if (options.scrollToEntry) {
-                    toggle.focus({ preventScroll: true });
-                    toggle.scrollIntoView({
-                        behavior: prefersReducedMotion ? 'auto' : 'smooth',
-                        block: 'center'
-                    });
-                }
+            if (open) {
+                navigateToView('examDivination');
                 return;
             }
-
-            // 先取消 hidden 再重算，确保刻度盘能拿到可见容器尺寸
-            panel.classList.remove('is-revealing');
-            void panel.offsetWidth;
-            panel.classList.add('is-revealing');
-            // 已冻结（STALE）时不重绘考试概率，保留旧数据与 STALE 覆盖层；
-            // 正常状态下再刷新，让隐藏期间未渲染的刻度盘拿到可见容器尺寸。
-            if (!divinationDirty) refreshExamTerminal();
-            requestAnimationFrame(() => {
-                panel.scrollIntoView({
-                    behavior: prefersReducedMotion ? 'auto' : 'smooth',
-                    block: 'start'
-                });
-            });
+            navigateToView('viewInput', options);
+            if (options.scrollToEntry) {
+                const toggle = document.getElementById('examChannelToggle');
+                if (toggle) toggle.focus({ preventScroll: true });
+            }
         }
 
         function bindExamChannel() {
             const toggle = document.getElementById('examChannelToggle');
             if (!toggle) return;
             toggle.addEventListener('click', () => {
-                const expanded = toggle.getAttribute('aria-expanded') === 'true';
-                setExamChannelOpen(!expanded);
+                setExamChannelOpen(true);
             });
             document.getElementById('examChannelCloseBtn')?.addEventListener('click', () => {
                 setExamChannelOpen(false, { scrollToEntry: true });
@@ -2910,6 +3422,7 @@
             if (!divinationActivated || !hasDivinationInput()) {
                 setDivinationPrompt('请先录入今日课程与具体时间、昨晚状态或今日饮食标签，再来连线玄学终端！');
                 updateDivinationGate('empty');
+                if (activeViewId !== 'viewLaunch') navigateToView('viewLaunch');
                 if (button) {
                     button.disabled = false;
                     button.textContent = '⟲ 重算今日';
@@ -2917,65 +3430,148 @@
                 return;
             }
 
-            setDivinationPrompt('');
-            if (button) {
-                button.hidden = false;
-                button.disabled = true;
-                button.textContent = '◌ 推演中...';
-            }
-            updateDivinationGate('busy');
-            status.textContent = '◌ CALCULATING';
-            status.className = 'text-[10px] tracking-widest text-amber-300';
-            content.classList.add('hidden');
-            loading.classList.remove('hidden');
-            document.getElementById('reportLines').innerHTML = '';
-            log.innerHTML = '';
-
-            const bootLines = [
-                `> 锁定今日单日切片 ... OK (${getTodayKey()} / ${getTodayCourseTimeline().length} blocks)`,
-                `> 载入今日课业压力档案 ... OK (${COURSE_RECORDS.length} courses)`,
-                `> 解锁晨间生活标签 ... OK (${getLifestyleState().labels.length} tags)`,
-                `> 读取昨晚睡眠状态 ... OK (${getSleepState().label || '未选择'})`,
-                '> 加载 cyber-oracle-7b 今日权重 ... OK',
-                '> 正在计算今日赛博播报 ...'
-            ];
-
-            for (const line of bootLines) {
+            const calcStartedAt = performance.now();
+            const resetRunUi = () => {
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = '⟲ 重算今日';
+                }
+            };
+            const abortRun = (error) => {
                 if (runId !== oracleRunId) return;
-                const row = document.createElement('p');
-                row.className = 'terminal-line';
-                row.textContent = line;
-                log.appendChild(row);
-                await sleep(150 + Math.random() * 90);
+                const message = error instanceof Error ? error.message : String(error || '未知错误');
+                console.error('[runOracle] 今日演算中断:', error);
+                resetRunUi();
+
+                // 结果页已经渲染成功时，打字机异常不能反向销毁已经生成的结果。
+                if (activeViewId === 'viewResult') {
+                    if (status) {
+                        status.textContent = '● ONLINE · DEGRADED';
+                        status.className = 'text-[10px] tracking-widest text-amber-300';
+                    }
+                    updateDivinationGate('active');
+                    return;
+                }
+
+                setCalcProgress(100, '链路异常：演算已中止，请返回启动页重试。');
+                if (status) {
+                    status.textContent = '● ERROR';
+                    status.className = 'text-[10px] tracking-widest text-rose-300';
+                }
+                loading?.classList.remove('hidden');
+                content?.classList.add('hidden');
+                if (log) {
+                    log.innerHTML = '';
+                    const failed = document.createElement('p');
+                    failed.className = 'terminal-line text-rose-300';
+                    failed.textContent = `> 演算异常 ... FAILED (${message})`;
+                    const retry = document.createElement('p');
+                    retry.className = 'terminal-line text-slate-500';
+                    retry.textContent = '> 已停止本次推演；请返回启动页后重新点击「开始占卜 · 今日运势」。';
+                    log.append(failed, retry);
+                }
+
+                // 回到“已暂存、未生成”的状态，避免启动页误报已生成今日运势。
+                divinationActivated = false;
+                divinationDirty = false;
+                updateDivinationGate('staged');
+                setDivinationPrompt(`今日演算中断：${message}。请返回启动页重新占卜。`);
+                window.setTimeout(() => {
+                    if (runId !== oracleRunId || activeViewId !== 'viewCalc') return;
+                    navigateToView('viewLaunch');
+                }, 1600);
+            };
+
+            try {
+                setDivinationPrompt('');
+                if (button) {
+                    button.hidden = false;
+                    button.disabled = true;
+                    button.textContent = '◌ 推演中...';
+                }
+                updateDivinationGate('busy');
+                if (status) {
+                    status.textContent = '◌ CALCULATING';
+                    status.className = 'text-[10px] tracking-widest text-amber-300';
+                }
+                content?.classList.add('hidden');
+                loading?.classList.remove('hidden');
+                document.getElementById('reportLines').innerHTML = '';
+                if (log) log.innerHTML = '';
+                setCalcProgress(4, '初始化量子链路，准备读取今日单日切片…');
+
+                const bootLines = [
+                    `> 锁定今日单日切片 ... OK (${getTodayKey()} / ${getTodayCourseTimeline().length} blocks)`,
+                    `> 载入今日课业压力档案 ... OK (${COURSE_RECORDS.length} courses)`,
+                    `> 解锁晨间生活标签 ... OK (${getLifestyleState().labels.length} tags)`,
+                    `> 读取昨晚睡眠状态 ... OK (${getSleepState().label || '未选择'})`,
+                    '> 加载 cyber-oracle-7b 今日权重 ... OK',
+                    '> 正在计算今日赛博播报 ...'
+                ];
+
+                for (const [index, line] of bootLines.entries()) {
+                    if (runId !== oracleRunId) return;
+                    const row = document.createElement('p');
+                    row.className = 'terminal-line';
+                    row.textContent = line;
+                    log?.appendChild(row);
+                    setCalcProgress(10 + ((index + 1) / bootLines.length) * 74, line.replace(/^>\s*/, '').split(' ...')[0]);
+                    await sleep(150 + Math.random() * 90);
+                }
+                if (runId !== oracleRunId) return;
+
+                // 84% 是最后一条启动日志的进度；继续推进到合成阶段，避免停在这里。
+                setCalcProgress(88, '正在聚合今日单日切片，计算课业压力与清醒指数…');
+                await sleep(160);
+                if (runId !== oracleRunId) return;
+
+                // 模拟大模型返回 JSON（实际项目可替换为 fetch('/api/divination')）
+                const result = buildDivination();
+                if (runId !== oracleRunId) return;
+                setCalcProgress(92, '正在合成今日赛博播报与人设参数…');
+                await sleep(180);
+                if (runId !== oracleRunId) return;
+                setCalcProgress(100, '玄学终端上线，正在切送往今日播报…');
+
+                // 至少留出 220ms 让 100% 真正绘制出来，再触发页面切换。
+                const remaining = Math.max(220, 1500 - (performance.now() - calcStartedAt));
+                await sleep(remaining);
+                if (runId !== oracleRunId) return;
+
+                // 先渲染结果，再切页；渲染失败时 catch 会把用户安全送回启动页。
+                renderOracle(result);
+
+                loading?.classList.add('hidden');
+                content?.classList.remove('hidden');
+                content?.classList.remove('fade-up');
+                if (content) void content.offsetWidth; // 重置入场动画
+                content?.classList.add('fade-up');
+
+                const targetView = navigateToView('viewResult', { replace: true });
+                if (targetView !== 'viewResult') {
+                    throw new Error('结果页切换被路由守卫拦截');
+                }
+                if (status) {
+                    status.textContent = '● ONLINE · TODAY';
+                    status.className = 'text-[10px] tracking-widest text-emerald-400/90';
+                }
+
+                await playReading(result.reportLines, runId);
+                if (runId !== oracleRunId) return;
+
+                resetRunUi();
+                updateDivinationGate('active');
+            } catch (error) {
+                abortRun(error);
             }
-
-            // 模拟大模型返回 JSON（实际项目可替换为 fetch('/api/divination')）
-            const result = buildDivination();
-            await sleep(180);
-            if (runId !== oracleRunId) return;
-
-            loading.classList.add('hidden');
-            content.classList.remove('hidden');
-            content.classList.remove('fade-up');
-            void content.offsetWidth; // 重置入场动画
-            content.classList.add('fade-up');
-            renderOracle(result);
-            status.textContent = '● ONLINE · TODAY';
-            status.className = 'text-[10px] tracking-widest text-emerald-400/90';
-
-            await playReading(result.reportLines, runId);
-            if (runId !== oracleRunId) return;
-
-            if (button) {
-                button.disabled = false;
-                button.textContent = '⟲ 重算今日';
-            }
-            updateDivinationGate('active');
         }
 
         document.getElementById('startDivinationBtn')?.addEventListener('click', requestDivination);
-        document.getElementById('chartGateBtn')?.addEventListener('click', requestDivination);
         document.getElementById('rerollBtn')?.addEventListener('click', requestDivination);
+        document.getElementById('goLaunchBtn')?.addEventListener('click', goToLaunchPage);
+        document.getElementById('backToInputBtn')?.addEventListener('click', () => navigateToView('viewInput'));
+        document.getElementById('resultBackInputBtn')?.addEventListener('click', () => navigateToView('viewInput'));
+        document.getElementById('resultBackLaunchBtn')?.addEventListener('click', () => navigateToView('viewLaunch'));
 
         /* ============================================================
          * 4.5 赛博数据接入端：课表上传 / 快捷录入 / 生活状态标签
@@ -3353,6 +3949,8 @@
         bindCourseAndLifestylePanel();
         bindExamChannel();
         updateDivinationGate('standby');
+        refreshInputStatus();
+        initViewRouter();
 
     </script>
 </body>
