@@ -231,51 +231,111 @@
             white-space: nowrap;
         }
 
-        /* ================= 期末渡劫隐藏通道 ================= */
-        .exam-channel-entry { display: flex; justify-content: center; }
-        @media (min-width: 640px) { .exam-channel-entry { justify-content: flex-end; } }
+        /* ================= 期末渡劫入口（标题栏通道） ================= */
+        .exam-channel-entry {
+            position: relative;
+            display: flex;
+            width: fit-content;
+            max-width: 100%;
+            flex-shrink: 0;
+            justify-content: center;
+            isolation: isolate;
+        }
+        .exam-channel-entry::before {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            z-index: -1;
+            border-radius: 9999px;
+            background:
+                radial-gradient(60% 120% at 18% 50%, rgba(251, 191, 36, 0.30), transparent 70%),
+                radial-gradient(70% 120% at 82% 50%, rgba(34, 211, 238, 0.18), transparent 72%);
+            filter: blur(12px);
+            opacity: 0.42;
+            animation: exam-channel-halo 4.2s ease-in-out infinite;
+            pointer-events: none;
+        }
         .exam-channel-btn {
             position: relative;
             display: inline-flex;
-            min-height: 40px;
+            min-height: 44px;
+            max-width: 100%;
             align-items: center;
             gap: 0.65rem;
             overflow: hidden;
-            border: 1px dashed rgba(148, 163, 184, 0.32);
+            border: 1px dashed rgba(251, 191, 36, 0.34);
             border-radius: 9999px;
-            background: rgba(2, 6, 23, 0.55);
-            padding: 0.4rem 0.8rem;
-            color: #94a3b8;
+            background:
+                linear-gradient(118deg, rgba(251, 191, 36, 0.10), rgba(2, 6, 23, 0.82) 46%, rgba(34, 211, 238, 0.08)),
+                rgba(2, 6, 23, 0.72);
+            padding: 0.5rem 0.9rem;
+            color: #cbd5e1;
             text-align: left;
-            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+            box-shadow:
+                inset 0 0 18px rgba(251, 191, 36, 0.04),
+                0 0 16px rgba(251, 191, 36, 0.08);
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+        .exam-channel-btn::before {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            z-index: 0;
+            border: 1px solid rgba(251, 191, 36, 0.55);
+            border-radius: inherit;
+            opacity: 0.18;
+            pointer-events: none;
+            animation: exam-channel-border-pulse 3.4s ease-in-out infinite;
         }
         .exam-channel-btn::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(110deg, transparent 20%, rgba(251, 191, 36, 0.10) 48%, transparent 76%);
+            background: linear-gradient(110deg, transparent 20%, rgba(251, 191, 36, 0.14) 48%, rgba(34, 211, 238, 0.08) 58%, transparent 76%);
             transform: translateX(-120%);
             pointer-events: none;
             animation: exam-channel-scan 5.5s ease-in-out infinite;
         }
-        .exam-channel-btn:hover,
-        .exam-channel-btn:focus-visible {
-            border-color: rgba(251, 191, 36, 0.65);
-            background: rgba(251, 191, 36, 0.06);
+        .exam-channel-btn:hover {
+            border-color: rgba(251, 191, 36, 0.72);
+            background:
+                linear-gradient(118deg, rgba(251, 191, 36, 0.16), rgba(2, 6, 23, 0.78) 46%, rgba(34, 211, 238, 0.12)),
+                rgba(2, 6, 23, 0.76);
             color: #fde68a;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.14);
-            outline: none;
+            box-shadow:
+                inset 0 0 20px rgba(251, 191, 36, 0.07),
+                0 0 24px rgba(251, 191, 36, 0.20),
+                0 0 36px rgba(34, 211, 238, 0.08);
+            transform: translateY(-1px);
+        }
+        .exam-channel-btn:focus-visible {
+            border-color: rgba(103, 232, 249, 0.8);
+            background: rgba(34, 211, 238, 0.08);
+            color: #ecfeff;
+            outline: 2px solid rgba(103, 232, 249, 0.75);
+            outline-offset: 3px;
+            box-shadow: 0 0 24px rgba(34, 211, 238, 0.18);
         }
         .exam-channel-btn[aria-expanded="true"] {
             border-style: solid;
-            border-color: rgba(251, 191, 36, 0.55);
+            border-color: rgba(251, 191, 36, 0.62);
             background: rgba(251, 191, 36, 0.08);
             color: #fef3c7;
         }
-        .exam-channel-icon { position: relative; z-index: 1; font-size: 14px; }
-        .exam-channel-copy { position: relative; z-index: 1; display: block; }
-        .exam-channel-eyebrow { display: block; font-size: 8px; letter-spacing: 0.22em; color: #64748b; }
-        .exam-channel-label { display: block; margin-top: 1px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: #cbd5e1; }
+        .exam-channel-icon {
+            position: relative;
+            z-index: 1;
+            font-size: 15px;
+            filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.45));
+        }
+        .exam-channel-copy { position: relative; z-index: 1; display: block; min-width: 0; }
+        .exam-channel-eyebrow { display: block; font-size: 8px; letter-spacing: 0.22em; color: #a16207; }
+        .exam-channel-label { display: block; margin-top: 1px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; white-space: nowrap; }
         .exam-channel-btn:hover .exam-channel-label,
         .exam-channel-btn[aria-expanded="true"] .exam-channel-label { color: #fde68a; }
         .exam-channel-state {
@@ -309,6 +369,14 @@
             box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
         }
         #examDivination.is-revealing { animation: exam-channel-reveal 0.48s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes exam-channel-halo {
+            0%, 100% { opacity: 0.30; transform: scale(0.985); }
+            50% { opacity: 0.62; transform: scale(1.015); }
+        }
+        @keyframes exam-channel-border-pulse {
+            0%, 100% { opacity: 0.16; }
+            50% { opacity: 0.58; }
+        }
         @keyframes exam-channel-scan {
             0%, 58% { transform: translateX(-120%); }
             82%, 100% { transform: translateX(120%); }
@@ -542,16 +610,12 @@
             .step-node b { width: 22px; height: 22px; font-size: 9px; }
         }
 
-        /* 第 1 页：暗门角落 + 下一步 CTA */
+        /* 第 1 页：下一步 CTA */
         .input-cta {
             background:
                 radial-gradient(420px 150px at 12% 0%, rgba(34, 211, 238, 0.12), transparent 70%),
                 linear-gradient(120deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.94));
             box-shadow: 0 20px 50px -34px rgba(34, 211, 238, 0.55);
-        }
-        .hidden-corner {
-            border-top: 1px dashed rgba(148, 163, 184, 0.14);
-            padding-top: 0.85rem;
         }
 
         /* 第 2 页：启动舱 */
@@ -706,8 +770,9 @@
             .exam-lot-tube::before, .exam-lot-tube.is-drawing,
             .exam-lot-tube.is-drawing .exam-lot-stick,
             .exam-channel-btn::after, .exam-channel-state::before,
+            .exam-channel-entry::before, .exam-channel-btn::before,
             #examDivination.is-revealing, .view.is-entering { animation: none !important; }
-            .aura-fill, .calc-bar { transition: none; }
+            .aura-fill, .calc-bar, .exam-channel-btn { transition: none; }
             .launch-orb::before, .launch-orb::after,
             .quantum-path-live, .quantum-core::before, .quantum-core::after,
             .quantum-core span, .quantum-node::after { animation: none !important; }
@@ -730,9 +795,25 @@
 
         <!-- ================= 第 1 页 · 今日数据录入 ================= -->
         <section id="viewInput" class="view" data-view="input" aria-label="今日数据录入页">
-        <header class="text-center mb-6 sm:mb-10">
-            <h1 class="text-2xl sm:text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学 · 今日晨间运势</h1>
-            <p class="text-xs sm:text-sm text-slate-400 mt-2">—— 昨晚状态 × 今日课程时间线，只算今天这一卦的晨间播报</p>
+        <header class="mb-6 sm:mb-10">
+            <div class="flex flex-col items-center gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+                <div class="w-full min-w-0 text-center lg:w-auto lg:flex-1 lg:text-left">
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学 · 今日晨间运势</h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-2">—— 昨晚状态 × 今日课程时间线，只算今天这一卦的晨间播报</p>
+                </div>
+                <div class="exam-channel-entry">
+                    <button id="examChannelToggle" type="button" class="exam-channel-btn"
+                        aria-expanded="false" aria-controls="examDivination" aria-describedby="examChannelHint">
+                        <span id="examChannelIcon" class="exam-channel-icon" aria-hidden="true">⚠️</span>
+                        <span class="exam-channel-copy">
+                            <span class="exam-channel-eyebrow">FINAL WEEK // SEALED CHANNEL</span>
+                            <span id="examChannelText" class="exam-channel-label">开启期末渡劫通道</span>
+                        </span>
+                        <span id="examChannelState" class="exam-channel-state" aria-live="polite">封印中</span>
+                    </button>
+                    <span id="examChannelHint" class="sr-only">第 1 页标题栏的期末渡劫通道入口；点击后无缝切换至期末渡劫占卜页。</span>
+                </div>
+            </div>
         </header>
 
         <!-- ================= 赛博数据接入端：统一输入区 ================= -->
@@ -920,24 +1001,6 @@
             </div>
         </div>
 
-        <div class="hidden-corner mt-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-                <p class="text-[9px] tracking-[0.30em] text-slate-600">HIDDEN CORNER // 不在流程图上的入口</p>
-                <p class="mt-1 text-[10px] leading-4 text-slate-600">如果今天不是普通的一天，也许你需要另一条通道。</p>
-            </div>
-            <div class="exam-channel-entry">
-                <button id="examChannelToggle" type="button" class="exam-channel-btn"
-                    aria-expanded="false" aria-controls="examDivination" aria-describedby="examChannelHint">
-                    <span id="examChannelIcon" class="exam-channel-icon" aria-hidden="true">⚠️</span>
-                    <span class="exam-channel-copy">
-                        <span class="exam-channel-eyebrow">FINAL WEEK // SEALED CHANNEL</span>
-                        <span id="examChannelText" class="exam-channel-label">开启期末渡劫通道</span>
-                    </span>
-                    <span id="examChannelState" class="exam-channel-state" aria-live="polite">封印中</span>
-                </button>
-                <span id="examChannelHint" class="sr-only">第 1 页角落的隐藏入口；点击后无缝切换至期末渡劫占卜页。</span>
-            </div>
-        </div>
         </section>
 
         <!-- ================= 第 2 页 · 占卜启动舱 ================= -->
@@ -3331,7 +3394,7 @@
         }
 
         /**
-         * 期末渡劫隐藏通道：第 1 页角落入口 → 第 5 页。
+         * 期末渡劫通道：第 1 页标题栏入口 → 第 5 页。
          * 只改变视图，不改动晨间占卜 / 课程与生活标签的任何计算状态。
          */
         function setExamChannelOpen(open, options = {}) {
