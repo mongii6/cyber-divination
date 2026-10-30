@@ -98,12 +98,6 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: none; }
         }
-        .upload-status { min-height: 1.25rem; }
-        .upload-status[data-tone="idle"] { color: #94a3b8; }
-        .upload-status[data-tone="busy"] { color: #fcd34d; }
-        .upload-status[data-tone="ok"] { color: #34d399; }
-        .upload-status[data-tone="error"] { color: #fb7185; }
-
         /* ================= 接入端快捷录入 ================= */
         .quick-label {
             display: block;
@@ -148,28 +142,6 @@
         }
         .data-panel summary { list-style: none; }
         .data-panel summary::-webkit-details-marker { display: none; }
-        .mini-upload {
-            cursor: pointer;
-            display: flex;
-            min-height: 64px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 1px dashed rgba(34, 211, 238, 0.42);
-            border-radius: 0.75rem;
-            background: rgba(34, 211, 238, 0.05);
-            padding: 0.65rem 0.9rem;
-            text-align: center;
-            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-        }
-        .mini-upload:hover, .mini-upload:focus-visible,
-        .mini-upload.is-dragover {
-            border-color: rgba(217, 70, 239, 0.8);
-            background: rgba(217, 70, 239, 0.10);
-            box-shadow: 0 0 22px rgba(217, 70, 239, 0.22);
-            outline: none;
-        }
-        .mini-upload.is-loading { cursor: wait; opacity: 0.65; }
         .data-chip {
             min-height: 46px;
             border: 1px solid rgba(148, 163, 184, 0.22);
@@ -190,22 +162,6 @@
         .data-chip:focus-visible { outline: 2px solid #67e8f9; outline-offset: 2px; }
         .data-chip .chip-meta { color: #64748b; }
         .data-chip[aria-pressed="true"] .chip-meta { color: #34d399; }
-        .mode-toggle {
-            min-height: 34px;
-            border: 1px solid rgba(148, 163, 184, 0.24);
-            border-radius: 0.55rem;
-            padding: 0.25rem 0.65rem;
-            color: #94a3b8;
-            font-size: 10px;
-            letter-spacing: 0.12em;
-            transition: all 0.18s ease;
-        }
-        .mode-toggle.is-active {
-            border-color: rgba(34, 211, 238, 0.6);
-            background: rgba(34, 211, 238, 0.12);
-            color: #a5f3fc;
-            box-shadow: 0 0 14px rgba(34, 211, 238, 0.12);
-        }
         .course-roster {
             max-height: 184px;
             overflow-y: auto;
@@ -230,6 +186,39 @@
             letter-spacing: 0.1em;
             white-space: nowrap;
         }
+
+        /* ================= 期末考试科目录入 ================= */
+        .exam-subject-roster {
+            max-height: 196px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(251, 191, 36, 0.35) transparent;
+        }
+        .exam-subject-roster::-webkit-scrollbar { width: 5px; }
+        .exam-subject-roster::-webkit-scrollbar-thumb { background: rgba(251, 191, 36, 0.35); border-radius: 9999px; }
+        .exam-subject-row {
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 0.65rem;
+            background: rgba(2, 6, 23, 0.62);
+            padding: 0.55rem 0.65rem;
+        }
+        .exam-subject-row.is-active {
+            border-color: rgba(251, 191, 36, 0.55);
+            box-shadow: inset 0 0 18px rgba(251, 191, 36, 0.06), 0 0 14px rgba(251, 191, 36, 0.08);
+        }
+        .exam-subject-difficulty {
+            min-height: 32px;
+            border: 1px solid rgba(148, 163, 184, 0.26);
+            border-radius: 0.5rem;
+            background: rgba(2, 6, 23, 0.9);
+            color: #e2e8f0;
+            padding: 0.2rem 0.45rem;
+            font: inherit;
+            font-size: 11px;
+            color-scheme: dark;
+        }
+        .exam-subject-difficulty:focus-visible { outline: 2px solid #fcd34d; outline-offset: 1px; }
+        .exam-subject-difficulty option { background: #020617; color: #e2e8f0; }
 
         /* ================= 期末渡劫入口（标题栏通道） ================= */
         .exam-channel-entry {
@@ -799,7 +788,7 @@
             <div class="flex flex-col items-center gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
                 <div class="w-full min-w-0 text-center lg:w-auto lg:flex-1 lg:text-left">
                     <h1 class="text-2xl sm:text-3xl font-bold tracking-wider text-purple-400">🔮 校园赛博玄学 · 今日晨间运势</h1>
-                    <p class="text-xs sm:text-sm text-slate-400 mt-2">—— 昨晚状态 × 今日课程时间线，只算今天这一卦的晨间播报</p>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-2">—— 昨晚状态 × 今日课程时间线，自动生成今日补给与晨间单日播报</p>
                 </div>
                 <div class="exam-channel-entry">
                     <button id="examChannelToggle" type="button" class="exam-channel-btn"
@@ -823,12 +812,12 @@
                     <p class="text-[10px] tracking-[0.35em] text-cyan-300/80">DATA HUB // UNIFIED INGESTION</p>
                     <h2 id="dataHubTitle" class="mt-1 text-lg font-bold text-slate-100">🛰️ 赛博数据接入端</h2>
                 </div>
-                <p class="text-[10px] tracking-wider text-slate-500">今日课表 × 昨晚睡眠 × 今日饮食 → 晨间单日播报</p>
+                <p class="text-[10px] tracking-wider text-slate-500">今日课表 × 昨晚睡眠 → 晨间单日播报 × 自动补给</p>
             </div>
             <div class="mb-4 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-amber-100">
                 <p class="text-[10px] tracking-[0.3em] text-amber-300/80">MORNING BRIEF // 晨间输入引导</p>
-                <p class="mt-1 text-sm font-semibold leading-6">请输入今日课程及具体时间，详细的时间输入可让赛博占卜更加精准！</p>
-                <p class="mt-1 text-[11px] leading-5 text-amber-200/75">课程名称 + 上课时间段 + 昨晚睡眠 / 精神状态 → 生成今日宜 / 不宜、今日核心注意事项与分时段渡劫提示。</p>
+                <p class="mt-1 text-sm font-semibold leading-6">手动录入今日课程及具体时间，详细的时间输入可让赛博占卜更加精准！</p>
+                <p class="mt-1 text-[11px] leading-5 text-amber-200/75">课程名称 + 上课时间段 + 昨晚睡眠 / 精神状态 → 生成今日宜 / 不宜、今日核心注意事项，并由占卜结果自动推演今日适合 / 不适合的补给。</p>
             </div>
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <details class="data-panel relative overflow-hidden rounded-2xl border border-cyan-400/25 lg:col-span-2" open>
@@ -838,28 +827,14 @@
                             <span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-cyan-400/30 bg-cyan-400/10 text-lg" aria-hidden="true">📚</span>
                             <span class="min-w-0">
                                 <span class="block text-[10px] tracking-[0.3em] text-cyan-300/80">ACADEMIC SIGNAL</span>
-                                <span class="mt-1 block text-base font-bold text-slate-100">今日课表 / 学业数据</span>
-                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">录入今日课程名称、开始 / 结束时间与难度；时间越具体，分时段渡劫提示越准。</span>
+                                <span class="mt-1 block text-base font-bold text-slate-100">今日课表 / 手动录入</span>
+                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">录入今日课程名称、开始 / 结束时间与难度；时间越具体，分时段渡劫提示与今日补给越准。</span>
                             </span>
                         </span>
                         <span class="shrink-0 text-[10px] tracking-wider text-slate-500">折叠 ⌄</span>
                     </summary>
                     <div class="relative border-t border-slate-700/50 p-4">
-                        <div class="flex flex-col gap-2 sm:flex-row">
-                            <label id="courseUploadZone" for="courseFileInput" role="button" tabindex="0"
-                                class="mini-upload min-w-0 flex-1">
-                                <span id="courseUploadTitle" class="text-xs font-semibold tracking-wider text-cyan-200">⬆ 上传今日课表 / 学业数据</span>
-                                <span id="courseUploadHint" class="mt-1 text-[10px] tracking-wider text-slate-500">支持 .csv / .json · 建议含开始 / 结束时间</span>
-                            </label>
-                            <input id="courseFileInput" type="file" accept=".csv,.json,text/csv,application/json" class="sr-only">
-                            <button id="resetCoursesBtn" type="button"
-                                class="hidden min-h-[48px] shrink-0 rounded-lg border border-slate-600/70 bg-slate-800/60 px-3 py-2 text-[10px] tracking-widest text-slate-300 transition hover:border-fuchsia-400/60 hover:text-fuchsia-200">
-                                ↺ 载入今日示例课表
-                            </button>
-                        </div>
-                        <p class="mt-2 text-[10px] leading-4 text-slate-500">CSV 列：course_name,start_time,end_time,difficulty_rating,is_final；可选 credits, semester, remark。也支持 time=08:00-09:40。JSON 支持数组或 { courses: [] }。</p>
-                        <p id="courseUploadStatus" class="upload-status mt-1 text-[11px]" data-tone="idle" role="status" aria-live="polite">● 等待录入：上传今日课表 / 学业数据，或用快捷表单填写课程名与上课时间段。</p>
-                        <form id="courseQuickForm" class="mt-3 border-t border-slate-700/50 pt-3" novalidate>
+                        <form id="courseQuickForm" novalidate>
                             <p class="mb-2 text-[10px] tracking-[0.22em] text-fuchsia-300/80">TODAY COURSE QUICK ADD // 今日课程快捷录入</p>
                             <p class="mb-3 text-[11px] leading-5 text-slate-500">至少填写课程名与开始 / 结束时间；示例：08:00–09:40 计算机网络。</p>
                             <div class="grid grid-cols-2 gap-3">
@@ -925,8 +900,8 @@
                             <span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 text-lg" aria-hidden="true">🌙</span>
                             <span class="min-w-0">
                                 <span class="block text-[10px] tracking-[0.3em] text-emerald-300/80">MORNING SIGNAL</span>
-                                <span class="mt-1 block text-base font-bold text-slate-100">昨晚状态 / 今日补给</span>
-                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">先选昨晚睡眠 / 精神状态（单选），再补今日饮食标签；两者一起决定晨间回蓝与今日饮食状态。</span>
+                                <span class="mt-1 block text-base font-bold text-slate-100">昨晚状态 / 手动输入</span>
+                                <span class="mt-1 block text-[11px] leading-5 text-slate-400">只需选择昨晚睡眠 / 精神状态（单选）。今日适合吃什么、不适合吃什么，将由接下来的占卜结果自动生成。</span>
                             </span>
                         </span>
                         <span class="shrink-0 text-[10px] tracking-wider text-slate-500">折叠 ⌄</span>
@@ -935,48 +910,28 @@
                         <div class="rounded-xl border border-fuchsia-400/20 bg-fuchsia-500/5 p-3">
                             <div class="flex flex-wrap items-center justify-between gap-2">
                                 <p class="text-[10px] tracking-[0.22em] text-fuchsia-200/80">LAST NIGHT // 昨晚睡眠 / 精神状态</p>
-                                <span class="text-[10px] tracking-wider text-slate-500">单选 · 影响晨间推演</span>
+                                <button id="clearSleepBtn" type="button"
+                                    class="min-h-[34px] rounded-lg border border-slate-600/60 px-2.5 py-1 text-[10px] tracking-wider text-slate-400 transition hover:border-rose-400/50 hover:text-rose-200">
+                                    清空昨晚状态
+                                </button>
                             </div>
                             <div id="sleepStatusList" class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4"></div>
                         </div>
 
-                        <div class="mt-3 border-t border-slate-700/50 pt-3">
-                            <div class="flex flex-wrap items-center justify-between gap-2">
-                                <div>
-                                    <p class="text-[10px] tracking-[0.22em] text-emerald-200/80">TODAY FUEL // 今日饮食补给</p>
-                                    <p class="mt-1 text-[10px] text-slate-500">可多选；和昨晚状态一起进入今日引擎。</p>
-                                </div>
-                                <button id="clearLifestyleBtn" type="button"
-                                    class="min-h-[34px] rounded-lg border border-slate-600/60 px-2.5 py-1 text-[10px] tracking-wider text-slate-400 transition hover:border-rose-400/50 hover:text-rose-200">
-                                    清空全部
-                                </button>
-                            </div>
-                            <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
-                                <div class="inline-flex items-center gap-1 rounded-lg border border-slate-700/60 bg-slate-950/60 p-1" role="group" aria-label="饮食标签选择模式">
-                                    <button type="button" data-lifestyle-mode="multi" aria-pressed="true"
-                                        class="mode-toggle is-active">MULTI 多选</button>
-                                    <button type="button" data-lifestyle-mode="single" aria-pressed="false"
-                                        class="mode-toggle">SINGLE 单选</button>
-                                </div>
-                                <span class="text-[10px] tracking-wider text-slate-600">ONLY TODAY</span>
-                            </div>
-                            <div id="lifestyleTagList" class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
-                        </div>
-
-                        <p id="lifestyleSummary" class="mt-3 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-3 py-2 text-[11px] leading-5 text-emerald-200/90" role="status" aria-live="polite">
-                            未选择昨晚状态与饮食标签：占卜引擎仅使用今日课程时间线。
+                        <p id="morningStateSummary" class="mt-3 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-3 py-2 text-[11px] leading-5 text-emerald-200/90" role="status" aria-live="polite">
+                            未选择昨晚状态：占卜引擎仅使用今日课程时间线。
                         </p>
                         <p class="mt-2 text-[10px] leading-4 text-slate-500">
-                            昨晚状态只影响 AI 解读与考试概率预测；饮食标签只用于今日晨间推演。点击已选中的昨晚状态可取消。
+                            昨晚状态只影响晨间回蓝、今日运势与考试概率预测；点击已选中的状态可取消。今日补给不再手动录入，统一由占卜结果生成。
                         </p>
                         <div class="mt-3 grid grid-cols-2 gap-2 text-[10px] leading-4 text-slate-500">
                             <div class="rounded-lg border border-slate-700/50 bg-slate-950/45 p-2">
                                 <span class="block tracking-widest text-cyan-300/70">SYNERGY</span>
-                                课程时间线 × 昨晚状态 × 饮食
+                                课程时间线 × 昨晚状态
                             </div>
                             <div class="rounded-lg border border-slate-700/50 bg-slate-950/45 p-2">
-                                <span class="block tracking-widest text-fuchsia-300/70">OUTPUT</span>
-                                人设 / 证据链 / 考运预测
+                                <span class="block tracking-widest text-fuchsia-300/70">AUTO FUEL</span>
+                                占卜结果 → 今日宜吃 / 忌口
                             </div>
                         </div>
                     </div>
@@ -991,7 +946,7 @@
                     <p class="text-[10px] tracking-[0.32em] text-cyan-300/80">INPUT LOCK // 输入封存</p>
                     <h2 class="mt-1 text-lg font-bold text-slate-100">数据接入完成？进入启动舱</h2>
                     <p id="inputFlowStatus" class="mt-1 text-[11px] leading-5 text-slate-400" data-tone="idle" role="status" aria-live="polite">
-                        ○ 尚未接入数据：至少录入一门课程，或选择昨晚状态 / 今日饮食标签。
+                        ○ 尚未接入数据：至少手动录入一门课程，或选择昨晚状态。
                     </p>
                 </div>
                 <button id="goLaunchBtn" type="button"
@@ -1012,7 +967,7 @@
                     <p class="mt-6 text-[10px] tracking-[0.38em] text-fuchsia-300/80">ORACLE LAUNCH SEQUENCE // READY</p>
                     <h2 class="cyber-glitch mt-2 text-2xl font-bold text-slate-100 sm:text-3xl">今日运势 · 等待点火</h2>
                     <p class="mx-auto mt-2 max-w-xl text-xs leading-6 text-slate-400">
-                        输入已锁定。启动后将进入量子连线演算，读取今日课表时间线、昨晚状态与今日补给，生成只属于今天的赛博播报。
+                        输入已锁定。启动后将进入量子连线演算，读取今日课表时间线与昨晚状态，并自动生成今日补给，输出只属于今天的赛博播报。
                     </p>
                     <p id="launchSummary" class="mx-auto mt-4 max-w-xl rounded-lg border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-[11px] leading-5 text-cyan-100/85" role="status" aria-live="polite">
                         已接入：等待生成今日数据摘要
@@ -1029,7 +984,7 @@
                         <p class="text-[10px] tracking-[0.35em] text-fuchsia-300/80">ORACLE IGNITION // ON-DEMAND</p>
                         <h2 id="divinationGateTitle" class="mt-1 text-lg font-bold text-slate-100">🔮 开始占卜 · 今日运势</h2>
                         <p id="divinationGateHint" class="mt-1 text-xs leading-5 text-slate-400">
-                            当前处于等待输入状态。请录入今日课程与具体时间、昨晚睡眠 / 精神状态，再点击「开始占卜 · 今日运势」唤醒晨间玄学终端。
+                            当前处于等待输入状态。请手动录入今日课程与具体时间、昨晚睡眠 / 精神状态，再点击「开始占卜 · 今日运势」唤醒晨间玄学终端。
                         </p>
                         <p id="divinationPrompt" class="is-hidden mt-2 rounded-lg border border-amber-400/35 bg-amber-400/10 px-3 py-2 text-[11px] leading-5 text-amber-200" role="alert" aria-live="assertive">
                             请先录入今日课程与具体时间、昨晚状态，再来连线玄学终端！
@@ -1171,6 +1126,32 @@
                                 </div>
                                 <p id="morningCoreWarning" class="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-[11px] font-semibold leading-5 text-amber-100" role="status"></p>
 
+                                <!-- 占卜结果自动生成的今日补给 -->
+                                <section class="cyber-panel mt-4 overflow-hidden rounded-xl border border-emerald-400/25 p-4" aria-labelledby="todayFuelTitle">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <div>
+                                            <p class="text-[10px] tracking-[0.3em] text-emerald-300/80">AUTO-GENERATED FUEL // 占卜结果驱动</p>
+                                            <h3 id="todayFuelTitle" class="mt-1 text-sm font-bold tracking-widest text-emerald-100">🍱 今日补给 · 宜吃 / 忌口</h3>
+                                        </div>
+                                        <span id="todayFuelTag" class="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-2.5 py-1 text-[9px] tracking-widest text-emerald-200">WAITING</span>
+                                    </div>
+                                    <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        <div class="rounded-lg border border-emerald-400/25 bg-emerald-400/5 p-3">
+                                            <p class="text-[10px] tracking-[0.25em] text-emerald-300/80">今日适合吃 / FUEL IN</p>
+                                            <ul id="todayFuelGoodList" class="mt-2 space-y-2 text-[11px] leading-5 text-emerald-50/90"></ul>
+                                        </div>
+                                        <div class="rounded-lg border border-rose-400/25 bg-rose-400/5 p-3">
+                                            <p class="text-[10px] tracking-[0.25em] text-rose-300/80">今日不适合吃 / FUEL OUT</p>
+                                            <ul id="todayFuelAvoidList" class="mt-2 space-y-2 text-[11px] leading-5 text-rose-50/90"></ul>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 grid grid-cols-1 gap-2 text-[10px] sm:grid-cols-2">
+                                        <p id="todayFuelDrink" class="rounded-lg border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 leading-5 text-cyan-100/90"></p>
+                                        <p id="todayFuelTiming" class="rounded-lg border border-amber-400/20 bg-amber-400/5 px-3 py-2 leading-5 text-amber-100/90"></p>
+                                    </div>
+                                    <p id="todayFuelRule" class="mt-2 text-[10px] leading-5 text-slate-500"></p>
+                                </section>
+
                                 <div class="mt-5 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
                                     <div class="rounded-lg border border-slate-700/60 bg-slate-950/50 p-2">
                                         <p class="text-[10px] tracking-widest text-slate-500">卦象</p>
@@ -1224,7 +1205,7 @@
 
                         <p class="mt-4 text-[10px] leading-5 text-slate-500">
                             <span id="oracleMeta"></span><br>
-                            本卡片由本地「今日课业 / 睡眠饮食规则引擎 + 模拟大模型 JSON」生成，只读取今日单日切片，仅用于娱乐，不构成任何选课或医疗建议。
+                            本卡片由本地「今日课业 / 昨晚状态规则引擎 + 模拟大模型 JSON」生成，只读取今日单日切片；今日补给由占卜结果自动抽取，仅用于娱乐，不构成任何选课或医疗建议。
                         </p>
                     </div>
                 </div>
@@ -1252,7 +1233,7 @@
                         <div>
                             <p class="text-[10px] tracking-[0.4em] text-amber-300/80">FINAL WEEK EXAM DIVINATION // SINGLE-DAY PROBABILITY</p>
                             <h2 id="examTitle" class="cyber-glitch mt-2 text-2xl font-bold text-slate-100">🧧 期末渡劫占卜 · 考试概率</h2>
-                            <p class="mt-2 text-xs leading-5 text-slate-400">期末渡劫通道已开启：只算今天，今日课程时间线 × 昨晚睡眠 / 精神状态 × 今日课业压力，再叠加今日 Buff。</p>
+                            <p class="mt-2 text-xs leading-5 text-slate-400">期末渡劫通道已开启：可重新录入考试科目并逐项选择难度；今日概率 = 考试科目难度 × 今日课业压力 × 昨晚状态 × Buff。</p>
                         </div>
                         <div class="flex shrink-0 flex-wrap items-center gap-2">
                             <button id="examChannelCloseBtn" type="button"
@@ -1262,11 +1243,67 @@
                             <span id="examStatus" class="shrink-0 rounded-full border border-slate-500/35 bg-slate-500/10 px-3 py-1 text-[10px] tracking-widest text-slate-300">● STANDBY</span>
                         </div>
                     </div>
-                    <div class="mt-5 flex flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-950/55 p-3 sm:flex-row sm:items-center sm:justify-between">
-                        <label for="examSubjectSelect" class="text-[10px] tracking-[0.22em] text-cyan-200/80">今日渡劫科目 / TODAY'S EXAM SUBJECT</label>
-                        <div class="flex min-w-0 flex-col gap-1 sm:w-2/3 sm:items-end">
-                            <select id="examSubjectSelect" class="quick-input sm:max-w-sm"></select>
-                            <span class="text-[10px] leading-4 text-slate-500">该科目同时用于今日考试概率与今日符咒生成。</span>
+                    <!-- 期末科目录入：独立于第一页课程，可重新输入并逐项设置难度 -->
+                    <div class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                        <div class="cyber-panel rounded-xl p-4">
+                            <div class="flex items-center justify-between gap-2">
+                                <div>
+                                    <p class="text-[10px] tracking-[0.3em] text-amber-300/80">EXAM SUBJECT INGEST</p>
+                                    <h3 class="mt-1 text-sm font-semibold tracking-widest text-amber-100">📝 重新录入考试科目</h3>
+                                </div>
+                                <span class="text-[10px] tracking-widest text-slate-500">MANUAL</span>
+                            </div>
+                            <form id="examSubjectForm" class="mt-3" novalidate>
+                                <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                                    <div class="sm:col-span-2">
+                                        <label for="examSubjectName" class="quick-label">考试科目名</label>
+                                        <input id="examSubjectName" name="examSubjectName" type="text" maxlength="32" required
+                                            class="quick-input mt-1.5" placeholder="例如：概率论与数理统计" enterkeyhint="done">
+                                    </div>
+                                    <div>
+                                        <label for="examSubjectDifficulty" class="quick-label">难度系数</label>
+                                        <select id="examSubjectDifficulty" name="examSubjectDifficulty" class="quick-input mt-1.5">
+                                            <option value="easy">简单 · 1/5</option>
+                                            <option value="medium" selected>中等 · 3/5</option>
+                                            <option value="hard">困难 · 4/5</option>
+                                            <option value="hell">地狱级 · 5/5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                    class="mt-3 min-h-[44px] w-full rounded-lg bg-gradient-to-r from-amber-400 to-cyan-400 px-4 py-2 text-xs font-bold tracking-widest text-slate-950 transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200">
+                                    ➕ 录入 / 更新考试科目
+                                </button>
+                            </form>
+                            <p id="examSubjectStatus" class="mt-2 text-[10px] leading-5 text-slate-500" role="status" aria-live="polite">
+                                输入科目名并选择难度；同名科目会更新难度并自动选中。
+                            </p>
+                        </div>
+
+                        <div class="cyber-panel rounded-xl p-4">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                    <p class="text-[10px] tracking-[0.3em] text-cyan-300/80">ACTIVE SUBJECT MATRIX</p>
+                                    <h3 class="mt-1 text-sm font-semibold tracking-widest text-cyan-100">🎯 当前渡劫科目</h3>
+                                </div>
+                                <span id="examSubjectCountBadge" class="text-[10px] tracking-wider text-cyan-300/80">0 门</span>
+                            </div>
+                            <div class="mt-3 rounded-xl border border-slate-700/60 bg-slate-950/55 p-3">
+                                <label for="examSubjectSelect" class="text-[10px] tracking-[0.22em] text-amber-200/80">今日渡劫科目 / TODAY'S EXAM SUBJECT</label>
+                                <select id="examSubjectSelect" class="quick-input mt-2"></select>
+                                <span class="mt-1 block text-[10px] leading-4 text-slate-500">该科目与自身难度同时用于今日考试概率、签筒与符咒生成。</span>
+                            </div>
+                            <div class="mt-3 flex flex-wrap items-center gap-2">
+                                <button id="syncExamSubjectsBtn" type="button"
+                                    class="min-h-[34px] rounded-lg border border-slate-600/60 px-2.5 py-1 text-[10px] tracking-wider text-slate-300 transition hover:border-cyan-400/50 hover:text-cyan-200">
+                                    ↧ 从今日课表带入
+                                </button>
+                                <button id="clearExamSubjectsBtn" type="button"
+                                    class="min-h-[34px] rounded-lg border border-slate-600/60 px-2.5 py-1 text-[10px] tracking-wider text-slate-400 transition hover:border-rose-400/50 hover:text-rose-200">
+                                    清空考试科目
+                                </button>
+                            </div>
+                            <div id="examSubjectRoster" class="exam-subject-roster mt-3 space-y-2" aria-live="polite"></div>
                         </div>
                     </div>
                     <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -1319,7 +1356,7 @@
                                         class="mt-2 min-h-[48px] w-full rounded-lg border border-amber-300/50 bg-gradient-to-r from-amber-400 to-yellow-300 px-4 py-2 text-xs font-bold tracking-widest text-slate-950 transition hover:brightness-110 hover:shadow-[0_0_24px_rgba(251,191,36,0.35)] disabled:cursor-wait disabled:opacity-60 sm:w-auto">
                                         🎲 开始抽签
                                     </button>
-                                    <p id="examLotStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">签筒处于待机状态；接入今日课程与状态后即可抽签。</p>
+                                    <p id="examLotStatus" class="mt-2 text-[10px] leading-4 text-slate-500" role="status" aria-live="polite">签筒处于待机状态；录入考试科目与难度后即可抽签。</p>
                                 </div>
                             </div>
 
@@ -1367,19 +1404,22 @@
 
     <script>
         /* ============================================================
-         * 0. 基础课程 Mock 数据
-         *    单文件页面在 file:// 协议下无法 fetch 本地文件，故内联一份，
-         *    用来模拟真实项目中「后端 / 大模型返回 JSON」的数据层。
+         * 0. 数据层
+         *    今日课程只允许手动录入；
+         *    期末考试科目在第 5 页独立录入，与课表数据源解耦。
          * ============================================================ */
 
-        const MOCK_COURSE_RECORDS = [
-            { course_id: 'CS101', course_name: '计算机网络', semester: '2025-2026-2', credits: 4, difficulty_rating: 5, is_final: true, start_time: '08:00', end_time: '09:40', remark: '今日重点渡劫课程' },
-            { course_id: 'CS102', course_name: '数据结构与算法', semester: '2025-2026-1', credits: 4, difficulty_rating: 4, is_final: true, start_time: '14:00', end_time: '15:40', remark: '头发减半' },
-            { course_id: 'GE201', course_name: '赛博朋克与未来哲学', semester: '2025-2026-2', credits: 2, difficulty_rating: 1, is_final: false, start_time: '19:00', end_time: '20:40', remark: '神仙通识课' }
-        ];
-        // 页面初始不注入任何默认课程；用户主动录入/上传后才进入占卜流程
         let COURSE_RECORDS = [];
-        let activeCourseSource = '等待录入';
+        let activeCourseSource = '等待手动录入';
+
+        const EXAM_DIFFICULTIES = [
+            { id: 'easy', label: '简单', rating: 1, color: '#34d399', note: '基础送分 · 稳拿' },
+            { id: 'medium', label: '中等', rating: 3, color: '#22d3ee', note: '常规渡劫 · 正常发挥' },
+            { id: 'hard', label: '困难', rating: 4, color: '#fbbf24', note: '硬核课程 · 需重点复习' },
+            { id: 'hell', label: '地狱级', rating: 5, color: '#fb7185', note: '雷劫中心 · 高风险' }
+        ];
+        const EXAM_SUBJECTS = [];
+        let examSubjectsSeeded = false;
 
         const FORTUNE_TIERS = [
             { min: 88, label: '大吉 · 欧皇附体', color: '#fbbf24' },
@@ -1396,14 +1436,32 @@
             { id: 'insomnia', label: '失眠焦虑', emoji: '😵‍💫', risk: 14, energy: -14, quality: 'poor', note: '大脑空转 · 精神内耗' },
             { id: 'energetic', label: '精力充沛', emoji: '⚡', risk: -8, energy: 9, quality: 'good', note: '状态在线 · 适合硬刚' }
         ];
-        const LIFESTYLE_OPTIONS = [
-            { id: 'milk-tea', label: '奶茶续命', emoji: '🧋', risk: 9, note: '糖分护盾 · 血糖过山车' },
-            { id: 'takeout', label: '疯狂外卖', emoji: '🛵', risk: 7, note: '外卖柜常驻居民' },
-            { id: 'canteen', label: '食堂清汤寡水', emoji: '🥣', risk: 3, note: '低配生存模式' },
-            { id: 'night-snack', label: '熬夜夜宵', emoji: '🌙', risk: 12, note: '凌晨灵能补给' }
+        // 今日补给库：只由占卜结果抽取，第一页不再提供任何手动补给录入
+        const TODAY_FUEL_GOOD = [
+            { name: '鸡蛋 + 无糖豆浆', emoji: '🍳', effect: '稳定供能', tags: ['protein', 'morning'] },
+            { name: '燕麦粥 + 香蕉', emoji: '🥣', effect: '缓慢释放能量', tags: ['carbs', 'morning'] },
+            { name: '鸡胸肉饭团 + 温水', emoji: '🍙', effect: '保住上午专注', tags: ['protein', 'focus'] },
+            { name: '清汤面 + 青菜 + 卤蛋', emoji: '🍜', effect: '温和补盐补水', tags: ['light', 'pressure'] },
+            { name: '酸奶 + 坚果', emoji: '🥛', effect: '课间轻补给', tags: ['light', 'focus'] },
+            { name: '番茄牛腩 + 半份米饭', emoji: '🍲', effect: '高压日续命正餐', tags: ['protein', 'pressure'] },
+            { name: '温牛奶 + 全麦面包', emoji: '🥖', effect: '平稳血糖', tags: ['carbs', 'calm'] }
         ];
-        let lifestyleMode = 'multi';
-        let selectedLifestyleIds = new Set();
+        const TODAY_FUEL_AVOID = [
+            { name: '空腹冰美式', emoji: '🧊', reason: '早八空腹容易心悸、注意力反跳', tags: ['morning', 'poorSleep'] },
+            { name: '重辣炸物', emoji: '🌶️', reason: '高压时段增加肠胃负担', tags: ['pressure'] },
+            { name: '第三杯奶茶', emoji: '🧋', reason: '糖分过山车会拉低下午专注', tags: ['sugar', 'pressure'] },
+            { name: '凌晨夜宵', emoji: '🌙', reason: '会直接稀释今晚的回蓝窗口', tags: ['poorSleep', 'night'] },
+            { name: '高糖能量饮料', emoji: '⚡', reason: '短暂亢奋后更容易断崖式疲惫', tags: ['morning', 'pressure'] },
+            { name: '只靠零食代餐', emoji: '🍪', reason: '撑不过连续课程，容易在课间掉线', tags: ['focus', 'morning'] },
+            { name: '冰镇碳酸饮料', emoji: '🥤', reason: '空腹刺激肠胃，建议换成温水', tags: ['poorSleep', 'pressure'] }
+        ];
+        const TODAY_FUEL_DRINKS = [
+            { name: '温水 + 少量盐', note: '先把回蓝通道打开' },
+            { name: '温豆浆', note: '蛋白质与温度双修' },
+            { name: '淡茶', note: '提神但不拉高心率' },
+            { name: '温牛奶', note: '稳住情绪与血糖' },
+            { name: '柠檬温水', note: '清爽唤醒，不刺激空腹' }
+        ];
         let selectedSleepId = '';
         let selectedExamBuffIds = new Set();
         let currentExamLot = null;
@@ -1599,19 +1657,10 @@
             };
         }
 
-        /** 当前生活状态 → 可复用的规则输入（昨晚状态 + 今日饮食） */
+        /** 晨间规则输入：第一页只保留昨晚状态，今日补给改由占卜结果生成 */
         function getLifestyleState() {
-            const dietOptions = LIFESTYLE_OPTIONS.filter((option) => selectedLifestyleIds.has(option.id));
             const sleep = getSleepState();
-            const options = sleep.option ? [sleep.option, ...dietOptions] : dietOptions;
-            const risk = options.reduce((total, option) => total + option.risk, 0);
             return {
-                mode: lifestyleMode,
-                options,
-                dietOptions,
-                dietCount: dietOptions.length,
-                dietLabels: dietOptions.map((option) => option.label),
-                dietEmojis: dietOptions.map((option) => option.emoji),
                 sleep,
                 sleepId: sleep.id,
                 hasSleepSelection: sleep.hasSelection,
@@ -1620,15 +1669,11 @@
                 sleepEnergy: sleep.energy,
                 hasGoodSleep: sleep.hasGoodSleep,
                 hasPoorSleep: sleep.hasPoorSleep,
-                ids: options.map((option) => option.id),
-                labels: options.map((option) => option.label),
-                count: options.length,
-                risk,
-                hasMilkTea: selectedLifestyleIds.has('milk-tea'),
-                hasTakeout: selectedLifestyleIds.has('takeout'),
-                hasCanteen: selectedLifestyleIds.has('canteen'),
-                hasNightSnack: selectedLifestyleIds.has('night-snack'),
-                // 兼容旧规则：任一正向睡眠状态都视为“早睡结界”
+                options: sleep.option ? [sleep.option] : [],
+                labels: sleep.hasSelection ? [sleep.label] : [],
+                count: sleep.hasSelection ? 1 : 0,
+                risk: sleep.risk,
+                // 兼容旧规则：正向睡眠状态视为“早睡结界”
                 hasEarlySleep: sleep.hasGoodSleep
             };
         }
@@ -1648,7 +1693,7 @@
         };
 
         /**
-         * 统一课程数据形状，兼容 CSV / JSON / 快捷表单与 courses.json。
+         * 统一手动录入的课程数据形状，保证课程 ID / 时间 / 难度字段可靠。
          * 仅保留课表 / 学业相关字段；缺少可选字段时不伪造数据。
          */
         function normalizeCourseRecord(record, index) {
@@ -1690,7 +1735,7 @@
             };
         }
 
-        /** 保证课程 ID 唯一，便于两个科目下拉框稳定回选 */
+        /** 保证课程 ID 唯一，便于课程档案与考试科目稳定回选 */
         function ensureUniqueCourseIds(courses) {
             const used = new Set();
             return courses.map((course, index) => {
@@ -1707,139 +1752,6 @@
             });
         }
 
-        /**
-         * 极简 CSV 解析：支持双引号包裹字段与字段内逗号。
-         * 课程 CSV 与示例数据共用此工具。
-         */
-        function splitCsvLine(line) {
-            const fields = [];
-            let current = '';
-            let quoted = false;
-            for (let i = 0; i < line.length; i += 1) {
-                const char = line[i];
-                if (quoted) {
-                    if (char === '"' && line[i + 1] === '"') {
-                        current += '"';
-                        i += 1;
-                    } else if (char === '"') {
-                        quoted = false;
-                    } else {
-                        current += char;
-                    }
-                } else if (char === '"') {
-                    quoted = true;
-                } else if (char === ',') {
-                    fields.push(current);
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            fields.push(current);
-            return fields;
-        }
-
-        /**
-         * 课表 / 学业数据 CSV 解析。
-         * 必需列：course_name；可选列：start_time、end_time、time、difficulty_rating、is_final、credits、semester、remark。
-         */
-        function parseCoursesCsv(csv) {
-            const lines = String(csv).replace(/^\uFEFF/, '').split(/\r?\n/)
-                .map((line) => line.trim())
-                .filter(Boolean);
-            if (lines.length < 2) throw new Error('课程 CSV 为空或缺少数据行');
-
-            const header = splitCsvLine(lines[0]).map((name) => name.trim().toLowerCase());
-            const findIndex = (aliases) => aliases.reduce(
-                (found, alias) => (found === -1 ? header.indexOf(alias) : found),
-                -1
-            );
-            const nameIndex = findIndex(['course_name', 'name', 'course', '课程名', '课程']);
-            if (nameIndex === -1) throw new Error('缺少必需列：course_name（或 name / 课程名）');
-
-            const startIndex = findIndex(['start_time', 'start', 'begin', '开始时间', '上课开始时间']);
-            const endIndex = findIndex(['end_time', 'end', 'finish', '结束时间', '下课时间']);
-            const timeIndex = findIndex(['time', 'schedule', 'course_time', '上课时间', '时间段', '上课时间段']);
-            const difficultyIndex = findIndex(['difficulty_rating', 'difficulty', 'rating', '难度']);
-            const finalIndex = findIndex(['is_final', 'final', 'final_exam', '期末', '期末科目']);
-            const creditsIndex = findIndex(['credits', 'credit', '学分']);
-            const semesterIndex = findIndex(['semester', 'term', '学期']);
-            const remarkIndex = findIndex(['remark', 'note', '备注']);
-
-            const courses = [];
-            let skipped = 0;
-            const errorSamples = [];
-            lines.slice(1).forEach((line, offset) => {
-                const fields = splitCsvLine(line);
-                const pick = (index) => (index >= 0 ? (fields[index] || '').trim() : '');
-                const course = normalizeCourseRecord({
-                    course_name: pick(nameIndex),
-                    start_time: pick(startIndex),
-                    end_time: pick(endIndex),
-                    time: pick(timeIndex),
-                    difficulty_rating: pick(difficultyIndex),
-                    is_final: pick(finalIndex),
-                    credits: pick(creditsIndex),
-                    semester: pick(semesterIndex),
-                    remark: remarkIndex >= 0
-                        ? fields.slice(remarkIndex).map((field) => field.trim()).join(',')
-                        : ''
-                }, courses.length);
-                if (!course) {
-                    skipped += 1;
-                    if (errorSamples.length < 3) errorSamples.push(`第 ${offset + 2} 行：课程名为空`);
-                    return;
-                }
-                courses.push(course);
-            });
-
-            if (!courses.length) {
-                const detail = errorSamples.length ? `（${errorSamples[0]}）` : '';
-                throw new Error(`没有解析到有效课程${detail}`);
-            }
-            return { courses: ensureUniqueCourseIds(courses), skipped, errorSamples, format: 'CSV' };
-        }
-
-        /** 课表 / 学业数据 JSON 解析，兼容数组与 { courses: [] } */
-        function parseCoursesJson(text) {
-            let parsed;
-            try {
-                parsed = JSON.parse(String(text).replace(/^\uFEFF/, ''));
-            } catch (error) {
-                throw new Error(`JSON 格式错误：${error.message}`);
-            }
-            let list;
-            if (Array.isArray(parsed)) {
-                list = parsed;
-            } else if (parsed && Array.isArray(parsed.courses)) {
-                list = parsed.courses;
-            } else if (parsed && (parsed.course_name || parsed.name || parsed.course
-                || parsed['课程名'] || parsed['课程'])) {
-                list = [parsed];
-            } else {
-                throw new Error('JSON 需为课程数组，或包含 courses 数组');
-            }
-            if (!list.length) throw new Error('JSON 中没有课程数据');
-
-            const courses = [];
-            let skipped = 0;
-            const errorSamples = [];
-            list.forEach((item, index) => {
-                const course = normalizeCourseRecord(item, courses.length);
-                if (!course) {
-                    skipped += 1;
-                    if (errorSamples.length < 3) errorSamples.push(`第 ${index + 1} 项：course_name 为空`);
-                    return;
-                }
-                courses.push(course);
-            });
-            if (!courses.length) {
-                const detail = errorSamples.length ? `（${errorSamples[0]}）` : '';
-                throw new Error(`没有解析到有效课程${detail}`);
-            }
-            return { courses: ensureUniqueCourseIds(courses), skipped, errorSamples, format: 'JSON' };
-        }
-
         let divinationActivated = false;
         let divinationDirty = false;
 
@@ -1851,7 +1763,6 @@
             }
             const lifestyle = getLifestyleState();
             if (lifestyle.hasSleepSelection) parts.push(`昨晚：${lifestyle.sleepLabel}`);
-            if (lifestyle.dietCount) parts.push(`${lifestyle.dietCount} 个饮食标签`);
             return parts.join(' · ');
         }
 
@@ -1859,9 +1770,13 @@
             return Boolean(getDivinationInputSummary());
         }
 
-        // 期末暗线可脱离晨间播报独立使用：只要今日数据已接入且未冻结即可。
+        function hasExamSubjectInput() {
+            return EXAM_SUBJECTS.length > 0;
+        }
+
+        // 期末暗线使用第 5 页独立录入的考试科目，不再依赖第一页课表。
         function canRunExamDivination() {
-            return hasDivinationInput() && !divinationDirty;
+            return hasExamSubjectInput() && !divinationDirty;
         }
 
         function refreshInputStatus() {
@@ -1873,14 +1788,14 @@
                 ? 'mt-1 text-[11px] leading-5 text-emerald-300'
                 : 'mt-1 text-[11px] leading-5 text-slate-400';
             status.textContent = summary
-                ? `✓ 已接入 ${summary}。可进入启动页。`
-                : '○ 尚未接入数据：至少录入一门课程，或选择昨晚状态 / 今日饮食标签。';
+                ? `✓ 已接入 ${summary}。可进入启动页；今日补给将由占卜结果自动生成。`
+                : '○ 尚未接入数据：至少手动录入一门课程，或选择昨晚状态。';
         }
 
         function setDivinationPrompt(message = '') {
             const prompt = document.getElementById('divinationPrompt');
             if (!prompt) return;
-            prompt.textContent = message || '请先录入今日课程与具体时间、昨晚状态，再来连线玄学终端！';
+            prompt.textContent = message || '请先手动录入今日课程与具体时间、昨晚状态，再来连线玄学终端！';
             prompt.classList.toggle('is-hidden', !message);
         }
 
@@ -2077,7 +1992,7 @@
             startButton.textContent = actionLabel;
 
             if (!summary) {
-                hint.textContent = '当前处于等待输入状态。请录入今日课程与具体时间、昨晚睡眠 / 精神状态，再点击「开始占卜 · 今日运势」唤醒晨间玄学终端。';
+                hint.textContent = '当前处于等待输入状态。请手动录入今日课程与具体时间、昨晚睡眠 / 精神状态，再点击「开始占卜 · 今日运势」唤醒晨间玄学终端。';
                 return;
             }
             if (!divinationActivated) {
@@ -2156,7 +2071,7 @@
         function requestDivination() {
             const summary = getDivinationInputSummary();
             if (!summary) {
-                setDivinationPrompt('请先录入今日课程与具体时间、昨晚状态或今日饮食标签，再来连线玄学终端！');
+                setDivinationPrompt('请先手动录入今日课程与具体时间、昨晚状态，再来连线玄学终端！');
                 updateDivinationGate('empty');
                 if (activeViewId !== 'viewLaunch') navigateToView('viewLaunch');
                 document.getElementById('divinationGate')?.scrollIntoView({
@@ -2185,7 +2100,7 @@
                 if (status) {
                     status.dataset.tone = 'error';
                     status.className = 'mt-1 text-[11px] leading-5 text-rose-300';
-                    status.textContent = '⚠ 至少录入一门今日课程，或选择昨晚状态 / 今日饮食标签，才能进入启动页。';
+                    status.textContent = '⚠ 至少手动录入一门今日课程，或选择昨晚状态，才能进入启动页。';
                 }
                 document.getElementById('dataHubTitle')?.scrollIntoView({
                     behavior: prefersReducedMotion ? 'auto' : 'smooth',
@@ -2200,7 +2115,7 @@
         }
 
         /* ============================================================
-         * 1. 数据分析：把课程时间线 / 昨晚状态 / 今日饮食转成「玄学事实」
+         * 1. 数据分析：把课程时间线 / 昨晚状态转成「玄学事实」
          * ============================================================ */
         function analyzeCampusData() {
             const todayKey = getTodayKey();
@@ -2242,27 +2157,16 @@
             const todayCoursePressure = COURSE_RECORDS.length
                 ? clamp(Math.round(
                     18 + avgDifficulty * 9 + hardCourses.length * 4 + examCourses.length * 4
-                    + (lifestyle.hasNightSnack ? 4 : 0)
                     + (timelineCount ? 4 : 0) + (hasMorningClass ? 4 : 0) + (hasEveningClass ? 2 : 0)
                     + (lifestyle.hasPoorSleep ? 6 : 0) - (lifestyle.hasGoodSleep ? 5 : 0)
                 ), 0, 100)
                 : 0;
 
-            // 今日熬夜浓度：只由昨晚状态与今日生活标签推演
+            // 今日熬夜浓度：仅由昨晚状态推演
             const todayNightIndex = clamp(Math.round(
-                (lifestyle.hasPoorSleep ? 44 : 0)
-                + (lifestyle.hasNightSnack ? 24 : 0)
-                + (lifestyle.hasTakeout ? 10 : 0)
-                - (lifestyle.hasGoodSleep ? 18 : 0)
+                (lifestyle.hasPoorSleep ? 48 : 0)
+                - (lifestyle.hasGoodSleep ? 20 : 0)
                 + positiveRisk * 1.2
-            ), 0, 100);
-
-            // 今日糖分依赖：奶茶 / 外卖 / 夜宵标签
-            const todaySugarIndex = clamp(Math.round(
-                (lifestyle.hasMilkTea ? 52 : 0)
-                + (lifestyle.hasTakeout ? 12 : 0)
-                + (lifestyle.hasNightSnack ? 10 : 0)
-                + positiveRisk * 1.1
             ), 0, 100);
 
             const todayBurnout = clamp(Math.round(
@@ -2295,7 +2199,6 @@
                 todayTimelinePressure,
                 todayCoursePressure,
                 todayNightIndex,
-                todaySugarIndex,
                 todayBurnout,
                 todayFocusIndex,
                 lifestyle
@@ -2305,14 +2208,13 @@
         /* ============================================================
          * 2. 模拟大模型：根据事实生成「人设 + 运势报告」JSON
          * ============================================================ */
-        function buildPersona(facts, seed) {
+        function buildPersona(facts) {
             const course = facts.hardestCourse;
             const lifestyle = facts.lifestyle;
             const hasCourse = facts.courseCount > 0;
             const courseLabel = hasCourse ? `《${course.course_name}》` : '今日课业';
-            const dietLabel = lifestyle.dietLabels.slice(0, 2).join(' + ') || '今日饮食';
 
-            if (lifestyle.hasGoodSleep && !lifestyle.hasNightSnack) {
+            if (lifestyle.hasGoodSleep) {
                 return {
                     emoji: lifestyle.sleep.option ? lifestyle.sleep.option.emoji : '🌙',
                     title: '今日回蓝型 · 睡眠结界师',
@@ -2330,36 +2232,6 @@
                     tags: ['昨晚熬夜', '早八雷劫', '回蓝告急'],
                     desc: `昨晚「${lifestyle.sleepLabel}」，今日第一道雷劫是 ${facts.firstCourse.start_time}《${facts.firstCourse.course_name}》；今日清醒指数 ${facts.todayFocusIndex}%，先保起床与早餐，再谈复习效率。`
                 };
-            }
-
-            if (hasCourse && course.difficulty_rating >= 4
-                && (lifestyle.hasTakeout || lifestyle.hasNightSnack || lifestyle.hasMilkTea)) {
-                return {
-                    emoji: '🛵',
-                    title: '今日课业高压型 · 糖分护盾术士',
-                    code: 'TODAY-DELIVERY-SHIELD // 外卖系 Lv.87',
-                    tags: ['今日硬核', '外卖常驻', '五行缺觉'],
-                    desc: `今天要面对难度 ${course.difficulty_rating}/5 的${courseLabel}，而你把「${dietLabel}」当作护盾；今日糖分依赖 ${facts.todaySugarIndex}%，课业在扣血，糖分在回血。`
-                };
-            }
-
-            if (lifestyle.hasNightSnack) {
-                return pickBySeed([
-                    {
-                        emoji: '🧋',
-                        title: '今日深夜渡劫型 · 奶茶续命法师',
-                        code: 'TODAY-MIDNIGHT-ALCHEMIST // 糖分系 Lv.MAX',
-                        tags: ['今日夜宵', '糖分续命', '凌晨灵能'],
-                        desc: `今日饮食勾选了「${dietLabel}」，昨晚状态为「${lifestyle.sleepLabel || '未选择'}」；${courseLabel}还没渡完，糖分法阵先亮了起来。`
-                    },
-                    {
-                        emoji: '🌙',
-                        title: '今日月相绑定型 · 凌晨灵能者',
-                        code: 'TODAY-LUNAR-CAFFEINE // 夜行系 Lv.99',
-                        tags: ['月亮不睡我不睡', '夜宵成瘾', '早八绝缘体'],
-                        desc: `今天的作息与月亮同步，今日熬夜浓度 ${facts.todayNightIndex}%；白天修学分，夜晚修玄学，今晚 23:00 前记得回蓝。`
-                    }
-                ], seed);
             }
 
             if (hasCourse && course.difficulty_rating >= 4) {
@@ -2418,8 +2290,6 @@
             }
 
             if (facts.hasEveningClass) donts.push('不宜把高难度复习拖到晚课后，晚课段只做低耗能整理与复盘。');
-            if (facts.lifestyle.hasMilkTea) donts.push('不宜用奶茶代替早餐或正餐，今日糖分依赖会被继续放大。');
-            if (facts.lifestyle.hasNightSnack) donts.push('不宜在 23:30 后再开夜宵副本，今晚的睡眠结界会一起漏水。');
             if (facts.hasMorningClass && sleep.hasPoorSleep) donts.push('不宜在早八课堂补觉，错过签到与老师口头重点的代价高于多睡十分钟。');
 
             let riskSentence;
@@ -2495,6 +2365,68 @@
             return tips;
         }
 
+        /**
+         * 今日补给：完全由占卜种子 + 昨晚状态 + 今日课程压力推演。
+         * 不再读取第一页的任何饮食 / 补给输入。
+         */
+        function buildTodayFuel(facts, roll) {
+            const sleep = facts.lifestyle.sleep;
+            const flags = new Set();
+            if (sleep.hasPoorSleep) flags.add('poorSleep');
+            if (sleep.hasGoodSleep) flags.add('goodSleep');
+            if (facts.hasMorningClass) flags.add('morning');
+            if (facts.hasEveningClass) flags.add('night');
+            if (facts.todayCoursePressure >= 60 || facts.todayTimelinePressure >= 60) flags.add('pressure');
+            if (facts.todayFocusIndex < 62) flags.add('focus');
+            if (facts.todayBurnout >= 55) flags.add('sugar');
+
+            const rankPool = (pool) => pool
+                .map((item, index) => ({
+                    ...item,
+                    fit: item.tags.reduce((total, tag) => total + (flags.has(tag) ? 1 : 0), 0),
+                    order: index
+                }))
+                .sort((a, b) => b.fit - a.fit || a.order - b.order);
+
+            const takeRotated = (pool, count, offset) => {
+                if (!pool.length) return [];
+                return Array.from({ length: Math.min(count, pool.length) }, (_, index) =>
+                    pool[(offset + index) % pool.length]
+                );
+            };
+
+            const goodRanked = rankPool(TODAY_FUEL_GOOD);
+            const avoidRanked = rankPool(TODAY_FUEL_AVOID);
+            const goodOffset = Math.floor(roll * Math.min(3, goodRanked.length));
+            const avoidOffset = Math.floor(roll * 2) % 2;
+            const suitable = takeRotated(goodRanked, 2, goodOffset)
+                .map((item) => ({ name: item.name, emoji: item.emoji, effect: item.effect }));
+            const avoid = takeRotated(avoidRanked, 2, avoidOffset)
+                .map((item) => ({ name: item.name, emoji: item.emoji, reason: item.reason }));
+            const drink = pickBySeed(TODAY_FUEL_DRINKS, roll);
+
+            const timing = sleep.hasPoorSleep
+                ? '起床后 30 分钟内先吃第一口，午间再补一次轻食；不要空腹撑到中午。'
+                : (facts.hasMorningClass
+                    ? `首节 ${facts.firstCourse.start_time} 前 40 分钟完成早餐，课间只补温水或坚果。`
+                    : '起床后 1 小时内完成第一餐，今日吉时前避免高糖空转。');
+
+            const tag = facts.todayCoursePressure >= 70
+                ? 'HIGH LOAD'
+                : (sleep.hasPoorSleep ? 'RECOVERY' : 'BALANCED');
+            const summary = `占卜引擎按昨晚「${sleep.label || '未选择'}」、今日 ${facts.timelineCount} 段课程与 ${facts.todayCoursePressure}% 课业压力抽取补给。`;
+
+            return {
+                suitable,
+                avoid,
+                drink: `${drink.name}（${drink.note}）`,
+                timing,
+                tag,
+                summary,
+                rule: `${summary} 补给只属于今日切片，仅供娱乐与生活参考，不构成医疗或饮食建议。`
+            };
+        }
+
         function getFortuneTier(score) {
             return FORTUNE_TIERS.find((tier) => score >= tier.min)
                 || FORTUNE_TIERS[FORTUNE_TIERS.length - 1];
@@ -2503,7 +2435,7 @@
         /**
          * 规则引擎 + 模拟大模型输出。
          * 返回值结构与真实 LLM 的 JSON 响应保持一致：
-         * { persona, score, tier, headline, reportLines, evidence, actions, lucky, auraStats, meta }
+         * { persona, score, tier, headline, reportLines, evidence, actions, lucky, auraStats, todayFuel, meta }
          */
         function buildDivination(seed) {
             const roll = typeof seed === 'number' ? seed : Math.random();
@@ -2513,25 +2445,24 @@
             const courseLabel = hasCourse ? `《${course.course_name}》` : '今日课业';
             const variance = Math.round((roll - 0.5) * 6); // -3 ~ +3，模拟「今日玄学波动」
 
-            // 今日运势值：只由昨晚状态、今日饮食、课程压力与清醒指数决定
+            // 今日运势值：由昨晚状态、课程压力与清醒指数决定
             const score = clamp(Math.round(
                 84
                 - facts.todayNightIndex * 0.14
-                - facts.todaySugarIndex * 0.1
                 - facts.todayCoursePressure * 0.16
                 - Math.max(0, facts.lifestyle.risk) * 0.25
                 + (facts.todayFocusIndex - 60) * 0.15
             ) + variance, 32, 98);
 
             const tier = getFortuneTier(score);
-            const persona = buildPersona(facts, roll);
+            const persona = buildPersona(facts);
             const hexagram = pickBySeed(HEXAGRAMS, roll);
             const serial = 1000 + Math.floor(roll * 8999);
+            const todayFuel = buildTodayFuel(facts, roll);
             const confidence = clamp(
                 70 + (hasCourse ? 10 : 0) + facts.courseCount * 2
                 + (facts.hasTimeline ? 8 : 0)
-                + (facts.lifestyle.hasSleepSelection ? 5 : 0)
-                + (facts.lifestyle.dietCount ? 3 : 0) + variance,
+                + (facts.lifestyle.hasSleepSelection ? 5 : 0) + variance,
                 70, 96
             );
             const reviewHint = hasCourse
@@ -2566,7 +2497,7 @@
                     facts.hasTimeline
                         ? `今天共有 ${facts.timelineCount} 个课程时段，首节 ${first.start_time}《${first.course_name}》，末节 ${facts.lastCourse ? `${facts.lastCourse.start_time}《${facts.lastCourse.course_name}》` : '与首节相同'}；时间线压力 ${facts.todayTimelinePressure}%。`
                         : '今天课程尚未录入开始 / 结束时间，分时段提示会退化为通用建议。',
-                    `昨晚状态「${facts.lifestyle.sleepLabel || '未选择'}」，今日饮食「${facts.lifestyle.dietLabels.join(' + ') || '未标注'}」；熬夜浓度 ${facts.todayNightIndex}%，糖分依赖 ${facts.todaySugarIndex}%。`,
+                    `昨晚状态「${facts.lifestyle.sleepLabel || '未选择'}」，今日熬夜浓度 ${facts.todayNightIndex}%；占卜自动抽取补给：宜 ${todayFuel.suitable.map((item) => item.name).join(' / ')}，忌 ${todayFuel.avoid.map((item) => item.name).join(' / ')}。`,
                     `今日渡劫指南：把「${reviewHint}」安排在今日 ${luckyTime}，先完成最容易拿分的一件事，再处理${courseLabel}的硬骨头。`
                 ],
                 [
@@ -2576,16 +2507,14 @@
                         : (facts.lifestyle.hasGoodSleep
                             ? '昨晚睡眠回蓝成功，今日适合把最难的课程放在精力最高的时段。'
                             : '昨晚状态尚未选择，今日推演按基础体力起算；补选后早八风险会更准。'),
-                    facts.lifestyle.hasNightSnack
-                        ? `今日饮食勾选了「${facts.lifestyle.dietLabels.join(' + ')}」，糖分依赖 ${facts.todaySugarIndex}%；夜宵法阵亮起时，记得在 23:30 前收手。`
-                        : '今天没有夜宵标签，糖分法阵暂时休眠；若稍后补餐，记得回「昨晚状态 / 今日饮食」更新。',
+                    `今日补给由占卜结果自动生成：宜 ${todayFuel.suitable.map((item) => item.name).join(' / ')}；饮品推荐 ${todayFuel.drink}。`,
                     `今日吉时 ${luckyTime}；宜做「${reviewHint}」，忌在 23:30 后再开一局；若 23:00 前上床，可锁定今日「回蓝结界」。`
                 ],
                 [
                     `今日卦象「${hexagram}」：${facts.dateLabel} 只算今天这一卦，今日运势值按单日切片计算，不累计历史周期。`,
-                    `今日饮食标签：「${facts.lifestyle.dietLabels.join('、') || '未标注'}」；${facts.lifestyle.hasMilkTea ? '奶茶已进入今日糖分账本，' : '今日暂无奶茶标签，'}糖分依赖 ${facts.todaySugarIndex}%。`,
+                    `占卜补给抽取完成：今日不适合 ${todayFuel.avoid.map((item) => `${item.name}（${item.reason}）`).join('；')}。`,
                     `今日课业压力 ${facts.todayCoursePressure}%，今日熬夜浓度 ${facts.todayNightIndex}%，今日清醒指数 ${facts.todayFocusIndex}%；三项里最弱的一项是今天最需要处理的劫。`,
-                    `今日禁忌：把「今天没喝奶茶」当成放纵许可证；一旦破戒，今日糖分依赖会立刻上涨。`
+                    `今日补给纪律：只吃占卜抽中的高匹配食物，不用高糖饮料给疲惫续命。`
                 ]
             ];
             // 复制模板数组：lifecycle 行的 splice 不能污染后续卜卦的模板
@@ -2594,12 +2523,9 @@
             const sleepSignal = facts.lifestyle.hasSleepSelection
                 ? `昨晚「${facts.lifestyle.sleepLabel}」`
                 : '昨晚状态未选择';
-            const dietSignal = facts.lifestyle.dietCount
-                ? `今日饮食「${facts.lifestyle.dietLabels.join(' + ')}」`
-                : '今日饮食未标注';
-            const lifestyleLine = facts.lifestyle.count
-                ? `晨间状态联动：${sleepSignal} × ${dietSignal}，生活业力 ${facts.lifestyle.risk > 0 ? '+' : ''}${facts.lifestyle.risk}。${facts.lifestyle.hasGoodSleep ? '正向睡眠正在抵消部分课程伤害。' : (facts.lifestyle.hasPoorSleep ? '睡眠赤字正在放大早八与专注力风险。' : '建议尽快补充昨晚状态，让推演更准。')}`
-                : '晨间状态联动：昨晚状态与今日饮食都未选择，本次仅按今日课程时间线推演；补选后晨间诊断会更准。';
+            const lifestyleLine = facts.lifestyle.hasSleepSelection
+                ? `晨间状态联动：${sleepSignal}，生活业力 ${facts.lifestyle.risk > 0 ? '+' : ''}${facts.lifestyle.risk}。${facts.lifestyle.hasGoodSleep ? '正向睡眠正在抵消部分课程伤害。' : '睡眠赤字正在放大早八与专注力风险。'}今日补给已由本次占卜自动生成，无需手动录入饮食。`
+                : '晨间状态联动：昨晚状态未选择，本次仅按今日课程时间线推演；今日补给仍会由占卜结果自动生成。';
             reportLines.splice(Math.min(3, reportLines.length), 0, lifestyleLine);
 
             const headline = `今日 ${facts.dateLabel} 单日切片：昨晚${sleepLabel} · 清醒指数 ${facts.todayFocusIndex}% · 课业压力 ${facts.todayCoursePressure}% · 熬夜浓度 ${facts.todayNightIndex}%${first ? ` · 首节 ${first.start_time}《${first.course_name}》` : ' · 课程时间线未接入'}。${facts.lifestyle.hasPoorSleep
@@ -2609,7 +2535,6 @@
             const auraStats = [
                 { label: '今日课业压力', value: facts.todayCoursePressure, color: '#fbbf24' },
                 { label: '今日熬夜浓度', value: facts.todayNightIndex, color: '#e879f9' },
-                { label: '今日糖分依赖', value: facts.todaySugarIndex, color: '#22d3ee' },
                 { label: '今日疲惫浓度', value: facts.todayBurnout, color: '#fb7185' },
                 { label: '今日清醒指数', value: facts.todayFocusIndex, color: '#34d399' }
             ];
@@ -2623,7 +2548,7 @@
                         ? `今日压力源是难度 ${course.difficulty_rating}/5 的${courseLabel}${course.credits > 0 ? `（${course.credits} 学分）` : ''}，备注「${course.remark || '无'}」；今日课业压力指数 ${facts.todayCoursePressure}%，${facts.hasTimeline
                             ? `时间线共 ${facts.timelineCount} 段（首节 ${facts.firstCourse.start_time}《${facts.firstCourse.course_name}》${facts.lastCourse && facts.lastCourse.course_id !== facts.firstCourse.course_id ? `，末节 ${facts.lastCourse.start_time}《${facts.lastCourse.course_name}》` : ''}），时间线压力 ${facts.todayTimelinePressure}%`
                             : '课程尚未录入开始 / 结束时间，无法拆分时段'}；课表中共有 ${facts.examCourseCount} 门考试科目、${facts.hardCourseCount} 门硬核课程。`
-                        : '今日未接入课程数据，课业压力指数按 0 起算；可在「赛博数据接入端」补充今日课表与上课时间。'
+                        : '今日未接入课程数据，课业压力指数按 0 起算；可在「赛博数据接入端」手动补充今日课表与上课时间。'
                 },
                 {
                     icon: facts.lifestyle.sleep.option ? facts.lifestyle.sleep.option.emoji : '🌙',
@@ -2634,12 +2559,10 @@
                         : '尚未选择昨晚睡眠 / 精神状态；请选择熬夜冲浪 / 优质睡眠 / 失眠焦虑 / 精力充沛，引擎会把睡眠与今日课程时间线合并推演。'
                 },
                 {
-                    icon: facts.lifestyle.dietOptions[0]?.emoji || '🍜',
-                    title: '今日饮食 · 糖分法阵',
-                    tag: `${facts.lifestyle.hasDietSelection ? `${facts.lifestyle.dietCount} 个标签` : '未标注'} · 糖分 ${facts.todaySugarIndex}%`,
-                    text: facts.lifestyle.hasDietSelection
-                        ? `今日饮食标签「${facts.lifestyle.dietLabels.join('、')}」，糖分依赖 ${facts.todaySugarIndex}%，夜间刺激 ${facts.todayNightIndex}%；${facts.lifestyle.hasNightSnack ? '夜宵已经进入今日账本，23:30 后建议关闭外卖 App。' : '暂未触发夜宵法阵，今晚的睡眠结界仍可保住。'}`
-                        : '今日饮食尚未标注；选择奶茶 / 外卖 / 夜宵 / 食堂标签后，糖分与夜间刺激指数会更准确。'
+                    icon: '🍱',
+                    title: '今日补给 · 占卜自动生成',
+                    tag: `${todayFuel.tag} · 宜 ${todayFuel.suitable.length} / 忌 ${todayFuel.avoid.length}`,
+                    text: `${todayFuel.summary} 宜吃：${todayFuel.suitable.map((item) => `${item.emoji}${item.name}（${item.effect}）`).join('、')}；忌口：${todayFuel.avoid.map((item) => `${item.emoji}${item.name}（${item.reason}）`).join('、')}；推荐饮品：${todayFuel.drink}。`
                 },
                 {
                     icon: '⏱️',
@@ -2657,14 +2580,8 @@
                     : (facts.lifestyle.hasPoorSleep
                         ? `昨晚「${facts.lifestyle.sleepLabel}」，今日 ${first ? `${first.start_time} 前` : '早八前'}先吃早餐再出门；咖啡最多一杯，午间补 20 分钟闭眼恢复。`
                         : `昨晚「${facts.lifestyle.sleepLabel}」，今日趁回蓝窗口在 ${first ? `${first.start_time} 前` : '第一节课前'}先解决最难的 25 分钟。`),
-                facts.lifestyle.hasDietSelection
-                    ? (facts.lifestyle.hasMilkTea || facts.lifestyle.hasNightSnack
-                        ? '今天已触发糖分 / 夜宵法阵：把奶茶或夜宵换成温水 + 水果，23:30 后关闭外卖 App。'
-                        : `今日饮食「${facts.lifestyle.dietLabels.join('、')}」已计入糖分账本，保持 23:30 前收手即可。`)
-                    : '今日饮食尚未标注；勾选奶茶 / 外卖 / 夜宵 / 食堂后，AI 才能计算今日糖分依赖。',
-                facts.lifestyle.hasNightSnack
-                    ? '今日已勾选夜宵标签，23:30 后关闭外卖 App，避免触发「深夜奶茶召唤阵」。'
-                    : '今日未检测到夜宵标签，建议 23:30 前上床锁定「回蓝结界」成就。',
+                `今日补给：${todayFuel.suitable.map((item) => `${item.emoji}${item.name}`).join(' + ')}；饮品选 ${todayFuel.drink}。`,
+                `今日忌口：${todayFuel.avoid.map((item) => `${item.emoji}${item.name}`).join('、')}；${todayFuel.timing}`,
                 `宜：把${reviewHint}讲给室友听；忌：凌晨 3 点刷新选课系统。`,
                 facts.lifestyle.hasPoorSleep
                     ? '今日 23:00 前上床，把睡眠补回来；明天早八的护盾比今晚多刷一套题更值。'
@@ -2672,7 +2589,7 @@
             ];
 
             const lucky = [
-                { label: '今日开运饮品', value: facts.lifestyle.hasPoorSleep ? '温水 + 蛋白质早餐' : '温牛奶（22:30 前）' },
+                { label: '今日补给饮品', value: todayFuel.drink },
                 { label: '今日开运时段', value: luckyTime },
                 { label: '今日开运操作', value: facts.lifestyle.hasPoorSleep ? '12:30 闭眼回蓝 20 分钟' : '先啃最难课程 25 分钟' },
                 { label: '今日渡劫道具', value: hasCourse && course.course_name.includes('数据') ? '草稿纸 + 错题本' : '机械键盘 + 降噪耳机' }
@@ -2690,6 +2607,7 @@
                 actions,
                 lucky,
                 auraStats,
+                todayFuel,
                 dos: morning.dos,
                 donts: morning.donts,
                 coreWarning: morning.coreWarning,
@@ -2735,7 +2653,7 @@
 
         function renderOracle(result) {
             const $ = (id) => document.getElementById(id);
-            $('oracleSource').textContent = `今日切片：${result.todayLabel} · 昨晚 ${result.facts.lifestyle.hasSleepSelection ? result.facts.lifestyle.sleepLabel : '未选择'} · ${activeCourseSource} ${COURSE_RECORDS.length} 门 / 时间线 ${result.facts.timelineCount} 段 · 今日课业压力 ${result.facts.todayCoursePressure}% · 今日清醒指数 ${result.facts.todayFocusIndex}% · 晨间规则推理完成`;
+            $('oracleSource').textContent = `今日切片：${result.todayLabel} · 昨晚 ${result.facts.lifestyle.hasSleepSelection ? result.facts.lifestyle.sleepLabel : '未选择'} · ${activeCourseSource} ${COURSE_RECORDS.length} 门 / 时间线 ${result.facts.timelineCount} 段 · 今日课业压力 ${result.facts.todayCoursePressure}% · 今日清醒指数 ${result.facts.todayFocusIndex}% · 自动补给 ${result.todayFuel.tag} · 晨间规则推理完成`;
 
             /* ---------- 今日赛博人设 ---------- */
             $('personaSerial').textContent = `#${result.serial.replace('DIV-', '')}`;
@@ -2792,6 +2710,31 @@
                 <li class="flex gap-2"><span class="shrink-0 text-rose-300/80">▸</span><span>${escapeHTML(item)}</span></li>
             `).join('');
             $('morningCoreWarning').textContent = result.coreWarning;
+
+            /* ---------- 占卜自动生成的今日补给 ---------- */
+            const fuel = result.todayFuel;
+            $('todayFuelTag').textContent = fuel.tag;
+            $('todayFuelTag').style.borderColor = fuel.tag === 'HIGH LOAD'
+                ? 'rgba(251, 113, 133, 0.45)'
+                : (fuel.tag === 'RECOVERY' ? 'rgba(251, 191, 36, 0.45)' : 'rgba(52, 211, 153, 0.35)');
+            $('todayFuelTag').style.color = fuel.tag === 'HIGH LOAD'
+                ? '#fda4af'
+                : (fuel.tag === 'RECOVERY' ? '#fcd34d' : '#a7f3d0');
+            $('todayFuelGoodList').innerHTML = fuel.suitable.map((item) => `
+                <li class="flex items-start gap-2">
+                    <span class="shrink-0" aria-hidden="true">${escapeHTML(item.emoji)}</span>
+                    <span><strong class="text-emerald-100">${escapeHTML(item.name)}</strong><span class="text-emerald-200/70"> · ${escapeHTML(item.effect)}</span></span>
+                </li>
+            `).join('');
+            $('todayFuelAvoidList').innerHTML = fuel.avoid.map((item) => `
+                <li class="flex items-start gap-2">
+                    <span class="shrink-0" aria-hidden="true">${escapeHTML(item.emoji)}</span>
+                    <span><strong class="text-rose-100">${escapeHTML(item.name)}</strong><span class="text-rose-200/70"> · ${escapeHTML(item.reason)}</span></span>
+                </li>
+            `).join('');
+            $('todayFuelDrink').textContent = `🥤 今日推荐饮品：${fuel.drink}`;
+            $('todayFuelTiming').textContent = `⏰ 补给时机：${fuel.timing}`;
+            $('todayFuelRule').textContent = fuel.rule;
 
             /* ---------- 今日课程时间线 · 分时段渡劫提示 ---------- */
             const tipTone = {
@@ -2854,20 +2797,26 @@
         }
 
         /* ============================================================
-         * 3.5 今日渡劫指南：今日课程时间线 × 昨晚状态 × 今日饮食标签 × Buff → 今日概率 / 签文 / 符咒
+         * 3.5 期末渡劫指南：独立考试科目难度 × 昨晚状态 × 今日课业压力 × Buff → 今日概率 / 签文 / 符咒
          * ============================================================ */
         const EXAM_FALLBACK_COURSE = {
             course_id: 'FINAL-404',
             course_name: '未命名渡劫科目',
-            credits: 0,
+            difficulty_id: 'medium',
+            difficulty_label: '中等',
+            difficulty_color: '#22d3ee',
             difficulty_rating: 3,
             is_final: true,
-            remark: '课程数据未提供'
+            remark: '考试科目尚未录入'
         };
 
-        function getExamCourse(courseId) {
-            return COURSE_RECORDS.find((course) => course.course_id === courseId)
-                || COURSE_RECORDS[0]
+        function getExamDifficulty(difficultyId) {
+            return EXAM_DIFFICULTIES.find((item) => item.id === difficultyId) || EXAM_DIFFICULTIES[1];
+        }
+
+        function getExamCourse(subjectId) {
+            return EXAM_SUBJECTS.find((subject) => subject.course_id === subjectId)
+                || EXAM_SUBJECTS[0]
                 || EXAM_FALLBACK_COURSE;
         }
 
@@ -2877,28 +2826,26 @@
                 .reduce((total, buff) => total + buff.boost, 0);
         }
 
-        function calculateExamRates(courseId) {
-            const course = getExamCourse(courseId);
+        function calculateExamRates(subjectId) {
+            const course = getExamCourse(subjectId);
             const lifestyle = getLifestyleState();
             const facts = analyzeCampusData();
-            const difficulty = course.difficulty_rating || 3;
+            const difficultyInfo = getExamDifficulty(course.difficulty_id);
+            const difficulty = difficultyInfo.rating;
             const buffBoost = getExamBuffBoost();
             const positiveRisk = Math.max(0, lifestyle.risk);
             const todayPressure = facts.todayCoursePressure;
             const todayBurnout = facts.todayBurnout;
-            const todaySugar = facts.todaySugarIndex;
 
-            // 今日考试概率：课程难度 + 今日课业压力 + 今日熬夜浓度 + 今日糖分依赖 + 生活标签
+            // 今日考试概率：考试科目自身难度 + 今日课业压力 + 熬夜浓度 + 睡眠修正 + Buff
             let fail = clamp(
-                6 + difficulty * 4.5 + todayPressure * 0.12 + todayBurnout * 0.12
-                + todaySugar * 0.06 + positiveRisk * 0.45 + (course.is_final ? 3 : 0)
-                - buffBoost - (lifestyle.hasEarlySleep ? 8 : 0),
-                3, 82
+                4 + difficulty * 5.5 + todayPressure * 0.12 + todayBurnout * 0.12
+                + positiveRisk * 0.35 + 2 - buffBoost - (lifestyle.hasEarlySleep ? 8 : 0),
+                3, 86
             );
             let high = clamp(
-                36 - difficulty * 4 - todayPressure * 0.08 - todayBurnout * 0.08
-                - todaySugar * 0.03 + buffBoost * 1.4
-                + (lifestyle.hasEarlySleep ? 6 : 0) - (course.is_final ? 2 : 0),
+                38 - difficulty * 5 - todayPressure * 0.08 - todayBurnout * 0.08
+                + buffBoost * 1.4 + (lifestyle.hasEarlySleep ? 6 : 0) - 2,
                 2, 78
             );
             if (fail + high > 94) high = 94 - fail;
@@ -2908,11 +2855,13 @@
             return {
                 course,
                 difficulty,
+                difficultyLabel: difficultyInfo.label,
+                difficultyColor: difficultyInfo.color,
+                difficultyNote: difficultyInfo.note,
                 buffBoost,
                 todayPressure,
                 todayBurnout,
                 todayNightIndex: facts.todayNightIndex,
-                todaySugar,
                 todayFocusIndex: facts.todayFocusIndex,
                 sleepLabel: facts.lifestyle.hasSleepSelection ? facts.lifestyle.sleepLabel : '未选择',
                 firstCourseLabel: facts.firstCourse
@@ -2938,30 +2887,249 @@
             el.className = `shrink-0 rounded-full border px-3 py-1 text-[10px] tracking-widest ${classes[tone] || classes.ready}`;
         }
 
+        function setExamSubjectStatus(message, tone = 'idle') {
+            const status = document.getElementById('examSubjectStatus');
+            if (!status) return;
+            status.textContent = message;
+            status.className = tone === 'error'
+                ? 'mt-2 text-[10px] leading-5 text-rose-300'
+                : (tone === 'ok'
+                    ? 'mt-2 text-[10px] leading-5 text-emerald-300'
+                    : 'mt-2 text-[10px] leading-5 text-slate-500');
+        }
+
+        function buildExamDifficultyOptions(selectedId) {
+            return EXAM_DIFFICULTIES.map((difficulty) => `
+                <option value="${difficulty.id}"${difficulty.id === selectedId ? ' selected' : ''}>
+                    ${difficulty.label} · ${difficulty.rating}/5
+                </option>
+            `).join('');
+        }
+
+        function renderExamSubjectRoster() {
+            const roster = document.getElementById('examSubjectRoster');
+            const countBadge = document.getElementById('examSubjectCountBadge');
+            const select = document.getElementById('examSubjectSelect');
+            if (!roster) return;
+            if (!EXAM_SUBJECTS.length) {
+                roster.innerHTML = `
+                    <div class="rounded-lg border border-dashed border-slate-600/50 p-3 text-[11px] leading-5 text-slate-500">
+                        暂无考试科目。请在上方手动录入科目与难度，或点击「从今日课表带入」。
+                    </div>`;
+                if (countBadge) countBadge.textContent = '0 门';
+                return;
+            }
+            const activeId = select ? select.value : '';
+            roster.innerHTML = EXAM_SUBJECTS.map((subject) => {
+                const difficulty = getExamDifficulty(subject.difficulty_id);
+                return `
+                    <div class="exam-subject-row${subject.course_id === activeId ? ' is-active' : ''}">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <p class="break-words text-[12px] font-semibold text-slate-100">${escapeHTML(subject.course_name)}</p>
+                            <span class="course-badge" style="border-color:${withAlpha(difficulty.color, 0.42)};background:${withAlpha(difficulty.color, 0.1)};color:${difficulty.color}">
+                                ${escapeHTML(difficulty.label)} · ${difficulty.rating}/5
+                            </span>
+                        </div>
+                        <p class="mt-1 text-[10px] leading-4 text-slate-500">${escapeHTML(difficulty.note)}${subject.source ? ` · ${escapeHTML(subject.source)}` : ''}</p>
+                        <div class="mt-2 flex items-center justify-between gap-2">
+                            <select class="exam-subject-difficulty" data-exam-subject-difficulty="${escapeHTML(subject.course_id)}"
+                                aria-label="调整 ${escapeHTML(subject.course_name)} 的难度">
+                                ${buildExamDifficultyOptions(subject.difficulty_id)}
+                            </select>
+                            <button type="button" data-remove-exam-subject="${escapeHTML(subject.course_id)}"
+                                class="shrink-0 rounded px-1.5 py-1 text-[10px] text-slate-500 transition hover:bg-rose-400/10 hover:text-rose-300"
+                                aria-label="移除考试科目 ${escapeHTML(subject.course_name)}">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            if (countBadge) {
+                const hellCount = EXAM_SUBJECTS.filter((subject) => subject.difficulty_id === 'hell').length;
+                countBadge.textContent = `${EXAM_SUBJECTS.length} 门 · 地狱 ${hellCount}`;
+            }
+        }
+
         function updateExamSubjects(preferredId) {
             const select = document.getElementById('examSubjectSelect');
             if (!select) return;
             const previous = preferredId || select.value;
             select.innerHTML = '';
-            if (!COURSE_RECORDS.length) {
+            if (!EXAM_SUBJECTS.length) {
                 const option = document.createElement('option');
                 option.value = '';
-                option.textContent = '暂无课程，请先录入或上传课表';
+                option.textContent = '暂无考试科目，请先在上方录入';
                 select.appendChild(option);
                 select.disabled = true;
+                renderExamSubjectRoster();
                 return;
             }
             select.disabled = false;
-            COURSE_RECORDS.forEach((course) => {
+            EXAM_SUBJECTS.forEach((subject) => {
+                const difficulty = getExamDifficulty(subject.difficulty_id);
                 const option = document.createElement('option');
-                option.value = course.course_id;
-                const hardMark = course.difficulty_rating >= 4 ? '🔥 ' : '';
-                option.textContent = `${hardMark}${course.course_name} · ${getCourseTimeLabel(course)} · 难度 ${course.difficulty_rating}/5${course.is_final ? ' · 考试' : ''}`;
+                option.value = subject.course_id;
+                option.textContent = `${subject.course_name} · ${difficulty.label} ${difficulty.rating}/5`;
                 select.appendChild(option);
             });
-            select.value = COURSE_RECORDS.some((course) => course.course_id === previous)
+            select.value = EXAM_SUBJECTS.some((subject) => subject.course_id === previous)
                 ? previous
-                : COURSE_RECORDS[0].course_id;
+                : EXAM_SUBJECTS[0].course_id;
+            renderExamSubjectRoster();
+        }
+
+        function createExamSubject(name, difficultyId, source = '手动录入') {
+            const difficulty = getExamDifficulty(difficultyId);
+            return {
+                course_id: `EXAM-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 900 + 100)}`,
+                course_name: name,
+                difficulty_id: difficulty.id,
+                difficulty_label: difficulty.label,
+                difficulty_color: difficulty.color,
+                difficulty_rating: difficulty.rating,
+                is_final: true,
+                remark: difficulty.note,
+                source
+            };
+        }
+
+        function upsertExamSubject() {
+            const nameInput = document.getElementById('examSubjectName');
+            const difficultySelect = document.getElementById('examSubjectDifficulty');
+            const name = nameInput ? nameInput.value.trim() : '';
+            const difficultyId = difficultySelect ? difficultySelect.value : 'medium';
+            if (!name) {
+                setExamSubjectStatus('✕ 请先输入考试科目名。', 'error');
+                nameInput?.focus();
+                return;
+            }
+            const existing = EXAM_SUBJECTS.find((subject) =>
+                subject.course_name.toLowerCase() === name.toLowerCase()
+            );
+            if (existing) {
+                const difficulty = getExamDifficulty(difficultyId);
+                existing.difficulty_id = difficulty.id;
+                existing.difficulty_label = difficulty.label;
+                existing.difficulty_color = difficulty.color;
+                existing.difficulty_rating = difficulty.rating;
+                existing.remark = difficulty.note;
+                existing.source = '手动更新';
+                examSubjectsSeeded = true;
+                updateExamSubjects(existing.course_id);
+                invalidateExamLot('科目难度已更新，旧签文已失效；请重新抽签。');
+                refreshExamTerminal(existing.course_id);
+                const card = document.getElementById('talismanCard');
+                if (card && !card.classList.contains('hidden')) generateTalisman();
+                setExamSubjectStatus(`✓ 已更新《${name}》难度为 ${difficulty.label} ${difficulty.rating}/5。`, 'ok');
+            } else {
+                const subject = createExamSubject(name, difficultyId);
+                EXAM_SUBJECTS.push(subject);
+                examSubjectsSeeded = true;
+                updateExamSubjects(subject.course_id);
+                refreshExamTerminal(subject.course_id);
+                const difficulty = getExamDifficulty(difficultyId);
+                setExamSubjectStatus(`✓ 已录入《${name}》· 难度 ${difficulty.label} ${difficulty.rating}/5。`, 'ok');
+            }
+            if (nameInput) nameInput.value = '';
+            nameInput?.focus();
+        }
+
+        function difficultyIdFromRating(rating) {
+            const value = Number(rating) || 3;
+            if (value <= 2) return 'easy';
+            if (value === 3) return 'medium';
+            if (value === 4) return 'hard';
+            return 'hell';
+        }
+
+        function syncExamSubjectsFromCourses(auto = false) {
+            if (!COURSE_RECORDS.length) {
+                setExamSubjectStatus('今日课表为空：请先在第一页手动录入课程，或直接在上方输入考试科目。', 'error');
+                return false;
+            }
+            let added = 0;
+            let updated = 0;
+            COURSE_RECORDS.forEach((course) => {
+                const difficultyId = difficultyIdFromRating(course.difficulty_rating);
+                const existing = EXAM_SUBJECTS.find((subject) =>
+                    subject.course_name.toLowerCase() === course.course_name.toLowerCase()
+                );
+                if (existing) {
+                    const difficulty = getExamDifficulty(difficultyId);
+                    if (existing.difficulty_id !== difficulty.id) {
+                        existing.difficulty_id = difficulty.id;
+                        existing.difficulty_label = difficulty.label;
+                        existing.difficulty_color = difficulty.color;
+                        existing.difficulty_rating = difficulty.rating;
+                        existing.remark = difficulty.note;
+                        updated += 1;
+                    }
+                    return;
+                }
+                EXAM_SUBJECTS.push(createExamSubject(course.course_name, difficultyId, '今日课表带入'));
+                added += 1;
+            });
+            examSubjectsSeeded = true;
+            const currentId = document.getElementById('examSubjectSelect')?.value || '';
+            const activeId = EXAM_SUBJECTS.some((subject) => subject.course_id === currentId)
+                ? currentId
+                : (EXAM_SUBJECTS[0] ? EXAM_SUBJECTS[0].course_id : '');
+            updateExamSubjects(activeId);
+            if (updated) invalidateExamLot('考试科目难度已同步，旧签文已失效；请重新抽签。');
+            refreshExamTerminal(activeId);
+            setExamSubjectStatus(
+                `✓ ${auto ? '已自动' : ''}从今日课表带入 ${added} 门考试科目${updated ? `，同步更新 ${updated} 门难度` : ''}。可在下方逐项调整难度。`,
+                'ok'
+            );
+            return true;
+        }
+
+        function ensureExamSubjectsFromCourses() {
+            if (examSubjectsSeeded || EXAM_SUBJECTS.length || !COURSE_RECORDS.length) return;
+            syncExamSubjectsFromCourses(true);
+        }
+
+        function removeExamSubject(subjectId) {
+            const index = EXAM_SUBJECTS.findIndex((subject) => subject.course_id === subjectId);
+            if (index === -1) return;
+            const activeId = document.getElementById('examSubjectSelect')?.value || '';
+            const [removed] = EXAM_SUBJECTS.splice(index, 1);
+            examSubjectsSeeded = true;
+            const stillActive = activeId !== subjectId
+                && EXAM_SUBJECTS.some((subject) => subject.course_id === activeId);
+            const next = stillActive
+                ? { course_id: activeId }
+                : (EXAM_SUBJECTS[index] || EXAM_SUBJECTS[index - 1] || EXAM_SUBJECTS[0]);
+            updateExamSubjects(next ? next.course_id : '');
+            refreshExamTerminal(next ? next.course_id : '');
+            setExamSubjectStatus(`✕ 已移除《${removed.course_name}》。`, 'idle');
+        }
+
+        function clearExamSubjects() {
+            EXAM_SUBJECTS.splice(0, EXAM_SUBJECTS.length);
+            examSubjectsSeeded = true;
+            currentExamLot = null;
+            document.getElementById('examLotResult')?.classList.add('hidden');
+            document.getElementById('talismanCard')?.classList.add('hidden');
+            updateExamSubjects('');
+            refreshExamTerminal('');
+            setExamSubjectStatus('已清空全部考试科目；可重新录入，或从今日课表带入。', 'idle');
+        }
+
+        function changeExamSubjectDifficulty(subjectId, difficultyId) {
+            const subject = EXAM_SUBJECTS.find((item) => item.course_id === subjectId);
+            if (!subject) return;
+            const difficulty = getExamDifficulty(difficultyId);
+            subject.difficulty_id = difficulty.id;
+            subject.difficulty_label = difficulty.label;
+            subject.difficulty_color = difficulty.color;
+            subject.difficulty_rating = difficulty.rating;
+            subject.remark = difficulty.note;
+            updateExamSubjects(subjectId);
+            invalidateExamLot('科目难度已调整，旧签文已失效；请重新抽签。');
+            refreshExamTerminal(subjectId);
+            const card = document.getElementById('talismanCard');
+            if (card && !card.classList.contains('hidden')) generateTalisman();
+            setExamSubjectStatus(`✓ 《${subject.course_name}》难度已调整为 ${difficulty.label} ${difficulty.rating}/5。`, 'ok');
         }
 
         function renderExamGauge(courseId) {
@@ -2995,7 +3163,7 @@
                 if (gauge) {
                     gauge.innerHTML = `
                         <div class="flex h-full items-center justify-center rounded-xl border border-dashed border-slate-600/50 text-[11px] tracking-widest text-slate-500">
-                            NO COURSE DATA // 等待课程接入
+                            NO SUBJECT DATA // 等待考试科目录入
                         </div>`;
                 }
                 ['examPassRate', 'examFailRate', 'examLowRate', 'examHighRate'].forEach((id) => {
@@ -3004,11 +3172,11 @@
                 });
                 const ticker = document.getElementById('examLotTicker');
                 if (ticker) {
-                    ticker.textContent = 'SYNC // 今日暂无课程数据，请先在录入页添加今日课程';
+                    ticker.textContent = 'SYNC // 今日暂无考试科目，请先在左侧录入科目与难度';
                 }
                 const lotStatus = document.getElementById('examLotStatus');
                 if (lotStatus) {
-                    lotStatus.textContent = '今日暂无可抽签科目，请先在录入页添加课程。';
+                    lotStatus.textContent = '今日暂无可抽签科目，请先录入考试科目与难度。';
                 }
                 const result = document.getElementById('examLotResult');
                 if (result) result.classList.add('hidden');
@@ -3024,31 +3192,34 @@
                 const card = document.getElementById('talismanCard');
                 if (card) card.classList.add('hidden');
                 const talismanStatus = document.getElementById('talismanStatus');
-                if (talismanStatus) talismanStatus.textContent = '暂无可渡劫科目：请先录入或上传课程数据。';
+                if (talismanStatus) talismanStatus.textContent = '暂无可渡劫科目：请先录入考试科目与难度。';
                 return;
             }
-            setExamGaugeGate(false);
+            setExamGaugeGate(divinationDirty, divinationDirty ? '今日数据已更新，旧概率已冻结；请先重算今日运势。' : '');
             const drawButton = document.getElementById('drawLotBtn');
             // 抽签动画进行中即使数据刷新也不要提前解锁按钮
             if (drawButton) {
-                drawButton.disabled = examDrawing;
-                if (!examDrawing) drawButton.textContent = currentExamLot ? '🎲 再抽一签' : '🎲 摇一签';
+                drawButton.disabled = examDrawing || divinationDirty;
+                if (!examDrawing) drawButton.textContent = divinationDirty
+                    ? '🎲 等待今日重算'
+                    : (currentExamLot ? '🎲 再抽一签' : '🎲 摇一签');
             }
             const talismanButton = document.getElementById('generateTalismanBtn');
-            if (talismanButton) talismanButton.disabled = false;
-            // 课程恢复后清除“暂无可渡劫科目”的旧提示；已有符咒时保留生成反馈
+            if (talismanButton) talismanButton.disabled = divinationDirty;
+            // 科目恢复后清除“暂无可渡劫科目”的旧提示；已有符咒时保留生成反馈
             const talismanCard = document.getElementById('talismanCard');
             const talismanStatus = document.getElementById('talismanStatus');
-            if (talismanStatus
+            if (!divinationDirty && talismanStatus
                 && (!talismanCard || talismanCard.classList.contains('hidden'))
                 && (talismanStatus.textContent.startsWith('暂无可渡劫科目')
                     || talismanStatus.textContent.startsWith('数据已更新'))) {
                 talismanStatus.textContent = '尚未生成符咒。已选 Buff 会参与今日概率预测。';
             }
             const rates = renderExamGauge(courseId);
+            if (!rates) return;
             const ticker = document.getElementById('examLotTicker');
             if (ticker) {
-                ticker.textContent = `SYNC // 今日 ${rates.course.course_name} · 难度 ${rates.difficulty}/5 · 课业压力 ${rates.todayPressure}% · ${rates.buffBoost > 0 ? `已叠加 ${rates.buffBoost} 点 Buff` : '未叠加 Buff'}`;
+                ticker.textContent = `SYNC // 今日 ${rates.course.course_name} · ${rates.difficultyLabel} ${rates.difficulty}/5 · 课业压力 ${rates.todayPressure}% · ${rates.buffBoost > 0 ? `已叠加 ${rates.buffBoost} 点 Buff` : '未叠加 Buff'}`;
             }
             const result = document.getElementById('examLotResult');
             if (currentExamLot && currentExamLot.subjectId !== courseId && result) {
@@ -3059,8 +3230,10 @@
                 if (drawButton && !examDrawing) drawButton.textContent = '🎲 摇一签';
             }
             const lotStatus = document.getElementById('examLotStatus');
-            if (lotStatus && !currentExamLot
-                && (lotStatus.textContent.startsWith('暂无科目')
+            if (!divinationDirty && lotStatus && !currentExamLot
+                && (lotStatus.textContent.startsWith('今日暂无')
+                    || lotStatus.textContent.startsWith('还没有')
+                    || lotStatus.textContent.startsWith('暂无科目')
                     || lotStatus.textContent.startsWith('签筒处于待机')
                     || lotStatus.textContent.startsWith('数据已更新')
                     || lotStatus.textContent.startsWith('签筒已重置'))) {
@@ -3069,6 +3242,8 @@
             // 抽签动画进行中保持 DRAWING 徽标；数据刷新后不要把状态误重置为 READY
             if (examDrawing) {
                 setExamStatus('● DRAWING', 'drawing');
+            } else if (divinationDirty) {
+                setExamStatus('● STALE', 'warn');
             } else {
                 setExamStatus('● READY', 'ready');
             }
@@ -3109,16 +3284,16 @@
             if (!canRunExamDivination()) {
                 card.classList.add('hidden');
                 if (status) {
-                    status.textContent = !hasDivinationInput()
-                        ? '请先在录入页接入今日课程 / 状态，再生成符咒。'
-                        : '数据已更新，请先重算今日运势再生成符咒。';
+                    status.textContent = !hasExamSubjectInput()
+                        ? '请先在第 5 页录入考试科目与难度，再生成符咒。'
+                        : '今日数据已更新，请先重算今日运势再生成符咒。';
                 }
                 return;
             }
-            // 无课程时不再生成兜底符咒，避免按钮被程序化触发后展示虚假科目
-            if (!COURSE_RECORDS.length) {
+            // 无考试科目时不再生成兜底符咒，避免按钮被程序化触发后展示虚假科目
+            if (!EXAM_SUBJECTS.length) {
                 card.classList.add('hidden');
-                if (status) status.textContent = '暂无可渡劫科目：请先录入或上传课程数据。';
+                if (status) status.textContent = '暂无可渡劫科目：请先录入考试科目与难度。';
                 return;
             }
 
@@ -3127,7 +3302,7 @@
             const facts = analyzeCampusData();
             const lifestyle = getLifestyleState();
             const buffs = EXAM_BUFFS.filter((buff) => selectedExamBuffIds.has(buff.id));
-            const seed = hashText(`${getTodayKey()}-${course.course_id}-${lifestyle.labels.join('-')}-${buffs.map((buff) => buff.id).join('-')}-${facts.todaySugarIndex}-${facts.todayCoursePressure}`);
+            const seed = hashText(`${getTodayKey()}-${course.course_id}-${course.difficulty_id}-${lifestyle.labels.join('-')}-${buffs.map((buff) => buff.id).join('-')}-${facts.todayCoursePressure}`);
             const code = `TAL-${(seed % 9000 + 1000)}`;
             const blessings = [
                 '考神已接入你的草稿纸，步骤分自动对齐采分点。',
@@ -3138,9 +3313,9 @@
             const blessing = blessings[seed % blessings.length];
 
             const pitfalls = [];
-            if (lifestyle.hasNightSnack) pitfalls.push('今日 23:30 后停止夜宵与短视频，避免明天在考场进入待机模式。');
-            if (lifestyle.hasTakeout) pitfalls.push('若今日有考试，提前吃正餐，别让外卖延误把「护体」变成「空腹硬扛」。');
-            if (course.difficulty_rating >= 4) pitfalls.push(`《${course.course_name}》压轴题只留最后 15 分钟，先收基础分，避免和难题互相消耗。`);
+            if (lifestyle.hasPoorSleep) pitfalls.push('昨晚睡眠赤字已接入：今天先吃早餐再出门，咖啡最多一杯，午间补 20 分钟闭眼。');
+            if (facts.hasMorningClass && lifestyle.hasPoorSleep) pitfalls.push(`首节 ${facts.firstCourse.start_time}《${facts.firstCourse.course_name}》前不要空腹，提前 15 分钟到教室。`);
+            if (rates.difficulty >= 4) pitfalls.push(`《${course.course_name}》压轴题只留最后 15 分钟，先收基础分，避免和难题互相消耗。`);
             if (!buffs.length) pitfalls.push('当前是裸考 Buff 状态：至少叠一层「错题回响」，先把高频公式过一遍。');
             pitfalls.push('今日开考前检查准考证、学生证、2B 铅笔与听力设备；玄学不负责补办证件。');
 
@@ -3151,7 +3326,7 @@
                     : '今日雷劫强度：高危';
 
             if (status) {
-                status.textContent = `今日符咒已生成：${course.course_name} · ${luckText} · 今日过关率 ${rates.pass}%`;
+                status.textContent = `今日符咒已生成：${course.course_name} · ${rates.difficultyLabel} ${rates.difficulty}/5 · ${luckText} · 今日过关率 ${rates.pass}%`;
             }
 
             card.innerHTML = `
@@ -3161,7 +3336,7 @@
                         <div class="min-w-0 flex-1">
                             <p class="text-[9px] tracking-[0.28em] text-amber-300/75">CYBER TALISMAN // ${escapeHtml(code)}</p>
                             <h4 class="mt-1 break-words text-lg font-bold text-amber-100">《${escapeHtml(course.course_name)}》今日渡劫符</h4>
-                            <p class="mt-1 text-[10px] tracking-wider text-slate-400">难度 ${rates.difficulty}/5 · ${escapeHtml(luckText)} · 今日过关率 ${rates.pass}%</p>
+                            <p class="mt-1 text-[10px] tracking-wider text-slate-400">${escapeHtml(rates.difficultyLabel)} ${rates.difficulty}/5 · ${escapeHtml(luckText)} · 今日过关率 ${rates.pass}%</p>
                         </div>
                     </div>
                     <p class="mt-3 rounded-lg border border-amber-300/20 bg-amber-300/5 px-3 py-2 text-xs leading-6 text-amber-50/90">
@@ -3171,7 +3346,13 @@
                         ${buffs.length
                             ? buffs.map((buff) => `<span class="rounded-full border border-fuchsia-300/30 bg-fuchsia-300/10 px-2 py-0.5 text-[9px] tracking-wider text-fuchsia-100">${buff.emoji} ${escapeHtml(buff.label)}</span>`).join('')
                             : '<span class="rounded-full border border-slate-500/30 bg-slate-500/10 px-2 py-0.5 text-[9px] tracking-wider text-slate-400">裸考模式</span>'}
-                        ${lifestyle.options.map((option) => `<span class="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-2 py-0.5 text-[9px] tracking-wider text-emerald-100">${option.emoji} ${escapeHtml(option.label)}</span>`).join('')}
+                        <span class="rounded-full border px-2 py-0.5 text-[9px] tracking-wider"
+                            style="border-color:${withAlpha(rates.difficultyColor, 0.35)};background:${withAlpha(rates.difficultyColor, 0.1)};color:${rates.difficultyColor}">
+                            ${escapeHtml(rates.difficultyLabel)} ${rates.difficulty}/5
+                        </span>
+                        ${lifestyle.hasSleepSelection
+                            ? `<span class="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-2 py-0.5 text-[9px] tracking-wider text-emerald-100">${lifestyle.sleep.option.emoji} ${escapeHtml(lifestyle.sleepLabel)}</span>`
+                            : '<span class="rounded-full border border-slate-500/30 bg-slate-500/10 px-2 py-0.5 text-[9px] tracking-wider text-slate-400">昨晚未选择</span>'}
                     </div>
                     <div class="mt-3 border-t border-amber-300/15 pt-3">
                         <p class="text-[9px] tracking-[0.25em] text-cyan-300/75">避坑指南 // PITFALL SHIELD</p>
@@ -3244,18 +3425,18 @@
             if (!canRunExamDivination()) {
                 const guardStatus = document.getElementById('examLotStatus');
                 if (guardStatus) {
-                    guardStatus.textContent = !hasDivinationInput()
-                        ? '请先在录入页接入今日课程 / 状态，再抽签。'
-                        : '数据已更新，请先重算今日运势再抽签。';
+                    guardStatus.textContent = !hasExamSubjectInput()
+                        ? '请先录入考试科目与难度，再抽签。'
+                        : '今日数据已更新，请先重算今日运势再抽签。';
                 }
-                setExamStatus(!hasDivinationInput() ? '● STANDBY' : '● STALE', 'warn');
+                setExamStatus(!hasExamSubjectInput() ? '● STANDBY' : '● STALE', 'warn');
                 return;
             }
             const select = document.getElementById('examSubjectSelect');
             const courseId = select && select.value;
             if (!courseId) {
                 const status = document.getElementById('examLotStatus');
-                if (status) status.textContent = '还没有可抽签的科目，请先录入或上传课程。';
+                if (status) status.textContent = '还没有可抽签的科目，请先录入考试科目与难度。';
                 currentExamLot = null;
                 setExamStatus('● NO DATA', 'warn');
                 return;
@@ -3305,11 +3486,11 @@
                     button.textContent = '🎲 等待今日数据';
                 }
                 if (result) result.classList.add('hidden');
-                setExamStatus(!hasDivinationInput() ? '● STANDBY' : '● STALE', 'warn');
+                setExamStatus(!hasExamSubjectInput() ? '● STANDBY' : '● STALE', 'warn');
                 return;
             }
 
-            // 抽签动画期间课程 / 生活状态可能变化，最终结果按最新状态结算
+            // 抽签动画期间科目 / 昨晚状态可能变化，最终结果按最新状态结算
             const latestSelect = document.getElementById('examSubjectSelect');
             const latestCourseId = latestSelect ? latestSelect.value : '';
             if (!latestCourseId) {
@@ -3343,6 +3524,15 @@
             examDrawing = false;
         }
 
+        function invalidateExamLot(message = '') {
+            currentExamLot = null;
+            document.getElementById('examLotResult')?.classList.add('hidden');
+            const status = document.getElementById('examLotStatus');
+            if (status && message) status.textContent = message;
+            const drawButton = document.getElementById('drawLotBtn');
+            if (drawButton && !examDrawing) drawButton.textContent = '🎲 摇一签';
+        }
+
         function refreshExamAfterDataChange() {
             const hadLot = Boolean(currentExamLot);
             currentExamLot = null;
@@ -3365,14 +3555,38 @@
 
             const select = document.getElementById('examSubjectSelect');
             select?.addEventListener('change', () => {
-                if (!canRunExamDivination()) {
-                    setExamStatus(!hasDivinationInput() ? '● STANDBY' : '● STALE', 'warn');
-                    return;
-                }
                 refreshExamTerminal(select.value);
                 // 科目切换后，已生成的符咒必须同步为新科目
                 const card = document.getElementById('talismanCard');
-                if (card && !card.classList.contains('hidden')) generateTalisman();
+                if (!divinationDirty && card && !card.classList.contains('hidden')) generateTalisman();
+            });
+
+            document.getElementById('examSubjectForm')?.addEventListener('submit', (event) => {
+                event.preventDefault();
+                upsertExamSubject();
+            });
+
+            document.getElementById('examSubjectRoster')?.addEventListener('click', (event) => {
+                const button = event.target.closest('[data-remove-exam-subject]');
+                if (!button) return;
+                removeExamSubject(button.dataset.removeExamSubject);
+            });
+
+            document.getElementById('examSubjectRoster')?.addEventListener('change', (event) => {
+                const selectDifficulty = event.target.closest('[data-exam-subject-difficulty]');
+                if (!selectDifficulty) return;
+                changeExamSubjectDifficulty(
+                    selectDifficulty.dataset.examSubjectDifficulty,
+                    selectDifficulty.value
+                );
+            });
+
+            document.getElementById('syncExamSubjectsBtn')?.addEventListener('click', () => {
+                syncExamSubjectsFromCourses(false);
+            });
+
+            document.getElementById('clearExamSubjectsBtn')?.addEventListener('click', () => {
+                clearExamSubjects();
             });
 
             document.getElementById('buffList')?.addEventListener('click', (event) => {
@@ -3385,8 +3599,9 @@
                     selectedExamBuffIds.add(buffId);
                 }
                 renderBuffList();
-                // Buff 也是占卜输入：只冻结旧结果，等待用户重新点击占卜
-                markDivinationInputsChanged();
+                refreshExamTerminal(select ? select.value : '');
+                const card = document.getElementById('talismanCard');
+                if (!divinationDirty && card && !card.classList.contains('hidden')) generateTalisman();
             });
 
             document.getElementById('drawLotBtn')?.addEventListener('click', drawExamLot);
@@ -3395,10 +3610,11 @@
 
         /**
          * 期末渡劫通道：第 1 页标题栏入口 → 第 5 页。
-         * 只改变视图，不改动晨间占卜 / 课程与生活标签的任何计算状态。
+         * 只改变视图，不改动晨间占卜 / 今日课程与昨晚状态的计算状态。
          */
         function setExamChannelOpen(open, options = {}) {
             if (open) {
+                ensureExamSubjectsFromCourses();
                 navigateToView('examDivination');
                 return;
             }
@@ -3483,7 +3699,7 @@
 
             // 防呆：任何内部调用都不能绕过显式占卜按钮
             if (!divinationActivated || !hasDivinationInput()) {
-                setDivinationPrompt('请先录入今日课程与具体时间、昨晚状态或今日饮食标签，再来连线玄学终端！');
+                setDivinationPrompt('请先手动录入今日课程与具体时间、昨晚状态，再来连线玄学终端！');
                 updateDivinationGate('empty');
                 if (activeViewId !== 'viewLaunch') navigateToView('viewLaunch');
                 if (button) {
@@ -3566,7 +3782,7 @@
                 const bootLines = [
                     `> 锁定今日单日切片 ... OK (${getTodayKey()} / ${getTodayCourseTimeline().length} blocks)`,
                     `> 载入今日课业压力档案 ... OK (${COURSE_RECORDS.length} courses)`,
-                    `> 解锁晨间生活标签 ... OK (${getLifestyleState().labels.length} tags)`,
+                    `> 解锁昨晚状态信号 ... OK (${getLifestyleState().labels.length} tags)`,
                     `> 读取昨晚睡眠状态 ... OK (${getSleepState().label || '未选择'})`,
                     '> 加载 cyber-oracle-7b 今日权重 ... OK',
                     '> 正在计算今日赛博播报 ...'
@@ -3637,13 +3853,8 @@
         document.getElementById('resultBackLaunchBtn')?.addEventListener('click', () => navigateToView('viewLaunch'));
 
         /* ============================================================
-         * 4.5 赛博数据接入端：课表上传 / 快捷录入 / 生活状态标签
+         * 4.5 赛博数据接入端：课程手动录入 / 昨晚状态
          * ============================================================ */
-        const courseFileInput = document.getElementById('courseFileInput');
-        const courseUploadZone = document.getElementById('courseUploadZone');
-        const courseUploadTitle = document.getElementById('courseUploadTitle');
-        const courseUploadHint = document.getElementById('courseUploadHint');
-        const courseUploadStatus = document.getElementById('courseUploadStatus');
         const courseQuickForm = document.getElementById('courseQuickForm');
         const courseNameInput = document.getElementById('courseName');
         const courseStartTimeInput = document.getElementById('courseStartTime');
@@ -3653,18 +3864,9 @@
         const courseQuickStatus = document.getElementById('courseQuickStatus');
         const courseRoster = document.getElementById('courseRoster');
         const courseCountBadge = document.getElementById('courseCountBadge');
-        const resetCoursesBtn = document.getElementById('resetCoursesBtn');
         const sleepStatusList = document.getElementById('sleepStatusList');
-        const lifestyleTagList = document.getElementById('lifestyleTagList');
-        const lifestyleSummary = document.getElementById('lifestyleSummary');
-        const clearLifestyleBtn = document.getElementById('clearLifestyleBtn');
-        let courseUploadBusy = false;
-
-        function setCourseUploadStatus(message, tone = 'idle') {
-            if (!courseUploadStatus) return;
-            courseUploadStatus.textContent = message;
-            courseUploadStatus.dataset.tone = tone;
-        }
+        const morningStateSummary = document.getElementById('morningStateSummary');
+        const clearSleepBtn = document.getElementById('clearSleepBtn');
 
         function setCourseQuickStatus(message, tone = 'idle') {
             if (!courseQuickStatus) return;
@@ -3677,7 +3879,7 @@
             if (!COURSE_RECORDS.length) {
                 courseRoster.innerHTML = `
                     <div class="rounded-lg border border-dashed border-slate-600/50 p-3 text-[11px] leading-5 text-slate-500">
-                        暂无课程数据。上传课表，或使用上方快捷表单录入第一门渡劫课程。
+                        暂无课程数据。使用上方手动表单录入第一门渡劫课程。
                     </div>`;
                 if (courseCountBadge) courseCountBadge.textContent = '0 门';
                 return;
@@ -3710,76 +3912,6 @@
             }
         }
 
-        function applyCourseData(courses, sourceLabel, extraMessage = '') {
-            COURSE_RECORDS = ensureUniqueCourseIds(courses);
-            activeCourseSource = sourceLabel;
-            renderCourseRoster();
-            resetCoursesBtn?.classList.remove('hidden');
-            if (extraMessage) setCourseUploadStatus(extraMessage, 'ok');
-            markDivinationInputsChanged();
-        }
-
-        function handleCourseFile(file) {
-            if (!file || courseUploadBusy) return;
-            const isCsv = /\.csv$/i.test(file.name) || file.type === 'text/csv';
-            const isJson = /\.json$/i.test(file.name) || file.type === 'application/json';
-            if (!isCsv && !isJson) {
-                setCourseUploadStatus('✕ 仅支持 .csv / .json 文件，请重新选择。', 'error');
-                if (courseFileInput) courseFileInput.value = '';
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                setCourseUploadStatus('✕ 文件超过 2 MB，请精简后再上传。', 'error');
-                if (courseFileInput) courseFileInput.value = '';
-                return;
-            }
-            if (file.size === 0) {
-                setCourseUploadStatus('✕ 文件为空，请检查后重新上传。', 'error');
-                if (courseFileInput) courseFileInput.value = '';
-                return;
-            }
-
-            courseUploadBusy = true;
-            courseUploadZone?.classList.add('is-loading');
-            setCourseUploadStatus(`◌ 正在读取 ${file.name} ...`, 'busy');
-            const reader = new FileReader();
-            reader.onload = () => {
-                try {
-                    const parsed = isCsv
-                        ? parseCoursesCsv(reader.result)
-                        : parseCoursesJson(reader.result);
-                    const skippedText = parsed.skipped
-                        ? `，跳过 ${parsed.skipped} 条无效记录（${parsed.errorSamples[0] || '字段缺失'}）`
-                        : '';
-                    const timelineCount = parsed.courses.filter((course) => Boolean(normalizeClockTime(course.start_time))).length;
-                    const timelineText = timelineCount
-                        ? `其中 ${timelineCount} 门含上课时间，可生成分时段渡劫提示`
-                        : '未检测到上课时间，建议补充 start_time / end_time';
-                    applyCourseData(
-                        parsed.courses,
-                        `本地文件：${file.name}`,
-                        `✓ 已载入 ${parsed.courses.length} 门今日课程（${parsed.format}）${skippedText}；${timelineText}。点击「开始占卜 · 今日运势」生成晨间播报。`
-                    );
-                    if (courseUploadTitle) courseUploadTitle.textContent = '⬆ 更换今日课表 / 学业数据';
-                    if (courseUploadHint) courseUploadHint.textContent = file.name;
-                    setCourseQuickStatus('课程档案已更新；可继续快捷录入今日课程时间，或点击「开始占卜 · 今日运势」。', 'ok');
-                } catch (error) {
-                    setCourseUploadStatus(`✕ 课程导入失败：${error.message}`, 'error');
-                } finally {
-                    courseUploadBusy = false;
-                    courseUploadZone?.classList.remove('is-loading');
-                    if (courseFileInput) courseFileInput.value = '';
-                }
-            };
-            reader.onerror = () => {
-                courseUploadBusy = false;
-                courseUploadZone?.classList.remove('is-loading');
-                if (courseFileInput) courseFileInput.value = '';
-                setCourseUploadStatus('✕ 文件读取失败，请确认文件未被占用后重试。', 'error');
-            };
-            reader.readAsText(file, 'UTF-8');
-        }
-
         function renderSleepTags() {
             if (!sleepStatusList) return;
             sleepStatusList.innerHTML = SLEEP_OPTIONS.map((option) => {
@@ -3796,42 +3928,20 @@
             }).join('');
         }
 
-        function renderLifestyleTags() {
-            if (!lifestyleTagList) return;
-            lifestyleTagList.innerHTML = LIFESTYLE_OPTIONS.map((option) => {
-                const selected = selectedLifestyleIds.has(option.id);
-                return `
-                    <button type="button" class="data-chip" data-lifestyle-id="${option.id}"
-                        aria-pressed="${selected}">
-                        <span class="flex items-center gap-1.5 text-[11px] font-semibold">
-                            <span aria-hidden="true">${option.emoji}</span>${option.label}
-                        </span>
-                        <span class="chip-meta mt-1 block text-[9px] leading-4">${option.note}</span>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function renderLifestyleSummary() {
-            if (!lifestyleSummary) return;
+        function renderMorningStateSummary() {
+            if (!morningStateSummary) return;
             const state = getLifestyleState();
-            if (!state.count) {
-                lifestyleSummary.textContent = '未选择昨晚状态与饮食标签：今日占卜引擎仅使用课程时间线；补选后可激活晨间联动解读。';
+            if (!state.hasSleepSelection) {
+                morningStateSummary.textContent = '未选择昨晚状态：占卜引擎仅使用今日课程时间线；今日补给仍会由占卜结果自动生成。';
                 return;
             }
             const riskText = `${state.risk > 0 ? '+' : ''}${state.risk}`;
-            const sleepText = state.hasSleepSelection ? `昨晚「${state.sleepLabel}」` : '昨晚状态未选';
-            const dietText = state.dietCount
-                ? `今日饮食「${state.dietLabels.join(' + ')}」（${lifestyleMode === 'single' ? '单选' : '多选'}）`
-                : '今日饮食未选';
             const synergy = state.hasPoorSleep
                 ? '睡眠赤字已接入：早八 / 上午课程压力与今日挂科率已被上调。'
                 : (state.hasGoodSleep
                     ? '正向睡眠已接入：今日清醒指数与考试概率获得正向修正。'
-                    : (state.hasNightSnack || state.hasMilkTea
-                        ? '检测到糖分 / 熬夜信号，今日课业压力与今日挂科率已被上调。'
-                        : '生活状态信号已接入今日单日模型。'));
-            lifestyleSummary.textContent = `${sleepText} ｜ ${dietText} ｜ 生活业力 ${riskText}。${synergy}`;
+                    : '昨晚状态信号已接入今日单日模型。');
+            morningStateSummary.textContent = `昨晚「${state.sleepLabel}」 ｜ 生活业力 ${riskText}。${synergy} 今日补给将在占卜结果中自动生成。`;
         }
 
         function removeCourse(courseId) {
@@ -3839,63 +3949,18 @@
             COURSE_RECORDS = COURSE_RECORDS.filter((course) => course.course_id !== courseId);
             if (!activeCourseSource.includes('手动调整')) activeCourseSource = `${activeCourseSource} · 手动调整`;
             renderCourseRoster();
-            setCourseUploadStatus(
+            setCourseQuickStatus(
                 removed ? `✕ 已移除《${removed.course_name}》；点击「开始占卜 · 今日运势」更新今日结果。` : '课程已移除。',
                 'idle'
             );
-            resetCoursesBtn?.classList.remove('hidden');
             markDivinationInputsChanged();
         }
 
-        function bindCourseAndLifestylePanel() {
+        function bindInputPanels() {
             renderCourseRoster();
             renderSleepTags();
-            renderLifestyleTags();
-            renderLifestyleSummary();
+            renderMorningStateSummary();
             bindExamTerminal();
-
-            courseFileInput?.addEventListener('change', () => {
-                handleCourseFile(courseFileInput.files && courseFileInput.files[0]);
-            });
-
-            courseUploadZone?.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    courseFileInput?.click();
-                }
-            });
-
-            ['dragenter', 'dragover'].forEach((eventName) => {
-                courseUploadZone?.addEventListener(eventName, (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    courseUploadZone.classList.add('is-dragover');
-                });
-            });
-            ['dragleave', 'dragend'].forEach((eventName) => {
-                courseUploadZone?.addEventListener(eventName, () => {
-                    courseUploadZone.classList.remove('is-dragover');
-                });
-            });
-            courseUploadZone?.addEventListener('drop', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                courseUploadZone.classList.remove('is-dragover');
-                const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-                handleCourseFile(file);
-            });
-
-            resetCoursesBtn?.addEventListener('click', () => {
-                COURSE_RECORDS = MOCK_COURSE_RECORDS.map((course) => ({ ...course }));
-                activeCourseSource = '示例课表（courses.json）';
-                renderCourseRoster();
-                resetCoursesBtn.classList.add('hidden');
-                if (courseUploadTitle) courseUploadTitle.textContent = '⬆ 上传今日课表 / 学业数据';
-                if (courseUploadHint) courseUploadHint.textContent = '支持 .csv / .json · 建议含开始 / 结束时间';
-                setCourseUploadStatus('↺ 已载入今日示例课表（含 08:00 / 14:00 / 19:00 时段）；点击「开始占卜 · 今日运势」生成晨间播报。', 'idle');
-                setCourseQuickStatus('示例课程已暂存，可继续快捷录入或开始占卜。', 'idle');
-                markDivinationInputsChanged();
-            });
 
             courseQuickForm?.addEventListener('submit', (event) => {
                 event.preventDefault();
@@ -3927,7 +3992,7 @@
                     is_final: Boolean(courseIsFinalInput?.checked),
                     credits: 0,
                     semester: '',
-                    remark: '移动端快捷录入'
+                    remark: '手动录入'
                 }, COURSE_RECORDS.length);
                 if (!newCourse) {
                     setCourseQuickStatus('✕ 课程数据无效，请检查课程名。', 'error');
@@ -3941,7 +4006,6 @@
                     activeCourseSource = `${activeCourseSource} + 快捷录入`;
                 }
                 renderCourseRoster();
-                resetCoursesBtn?.classList.remove('hidden');
                 setCourseQuickStatus(`✓ 已录入《${newCourse.course_name}》（${startTime}–${endTime} · 难度 ${difficulty}/5${newCourse.is_final ? ' · 考试科目' : ''}）；点击「开始占卜 · 今日运势」生成晨间播报。`, 'ok');
                 courseQuickForm.reset();
                 markDivinationInputsChanged();
@@ -3960,56 +4024,19 @@
                 const id = button.dataset.sleepId;
                 selectedSleepId = selectedSleepId === id ? '' : id;
                 renderSleepTags();
-                renderLifestyleSummary();
+                renderMorningStateSummary();
                 markDivinationInputsChanged();
             });
 
-            document.querySelectorAll('[data-lifestyle-mode]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    lifestyleMode = button.dataset.lifestyleMode === 'single' ? 'single' : 'multi';
-                    if (lifestyleMode === 'single' && selectedLifestyleIds.size > 1) {
-                        selectedLifestyleIds = new Set([selectedLifestyleIds.values().next().value]);
-                    }
-                    document.querySelectorAll('[data-lifestyle-mode]').forEach((item) => {
-                        const active = item.dataset.lifestyleMode === lifestyleMode;
-                        item.classList.toggle('is-active', active);
-                        item.setAttribute('aria-pressed', String(active));
-                    });
-                    renderLifestyleTags();
-                    renderLifestyleSummary();
-                    markDivinationInputsChanged();
-                });
-            });
-
-            lifestyleTagList?.addEventListener('click', (event) => {
-                const button = event.target.closest('[data-lifestyle-id]');
-                if (!button) return;
-                const id = button.dataset.lifestyleId;
-                if (lifestyleMode === 'single') {
-                    selectedLifestyleIds = selectedLifestyleIds.has(id)
-                        ? new Set()
-                        : new Set([id]);
-                } else if (selectedLifestyleIds.has(id)) {
-                    selectedLifestyleIds.delete(id);
-                } else {
-                    selectedLifestyleIds.add(id);
-                }
-                renderLifestyleTags();
-                renderLifestyleSummary();
-                markDivinationInputsChanged();
-            });
-
-            clearLifestyleBtn?.addEventListener('click', () => {
+            clearSleepBtn?.addEventListener('click', () => {
                 selectedSleepId = '';
-                selectedLifestyleIds.clear();
                 renderSleepTags();
-                renderLifestyleTags();
-                renderLifestyleSummary();
+                renderMorningStateSummary();
                 markDivinationInputsChanged();
             });
         }
 
-        bindCourseAndLifestylePanel();
+        bindInputPanels();
         bindExamChannel();
         updateDivinationGate('standby');
         refreshInputStatus();
